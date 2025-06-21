@@ -1,0 +1,467 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Collezioni di Dati</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="collezioni-di-dati---malnati-18"><a class="header" href="#collezioni-di-dati---malnati-18">Collezioni di dati - Malnati 18 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-introduzione">1. Introduzione</a>
+<ul>
+<li><a href="#11-strutture-dati-standard">1.1 Strutture Dati Standard</a>
+<ul>
+<li><a href="#111-differenze-operative">1.1.1 Differenze Operative</a></li>
+<li><a href="#112-tipi-fondamentali-di-contenitori">1.1.2 Tipi Fondamentali di Contenitori</a></li>
+<li><a href="#113-implementazioni-multiple">1.1.3 Implementazioni Multiple</a></li>
+<li><a href="#114-scelta-della-struttura-dati">1.1.4 Scelta della Struttura Dati</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-tipi-di-contenitori">2. Tipi di contenitori</a>
+<ul>
+<li><a href="#21-array-dinamico">2.1 Array Dinamico</a></li>
+<li><a href="#22-coda-a-doppia-entrata-o-deque">2.2 Coda a doppia entrata (o deque)</a></li>
+<li><a href="#23-lista-doppiamente-collegata">2.3 Lista doppiamente collegata</a></li>
+<li><a href="#24-coda-a-priorit%C3%A0">2.4 Coda a priorità</a></li>
+<li><a href="#25-mappe">2.5 Mappe</a></li>
+</ul>
+</li>
+<li><a href="#3-caratteristiche-delle-strutture-dati">3. Caratteristiche delle Strutture Dati</a>
+<ul>
+<li><a href="#31-complessit%C3%A0-computazionale">3.1 Complessità Computazionale</a></li>
+</ul>
+</li>
+<li><a href="#4-vec">4. Vec</a></li>
+<li><a href="#5-vecdeque">5. VecDeque</a></li>
+<li><a href="#6-linkedlist">6. LinkedList</a></li>
+<li><a href="#7-mappe">7. Mappe</a>
+<ul>
+<li><a href="#71-api-delle-mappe-in-rust">7.1 API delle Mappe in Rust</a>
+<ul>
+<li><a href="#711-esempio-pratico">7.1.1 Esempio Pratico</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#8-insiemi">8. Insiemi</a></li>
+<li><a href="#9-binaryheap-priority-queue">9. BinaryHeap (Priority Queue)</a></li>
+<li><a href="#10-riferimenti">10. Riferimenti</a></li>
+</ul>
+<h1 id="1-introduzione"><a class="header" href="#1-introduzione">1. Introduzione</a></h1>
+<h2 id="11-strutture-dati-standard"><a class="header" href="#11-strutture-dati-standard">1.1 Strutture Dati Standard</a></h2>
+<p>Vogliamo concentrarci un attimo sui tipi standard di contenitori che ci vengono messi a disposizione da Rust e sugli algoritmi connessi per poterli gestire. La maggior parte di questi tipi li conoscete, tutti quanti avete fatto l'esame di algoritmi e programmazione avanzata e lì vi hanno abbondantemente trattato per farvi capire una serie di cose. Tra le cose che vi dovrebbero essere riusciti a inculcare nella testa è il concetto di <strong>complessità degli algoritmi</strong>.</p>
+<h3 id="111-differenze-operative"><a class="header" href="#111-differenze-operative">1.1.1 Differenze Operative</a></h3>
+<p>Perché? Perché a parità di problema io posso trovare delle soluzioni diverse che <em><strong>funzionalmente</strong></em> sono equivalenti ma <em><strong>operazionalmente</strong></em> non lo sono. Io posso tenere una sequenza di informazioni dentro un <code>Vec</code> o dentro una <code>linked list</code>. Entrambi sono dinamici, sono capaci di automaticamente allungarsi quanto serve per tenerne altri, sono capaci di contrarsi nel caso in cui serve, entrambi mi permettono di inserire all'inizio, a metà, e al fondo, ma il <strong>costo di queste operazioni è sostanzialmente diverso</strong>.</p>
+<p>La scelta dell'uno piuttosto che dell'altro non è dettata da problemi funzionali, perché tutti hanno la stessa esatta identica funzionalità: permettono di gestire sequenze unbounded nei limiti della memoria disponibile.
+La scelta la faccio in funzione del <strong>tipo di accesso</strong>. Se prevalentemente devo inserire in mezzo, il <code>Vec</code> non mi conviene, perché mi fa fare un mucchio di operazioni inutili, la linked list molto di più. Se in media devo accedere all'<em>i-esimo</em> elemento dove <code>i</code> non è noto a priori, il <code>Vec</code> è molto meglio, perché tenendo gli elementi compatti il costo di accedere al primo, al secondo, al centesimo elemento è sempre lo stesso — è quello semplicemente di calcolare l'offset rispetto all'inizio.
+Mentre nella linked list io posso raggiungere il centesimo elemento solo camminando 100 volte, seguendo 100 jump dal primo, al secondo, al terzo, al quarto, fino al centesimo. E chiaramente quell'operazione lì dopo un po' mi sfianca, cioè perdo una montagna di tempo nell'andare in giro.</p>
+<h3 id="112-tipi-fondamentali-di-contenitori"><a class="header" href="#112-tipi-fondamentali-di-contenitori">1.1.2 Tipi Fondamentali di Contenitori</a></h3>
+<p><img src="images/collezioni_di_dati/image.png" alt="image.png" /></p>
+<p>Adesso ci concentriamo su questa cosa qua.</p>
+<p>Di base tutti i linguaggi hanno questi tre fondamentali tipi:</p>
+<ul>
+<li><strong>Liste ordinate</strong>: contenitori capaci di mantenere in modo ordinato una sequenza di cose</li>
+<li><strong>Insiemi</strong>: contenitori disordinati che possono contenere un dato valore <em>una volta sola</em></li>
+<li><strong>Mappe</strong>: consentono di associare ad una chiave univoca un valore</li>
+</ul>
+<h3 id="113-implementazioni-multiple"><a class="header" href="#113-implementazioni-multiple">1.1.3 Implementazioni Multiple</a></h3>
+<p>Ciascuno di queste tre categorie grosse di cose (poi ci sono ulteriori derivazioni, quando le vedremo: le deque, piuttosto che le queue, piuttosto che gli stack etc…) hanno possibilità di essere implementate in vario modo. Ad esempio, nel caso degli elementi ordinati, dei contenitori ordinati, io posso scegliere:</p>
+<ul>
+<li>Un <strong>algoritmo simile al <code>Vec</code></strong>: alloca blocchi contigui con elementi uno a fianco all'altro</li>
+<li>Una <strong>linked list</strong>: elementi sparpagliati con puntatori al next e al previous</li>
+</ul>
+<h3 id="114-scelta-della-struttura-dati"><a class="header" href="#114-scelta-della-struttura-dati">1.1.4 Scelta della Struttura Dati</a></h3>
+<p>Tocca al programmatore capire la complessità degli algoritmi associati alle strutture dati che sta usando e capire quando gli conviene usarne uno o quando gli conviene usarne l'altro. In Java voi avete la <code>LinkedList</code> e l'<code>ArrayList</code>. Tutti e due implementano l'interfaccia <code>java.util.List</code>, quindi sono identici dal punto di vista funzionale: hanno esattamente gli stessi metodi.</p>
+<p>Il problema è che non hanno lo stesso comportamento a runtime, in termini di prestazioni. In certi algoritmi conviene molto la linked list, in altri conviene l'array list.</p>
+<h1 id="2-tipi-di-contenitori"><a class="header" href="#2-tipi-di-contenitori">2. Tipi di contenitori</a></h1>
+<p><img src="images/collezioni_di_dati/image%201.png" alt="image.png" /></p>
+<h2 id="21-array-dinamico"><a class="header" href="#21-array-dinamico">2.1 Array Dinamico</a></h2>
+<p>È un oggetto che, come un array, contiene un certo numero di elementi. Questi elementi sono contigui e sono garantiti a restare contigui. Si chiama dinamico perché, a differenza dell'array normale, che richiede al momento della sua creazione la definizione del numero di elementi che contiene (e il numero di elementi che contiene sarà sempre solo quello), l'array dinamico <strong>permette di avere un numero di elementi che cambia nel tempo</strong>, per cui lo posso allargare o lo posso contrarre.</p>
+<p>Questa struttura ha delle caratteristiche fondamentali.</p>
+<p><strong>La prima</strong>, <strong>permette di inserire in coda a costo costante, a costo ammortizzato costante</strong>, perché?
+Perché il principio è che lui alloca un certo blocco, fin tanto che io cerco di inserire, questo blocco è solo parzialmente in uso e quindi l'inserimento costa zero (perché sposto solo un puntatore o incremento un numero o una cosa del genere), e quando arrivassi a saturarlo la prossima allocazione mi fa duplicare lo spazio, quindi io ho a un certo punto un saltino: il costo è <em>basso, basso, basso, …, saltino, basso, basso, basso …</em></p>
+<p>Qui la tecnica è che quando mi allargo <strong>raddoppio di dimensione</strong>, per cui i saltini all'inizio sono non tanto alti, perché ho poca roba da copiare, ma abbastanza frequenti e progressivamente via via che mi allargo sempre meno frequenti, i salti diventano sempre più alti perché quando passo da 1024 a 2048 devo spostare 1024 cose e quindi chiaramente mi costa di più che spostarne 16, in compenso poi per altri 1024 non mi costa più niente, poi arrivato a 2048 duplico di nuovo, quindi un salto ancora più alto, ma poi torno a stare tranquillo per altri 2048 elementi etc… e <strong>questo fa sì che il costo ammortizzato sia costante</strong>.</p>
+<h2 id="22-coda-a-doppia-entrata-o-deque"><a class="header" href="#22-coda-a-doppia-entrata-o-deque">2.2 Coda a doppia entrata (o deque)</a></h2>
+<p>Le <strong>code a doppia entrata</strong> sono degli oggetti che permettono a <strong>ammortizzato costo costante</strong> di inserire in testa o in coda.</p>
+<p>Nel <code>Vec</code> normale se io inserisco alla posizione 0 è costosissimo, perché li devo spostare tutti — immaginate di avere una pila di piatti alta alta: quanto vi costa aggiungerne uno in cima? Poco. Quanta fatica vi costa infilarlo sotto? Devo tirare su tutta la pila e farci entrare quell'altro — tanta fatica!</p>
+<p>Nelle <code>VecDeque</code> quello che succede è che i piatti invece di tenerli in pila verticalmente, li metto orizzontalmente e quindi mi costa poco aggiungere da entrambi i lati, perché ho le estremità libere. Se devo inserire a metà ho sempre difficoltà perché li devo spostare. Questa struttura si chiama in modo diverso: in Rust si chiama <code>VecDeque</code>, in C si chiama <code>deque</code>, in Java si chiama <code>ArrayDeque</code> e in Python è un caso particolare della Package Collection che si chiama <code>deque</code>.</p>
+<h2 id="23-lista-doppiamente-collegata"><a class="header" href="#23-lista-doppiamente-collegata">2.3 Lista doppiamente collegata</a></h2>
+<p>Le <strong>liste doppiamente collegate</strong> hanno un puntatore al <em>next</em> e al <em>previous</em> per ogni elemento. L'oggetto lista che fa da testa contiene il <code>first</code> e il <code>last</code>, permettendo rapidi inserimenti. Costa poco inserire a metà perché dovete solo sganciare due puntatori, inserire una cosa e riagganciarli. Facile, basta farlo nel modo giusto.</p>
+<p>Viceversa, accedere all'<em>i-esimo</em> elemento dall'inizio vi costa attraversare tutti gli elementi precedenti. Questo esiste in Rust come <code>LinkedList</code>, in C++ come <code>list</code>, in Java come <code>LinkedList</code>, mentre in Python non esiste nella libreria standard.</p>
+<h2 id="24-coda-a-priorità"><a class="header" href="#24-coda-a-priorità">2.4 Coda a priorità</a></h2>
+<p>Le <strong>code a priorità</strong> (<em>Priority Queue</em>) sono strutture in cui, quando aggiungo un elemento, questo "galleggia" automaticamente verso l'uscita in base alla sua priorità. Questo serve quando devo ordinare elementi non per ordine di inserimento, ma per contenuto!</p>
+<p>Pensate al pronto soccorso: le persone arrivano nel tempo ma non sono curate nell'ordine di arrivo, bensì in base alla gravità — chi sta per morire ha precedenza su chi ha un taglietto. Al triage vi assegnano un codice (bianco, verde, giallo, rosso) che determina l'urgenza.</p>
+<p>Questo in Rust si chiama <code>BinaryHeap</code>, in C e Java <code>PriorityQueue</code>, in Python <code>heapq</code>.</p>
+<p>Queste sono tutte <strong>strutture lineari</strong>, funzionalmente diverse. Solo le liste doppiamente collegate e i <code>Vec</code> si sovrappongono funzionalmente, gli altri hanno metodi aggiuntivi.</p>
+<h2 id="25-mappe"><a class="header" href="#25-mappe">2.5 Mappe</a></h2>
+<p>Le <strong>mappe</strong> sono collezioni di chiavi univoche associate a valori. Le chiavi devono essere:</p>
+<ul>
+<li><strong>immutabili</strong></li>
+<li><strong>confrontabili</strong> (per determinare l'uguaglianza)</li>
+<li>a seconda dell'implementazione: <em>ordinabili</em> o <em>hashable</em></li>
+</ul>
+<p>Ci sono due modi principali di implementare le mappe:</p>
+<ul>
+<li>Con <strong>tabelle hash</strong>, sfruttando chiavi hashable</li>
+<li>Con <strong>binary tree</strong> — alberi bilanciati dove ogni nodo ha due figli:
+<ul>
+<li>Il figlio sinistro ha chiavi minori della chiave del nodo</li>
+<li>Il figlio destro ha chiavi maggiori della chiave del nodo</li>
+</ul>
+</li>
+</ul>
+<p>I B-tree si mantengono sempre il più bilanciati possibile: se un ramo diventa troppo pesante, l'albero si riorganizza per bilanciare il peso dei rami. Questo rende il costo della ricerca omogeneo indipendentemente dal percorso seguito.</p>
+<p>Questo fa sì che gli inserimenti nei B-tree siano una cosa complicata, perché portano alla ristrutturazione dell'albero. Altrimenti se io inserisco le cose tutte ordinate a partire dal più piccolo, partirei inizialmente dall'albero vuoto, il primo elemento che metto è la radice, il secondo glielo appendo da un lato, poi appendo dallo stesso lato, poi ancora dallo stesso lato, e così via, e questa cosa diventerebbe inefficientissima, perché si trasforma in una lista.</p>
+<p>Di conseguenza, appena arrivo ad inserire il terzo, quell'albero mi fa un pezzo di giro, si ribalta e sceglie come radice non più l'elemento che ho inserito per il primo, ma il secondo, e a quel punto lì il secondo ne ha uno a destra e uno a sinistra, e va meglio.</p>
+<p>Se vado avanti ad inserire ancora sempre uno che starebbe sempre dalla destra, lui dopo un po' si ribalta di nuovo e va avanti in questo modo per garantirmi una lettura più o meno uniforme. Quindi quell'algoritmo lì è complicato da implementare. Mi garantisce un tempo di accesso alla chiave <em>i-esima</em> pari al <strong>logaritmo in base 2</strong> del numero di chiavi presenti. Mentre quando scelgo l'algoritmo di hashing, l'accesso all'<em>i-esimo</em> elemento è <strong>circa costante</strong>, circa, dipende da quanti conflitti di hash ho.</p>
+<p>Di base la <strong>tabella hash</strong> ha associato a ciascuna chiave un valore. I <strong>set</strong> sono semplicemente delle tabelle hash o dei B-tree dove non c'è il valore, dove l'unica cosa che guardo è la chiave. La chiave, se c'è, è presente una volta sola. Quindi gli hash sono, in tutti i linguaggi, implementati in questa maniera qua, come delle hash map il cui valore non è presente.</p>
+<p>Le <strong>hash map</strong> esistono in Java, in C, in C++ con nomi diversi, si chiamano <code>HashMap</code> in Rust, <code>unordered_map</code> in C++, <code>HashMap</code> in Java, <code>dict</code> in Python.
+Le <strong>mappe binarie basate sui B-tree</strong>, in Rust si chiamano <code>BTreeMap</code>, in C++ si chiamano <code>map</code> semplicemente, in Java si chiamano <code>TreeMap</code>, in Python non esistono nella libreria standard.</p>
+<p>Ed infine gli <strong>insiemi hash</strong> si chiamano <code>HashSet</code> su Rust, <code>unordered_set</code> su C++, <code>HashSet</code> in Java, <code>set</code> in Python, e di nuovo il corrispondente basato sui B-tree, <code>BTreeSet</code> in Rust, <code>set</code> in C++ e <code>TreeSet</code> in Java.</p>
+<h1 id="3-caratteristiche-delle-strutture-dati"><a class="header" href="#3-caratteristiche-delle-strutture-dati">3. Caratteristiche delle Strutture Dati</a></h1>
+<p><img src="images/collezioni_di_dati/image%202.png" alt="image.png" /></p>
+<p>Qui sono segnato <strong>quattro operazioni fondamentali</strong>:</p>
+<ul>
+<li>Quanto costa <strong>accedere</strong> all'<em>i-esimo</em> elemento</li>
+<li>Quanto costa <strong>cercare</strong> se è presente un certo elemento</li>
+<li>Quanto costa <strong>inserire</strong></li>
+<li>Quanto costa <strong>cancellare</strong></li>
+</ul>
+<p>Adesso inserire è un po' una fregatura, perché dipende da dove inserisco. I numeri che qua sono riportati considerano l'inserimento in una posizione <em>non ottimale</em>. Chiaro che l’arrray dinamico se l'inserisco in coda è <strong>O(1)</strong>. Qui consideriamo l'inserimento in una posizione arbitraria.</p>
+<p>Allora vediamo che ci sono degli aspetti duali: l’array dinamico ha <strong>costo di accesso O(1)</strong> in una posizione arbitraria, perché siccome gli elementi sono contigui, io vado direttamente a quella posizione lì e sono tranquillo, mentre la lista doppiamente collegata a <strong>costo O(n)</strong>, se devo raggiungere la posizione <em>n-esima</em>.</p>
+<p>Al contrario, se sono già nella posizione <em>n-esima</em> e devo inserire, l’inserimento mi costa <strong>O(1)</strong> nella lista doppiamente collegata, perché sono già lì: smonto, attacco i puntatori e li riaggancio.
+Nell’array dinamico invece devo prendere tutti quelli che mi seguono e spostarli avanti di un passo. E questo può essere più o meno oneroso.</p>
+<p>Nelle code a doppia entrata io ho dei <strong>costi unitari</strong> in cima e al fondo e ho dei <strong>costi O(n)</strong> quando inserisco a metà, perché devo fare un po' di spazio a destra o a sinistra, a secondo di come viene meglio.</p>
+<p>Le tabelle hash mediamente hanno <strong>costo unitario</strong>, in modo amortizzato. Gli algoritmi di hash dipendono da quante collisioni si verificano. Se l'algoritmo di hashing è molto buono, mi spande su un range molto grande e quindi rende le collisioni poco probabili. Nel momento in cui l'algoritmo di hash fosse fatto male, ad esempio se io implemento come algoritmo di hash una costante, tutti i valori hanno come hash code sempre 3 e tutti confliggono e quindi le tabelle di hash diventano delle liste ordinate, costosissime.</p>
+<h2 id="31-complessità-computazionale"><a class="header" href="#31-complessità-computazionale">3.1 Complessità Computazionale</a></h2>
+<p><img src="images/collezioni_di_dati/image%203.png" alt="image.png" /></p>
+<p>Quando diciamo che certe cose sono <strong>O(1)</strong>, <strong>O(n)</strong>, o <strong>O(log n)</strong>, cosa vogliamo dire?
+Vogliamo dire che al crescere della dimensione dei dati io avrò dei costi progressivamente più grandi. Ma grandi come?</p>
+<ul>
+<li><strong>O(1)</strong>: costo costante</li>
+<li><strong>O(log n)</strong>: cresce lentamente</li>
+<li><strong>O(n)</strong>: cresce con pendenza costante</li>
+<li><strong>O(n log n)</strong>: sale più di n, ma non verticalmente</li>
+<li><strong>O(n²)</strong>: parabola</li>
+<li><strong>O(n³)</strong>: parabola ancora più stretta</li>
+</ul>
+<p>Già solo vedere l'algoritmo quadratico, <strong>O(n²)</strong>, ci fa capire molto in fretta che se noi abbiamo scritto un algoritmo quadratico quella roba lì diventa rapidamente inusabile. Perché per poco che aumentiamo la dimensione dei nostri dati, i tempi schizzano e diventano inaccettabili. Quindi bisogna fare molta attenzione a come noi scriviamo le cose.</p>
+<p>Se mi chiedo quali sono gli elementi del gruppo <strong>A</strong> che sono anche presenti nel gruppo <strong>B</strong> e mi metto a confrontare tutti gli <strong>A</strong> con tutti i <strong>B</strong>, faccio necessariamente un <strong>algoritmo quadratico</strong>. Perché devo prendere tutti gli <strong>A</strong> uno alla volta e mi chiedo: <em>“tu sei uguale al primo dei <strong>B</strong>?”</em>, <em>“sei uguale al secondo?”</em>, <em>“sei uguale al terzo?”</em>, e così via… Poi prendo il secondo degli <strong>A</strong>, e riparto: chiedo <em>“sei uguale al primo dei <strong>B</strong>?”</em> etc… un algoritmo del genere viene quadratico.</p>
+<p>Finché quei due insiemi sono piccolini chi se ne frega, ma quando quei due insiemi cominciano a diventare cento da una parte e cento dall'altra il prodotto fa <strong>diecimila</strong>. Se sono mille di qua e mille di là diventa un <strong>milione</strong>. Capite che i tempi si allungano in fretta e diventano ingestibili.</p>
+<p>Per questo usiamo le <strong>strutture dati</strong>. Le strutture dati sono pensate per permetterci degli accessi opportuni. In certe situazioni noi teniamo le stesse informazioni rappresentate in tredici modi diversi.</p>
+<p><em>Perché?</em> Perché ci serve una <strong>mappa</strong> per accedere in fretta al dato se conosco una certa cosa. Ci serve una <strong>lista</strong> per poter accedere in fretta se conosco la sua posizione. Ci serve magari una <strong>priority queue</strong> per trovare quali di questi è quello più importante in un certo momento.</p>
+<p>Quindi può essere conveniente in certi casi, per evitare di far diventare l'algoritmo ingestibile, dire che io <strong>moltiplico le rappresentazioni</strong> del mio dato. Lo tengo in contenitori diversi. Ovviamente lo devo tenere allineato: tutte le volte che aggiungo un nuovo pezzettino lo devo aggiungere in <em>tutti</em> i contenitori, tutte le volte che cancello un pezzettino lo devo cancellare da <em>tutti</em> i contenitori. Perché la struttura deve rimanere coerente. Così sono tranquillo che posso trovare le mie informazioni.</p>
+<p><img src="images/collezioni_di_dati/image%204.png" alt="image.png" /></p>
+<p>Limitandoci a Rust, tutte le diverse strutture dati (quindi <code>Vec</code>, <code>LinkedList</code>, <code>HashMap</code>, <code>HashSet</code> etc…) hanno una serie di metodi che condividono, che rendono l'uso di queste strutture facile. Tutte contengono <code>new</code> che dice <em>"crea una nuova collezione vuota"</em>.
+Tutte hanno <code>len</code> che mi dice quanti elementi sono presenti in questa collezione.
+Tutte hanno <code>clear</code> che dice <em>"qualunque cosa ci sia dentro buttala via e parti vuota"</em>.
+<code>is_empty</code> è l'equivalente di <code>len == 0</code> (cioè <em>“la collezione è vuota?”</em> — <code>is_empty</code> restituisce <em>true</em> se non c'è niente, <em>false</em> se c'è qualcosa).
+Tutte hanno <code>iter</code>, cioè la possibilità di esplorare quello che c'è dentro.</p>
+<p>Notate che non tutte hanno <code>into_iter</code> perché mentre io posso sbriciolare un array non posso sbriciolare una mappa. Perché per come la mappa è implementata in Rust, sbriciolarla sarebbe un grosso problema, la <code>HashMap</code> soprattutto.</p>
+<p>Dopodiché tutte quante hanno i tratti <code>IntoIterator</code> e <code>FromIterator</code>.
+Il tratto <code>IntoIterator</code> mi permette, data una collezione, di ricavare l'iteratore relativo.
+Il <code>FromIterator</code> al contrario dice: dato un iteratore, riempi questa collezione con i dati che vengono.</p>
+<h1 id="4-vec"><a class="header" href="#4-vec">4. Vec</a></h1>
+<p><img src="images/collezioni_di_dati/image%205.png" alt="image.png" /></p>
+<p><code>Vec</code> è il tipo assolutamente più fondamentale da usare in Rust, lo abbiamo usato tante volte, è il cavallo da lavoro di Rust. Tutto Rust è stato progettato attorno a <code>Vec</code>, <code>Vec</code> è estremamente ottimizzato, le scelte che sono state fatte al suo interno tendono a essere il meglio possibile perché sostituisce completamente il concetto di <em><strong>allocatore</strong></em> — in Rust non abbiamo l'equivalente della <code>malloc</code>, almeno nel Rust safe (nell'unsafe certamente sì), ma di base se ci serve allocare della memoria l'unico metodo più efficace possibile che è stato limato in tutti i modi nei vari sistemi operativi eccetera, è creare un <code>Vec</code>!</p>
+<p>E quel <code>Vec</code> lì è capace di allocare un blocco di una certa dimensione.</p>
+<p>Posso creare un <code>Vec</code> in tanti modi: certamente con il <code>new</code>, <code>Vec::new</code> me ne crea uno vuoto.
+Posso usare la macro <code>vec![...]</code> e mi genera un vettore che è pre-inizializzato con quella cosa lì.
+Posso creare un <code>Vec</code> con i costruttori derivati, con un <code>with_capacity</code>, ad esempio questo mi prepara un <code>Vec</code> che ha preallocato un array di una certa dimensione.</p>
+<p>Il <code>Vec with_capacity</code> è quello che mi permette di sostituire sostanzialmente la <code>malloc</code> perché mi dà accesso a un blocco che posso dire grande quanto mi pare.</p>
+<p>Internamente abbiamo già visto un <code>Vec</code> ha tre valori privati: c'è un puntatore sullo heap che può essere nullo nel momento in cui il <code>Vec</code> è completamente vuoto; se non è nullo punta un blocco la cui dimensione è specificato dal campo <code>capacity</code> che è privato, e di quel campo <code>capacity</code> <code>size</code> elementi (con <code>size</code> minore o uguale a <code>capacity</code>) sono in uso, e la parte restante è libera, pronta a essere usata.</p>
+<p>Questo è il principale strumento per la gestione dei dati.</p>
+<p><img src="images/collezioni_di_dati/image%206.png" alt="image.png" /></p>
+<p>Posso inserire degli elementi dentro il vettore facilmente con il metodo <code>push</code> che inserisce al fondo.</p>
+<p>Ci sono anche dei metodi che mi permettono di inserire a una posizione che non sia il fondo.
+<strong>Attenzione:</strong> se io gli indico di inserire ad una posizione che attualmente non è dell'array (e quindi gli dico l'array ha tre elementi e io chiedo di inserire alla posizione 7) i metodi panicano.</p>
+<p>Quello che lui sa è che se io cerco di aggiungere al fondo finché la <code>capacity</code> glielo consente occupa un pezzo dello spazio che si è già preso. Nel momento in cui si trovasse ad aver riempito tutto lo spazio che avevamo richiesto e non gli basta più, internamente fa partire un processo di riallocazione — quindi chiede al sistema operativo un blocco grosso il doppio dell'originale, muove tutto quello che ha nel nuovo blocco, libera il vecchio blocco e aggiunge l'elemento aggiuntivo nel primo spazio libero che si è venuto a creare.</p>
+<p>Possiamo usare la notazione con le <code>[]</code> per accedere all'<em>i-esimo</em> elemento e farci dare un reference lì dentro, oppure possiamo usare i metodi <code>get</code> e <code>get_mut</code> che ci danno rispettivamente un reference all'<em>i-esimo</em> e un reference mutabile.
+<strong>Nota:</strong> <code>get</code> e <code>get_mut</code> ci danno un <code>Option</code>, nel senso che se l'indice <code>i</code> che indichiamo è farlocco ci danno <code>None</code>. Viceversa se l'indice <code>i</code> è buono ci danno <code>Some</code> e all'interno di <code>Some</code> c'è scritto il riferimento vero e proprio. Mentre se usiamo le parentesi quadre, come anticipato prima, queste danno <code>panic</code> se l’indice non è valido.</p>
+<p><img src="images/collezioni_di_dati/image%207.png" alt="image.png" /></p>
+<p>Qui c'è una lista di metodi che <code>Vec</code> offre, più o meno li conosciamo già tutti:</p>
+<ul>
+<li><code>with_capacity</code>: alloca un vettore con una certa capacità</li>
+<li><code>capacity</code>: ci dice qual è la capacità corrente del nostro vettore</li>
+<li><code>push</code>: aggiunge al fondo</li>
+<li><code>pop</code>: torna l'ultimo elemento sotto forma di <code>Option</code> che può essere <code>Some</code> di qualcosa se il nostro vettore aveva un ultimo elemento, <code>None</code> se il nostro vettore era vuoto</li>
+<li><code>insert</code>: cerca di inserire alla posizione indicata il valore (se la posizione indicata è illecita panica)</li>
+<li><code>remove</code>: cerca di togliere l'elemento dalla posizione indicata (se anche questa non va, panica)</li>
+<li><code>first</code>/<code>last</code>: ci permettono di avere un riferimento al primo/ultimo elemento</li>
+<li><code>get</code>: ci permette anche una versione che accetta come parametro un range (es: da 1 a 7), cerca di prendere lo slice, ci restituisce il riferimento allo slice lì dentro sotto forma di <code>Option</code></li>
+</ul>
+<p><img src="images/collezioni_di_dati/image%208.png" alt="image.png" /></p>
+<p>Il <strong>vincolo</strong> per creare un <code>Vec</code> è che i dati contenuti al suo interno devono essere dello stesso tipo: noi creiamo dei <code>Vec</code> di <code>i32</code>, dei <code>Vec</code> di <code>String</code>, dei <code>Vec</code> di qualcos'altro, ma c'è <em>omogeneità</em> — il tipo è <code>Vec&lt;T&gt;</code>, quindi tutto deve essere pari al tipo <code>T</code>.</p>
+<h1 id="5-vecdeque"><a class="header" href="#5-vecdeque">5. VecDeque</a></h1>
+<p><img src="images/collezioni_di_dati/image%209.png" alt="image.png" /></p>
+<p>Il tipo <code>VecDeque</code> è un tipo che merita un secondo di ragionamento, perché l'implementazione che è stata fatta dentro Rust, pur garantendo lo stesso comportamento funzionale, è sostanzialmente diverso da quello che è stato fatto in C++.</p>
+<p>Un <code>VecDeque</code>, in C++, lo possiamo immaginare come una LinkedList di Vector, quindi io ho un buffer di una certa dimensione che ha un puntatore a quello che viene dopo e un puntatore a quello che viene prima.</p>
+<p>Ho questa catena di buffer più o meno grande, e se devo inserire vado sull'ultimo e inserisco nel buffer, se posso. Se invece lui ha già raggiunto il massimo della sua capacità, ne alloco uno ulteriore a valle. Se devo inserire in testa guardo il primo della mia catena: se ha spazio in testa inserisco direttamente lì, se no ne alloco uno precedente e estendo ulteriormente il <code>VecDeque</code>. Così è come funzionano le cose in C++.</p>
+<p>La scelta di Rust è stata un'altra completamente — quella cosa lì è complicata da far funzionare bene in modo safe per darsi garanzie delle cose e quindi <strong>Rust riduce il VecDeque a un Vec</strong>. Quindi internamente è un <code>Vec</code>, solo che invece di popolarlo dall'indice 0 a crescere fino all'n, lo tratta come un <em><strong>buffer circolare</strong></em>.</p>
+<p>Inizialmente abbiamo un buffer vuoto con una capacità di 32 elementi. Quando inseriamo il primo elemento, lo mettiamo in posizione 0, e quando ne aggiungiamo un altro in coda, va in posizione 1. Se dobbiamo inserire un elemento in testa — mentre un <code>Vec</code> normale dovrebbe spostare i due elementi esistenti di una posizione per fare spazio — il <em>buffer circolare</em> lo gestisce diversamente: avendo un elemento in 0 e uno in 1, mette il nuovo elemento in posizione 31, che diventa l'inizio. Un altro elemento in testa? Va in posizione 30. A questo punto abbiamo libere le posizioni dalla 2 alla 29 — se aggiungiamo in coda, usiamo la posizione 2, poi la 3 e così via.</p>
+<p>Ad un certo punto questi due estremi si toccano, non mi sta più né in testa né in coda, <em>che faccio?</em> <strong>Duplico</strong> — prima era lungo 32, ne alloco uno da 64 e a quel punto me li piazzo comodi, quindi me li sposto tutti quanti in modo che comincino da 1 a 32 e ripeto così.</p>
+<p>Quindi il <code>VecDeque</code> internamente è di fatto un <code>Vec</code>, semplicemente che questo <code>Vec</code> invece di assumere che comincia sempre alla posizione 0, può cominciare a una posizione qualunque perché è trattato da <em>buffer circolare</em>.
+Di fatto quindi ha un indice in più, infatti da questo punto di vista ha un campo interno in più rispetto all'altro, perché gli dice <code>first</code> e <code>last</code>, che gli permette di capire se c'è ancora spazio. Nel momento in cui non c'è più spazio perché i due indici sono arrivati a toccarsi, si rialloca, ne prende uno più grande e lo spazio si crea automaticamente.</p>
+<p>Ci garantisce che gli elementi sono collettivamente tutti nel suo buffer, ma non sono necessariamente contigui, perché io ne posso avere una parte all'inizio e una parte sul fondo. C'è un metodo che possiamo chiamare, che lui chiama automaticamente quando si allarga, che è <code>make_contiguous</code>, che se è diviso in due parti prima e dopo sposta in modo da appiccicarli.</p>
+<h1 id="6-linkedlist"><a class="header" href="#6-linkedlist">6. LinkedList</a></h1>
+<p><img src="images/collezioni_di_dati/image%2010.png" alt="image.png" /></p>
+<p><strong>LinkedList</strong> è ottimale in quelle situazioni in cui abbiamo bisogno di mantenere un ordine e inserire a metà. Inserire tipicamente nel contesto di qualche iterazione. I metodi che LinkedList offre sono scarsi, non è un granché, i signori di Rust non hanno fatto grossi sforzi per implementare LinkedList e ci dicono <em>"guarda, se puoi evitala".</em> Perché mentre Vec è il massimo dell'ottimizzazione, LinkedList è una schifezza, quindi in termini prestazionali è assai bassa.</p>
+<h1 id="7-mappe"><a class="header" href="#7-mappe">7. Mappe</a></h1>
+<p><img src="images/collezioni_di_dati/image%2011.png" alt="image.png" /></p>
+<p>Due implementazioni possibili, <strong><code>HashMap</code></strong> e <strong><code>BTreeMap</code></strong>.</p>
+<p><strong>HashMap</strong></p>
+<ul>
+<li>costo costante di accesso</li>
+<li>richiede che la chiave abbia un algoritmo di hash associato</li>
+</ul>
+<p>Quindi la chiave, il tipo <code>K</code> che noi usiamo per rappresentare la chiave, deve avere il tratto <code>Hash</code> e anche il tratto <code>Eq</code>.
+<em>Perché?</em> Perché se io ho due oggetti che mi danno lo stesso hash code, devo poter chiedermi se sono anche uguali tra di loro oppure no, per decidere se è una collisione oppure se ho beccato l'elemento giusto.</p>
+<p><strong>BTreeMap</strong>
+Nel momento in cui so di avere chiavi che hanno un ordine naturale, può essere conveniente usare una <strong><code>BTreeMap</code></strong>. Questo può essere utile se come chiavi ad esempio ho delle stringhe, o a volte i numeri, perché per certi aspetti posso avere alcune facilitazioni. In ogni caso la chiave deve essere univoca e immutabile. Non va bene avere una chiave che possa cambiare perché spaccherebbe tutti gli algoritmi.</p>
+<h2 id="71-api-delle-mappe-in-rust"><a class="header" href="#71-api-delle-mappe-in-rust">7.1 API delle Mappe in Rust</a></h2>
+<p><img src="images/collezioni_di_dati/image%2012.png" alt="image.png" /></p>
+<p>Attenzione, le mappe in Rust hanno un API che è totalmente diversa dalla implementazione che è presente altrove. La mappa possiede sia le chiavi che i valori. Siccome capire dove andare a mettere un'eventuale chiave se ancora non ce l'ho è un'operazione delicata, Map mi offre un API che è ottimizzata per far sì che se io cerco di inserire qualcosa che non c'è, lui questa ricerca la faccia una volta sola. Ma non è ovvio com'è fatta, quindi ci spendiamo due parole sopra per andare a vedere.</p>
+<p><img src="images/collezioni_di_dati/image%2013.png" alt="image.png" /></p>
+<p>Di base io posso chiedermi se un elemento c'è o non c'è attraverso il metodo <code>entry</code>.
+<code>entry</code> prende una chiave e mi restituisce un oggetto di tipo "<code>Entry</code>" con la E maiuscola.</p>
+<p>Può darsi che quella chiave lì nella mappa ci sia oppure che non ci sia. Di conseguenza l'oggetto <code>Entry</code> mi offre due metodi. <code>and_modify</code> che dice <em>"nel caso in cui ce l'ho ti lascio fare dei cambiamenti, nel caso in cui io non ce l'abbia te lo faccio cambiare".</em></p>
+<h3 id="711-esempio-pratico"><a class="header" href="#711-esempio-pratico">7.1.1 Esempio Pratico</a></h3>
+<p>Qui c'è l'esempio banale in cui voglio contare quante volte una certa parola compare in un certo testo. Per sapere quante volte una parola compare in un certo testo, parto con una mappa che è inizialmente vuota. Questa mappa avrà come chiavi le singole parole e come valori dei numeri. Inizialmente la mappa è vuota.</p>
+<p>Nel momento in cui io comincio a leggere il mio testo, prendo la prima parola e mi chiedo <em>"questa qua c'è nella mappa?".</em></p>
+<p>Allora, nei linguaggi Java, Python, e altri, quello che farei è un'operazione del tipo <code>if map.getKey(myWord) map[key] += 1</code> → Cioè mi chiedo <em>"ce l'ho questa chiave? Sì".</em> Allora accedo al valore e lo incremento.
+<code>else map(key)=1</code> → Non ce l'ho, allora creo una entry.</p>
+<p>Questo mi permette di popolare la mappa.</p>
+<p>Piccolo problema: fatto così, io nei due casi rischio in due volte di andarmi a cercare qual è la chiave su cui devo operare.</p>
+<p>Invece, vediamo che in Rust, come da slide, <code>.entry</code> dice <em>"vai a vedere se questa cosa c'è" —</em> se la trovi, a questo punto puoi modificarla col metodo <code>and_modify</code> o inserirla con <code>insert</code>. <code>and_modify</code> prende una lambda che mi permette di ricevere il valore e mi permette di descrivere come aggiorno il valore (In questo caso <code>*v+=1</code>. Prendo un <code>ref_mut</code> al valore). Altrimenti, <code>insert</code> mi dà la possibilità di dire cosa mettere, quindi la chiave verrà inserita lì dentro.</p>
+<p><img src="images/collezioni_di_dati/image%2014.png" alt="image.png" /></p>
+<p><strong>È importante capire questo concetto.</strong></p>
+<p>Le mappe le posso creare a partire da tuple. <code>HashMap::from</code> prende in questo caso un array di tuple dove il primo elemento della tupla è la <em>chiave</em> e il secondo elemento è il <em>valore</em>. Dopodiché io qui vado a cercare se c'è una certa chiave di cui voglio modificare il valore.</p>
+<p>Notate che non sono obbligato a fare, dato una <code>entry</code>, sempre sia l'<code>and_modify</code> che lo <code>insert</code>. Ad esempio qui all’istruzione <code>scores.entry("Carol").and_modify()</code> — se per caso ho "Carol" tra i miei valori, cambio qualcosa. Se non ce l'ho non faccio niente, va tutto bene.</p>
+<p>Ho la possibilità di trasformare la mia mappa in qualcos'altro. In <code>into_iter()</code>  — la sbriciolo e <code>collect()</code>.
+Poi ordino per valore, <code>sort_by_key()</code>, perché a questo punto io ho trasformato il mio vettore in tuple.</p>
+<p>Le mappe non si possono ordinare direttamente, poiché la mappa gestisce la propria struttura interna in modo autonomo. Quando si itera su una mappa, gli elementi vengono restituiti nell'ordine determinato dall'algoritmo interno della mappa, che non corrisponde necessariamente all'ordine di inserimento. Per esempio, se inseriamo gli elementi con chiave 1, chiave 2, chiave 3, potremmo ottenere chiave 3, chiave 1, chiave 2, in base alla funzione di hash utilizzata.</p>
+<h1 id="8-insiemi"><a class="header" href="#8-insiemi">8. Insiemi</a></h1>
+<p><img src="images/collezioni_di_dati/image%2015.png" alt="image.png" /></p>
+<p><strong>Gli insiemi (Sets)</strong> sono abbastanza simili alle mappe: sono proprio implementati come mappe in cui non c'è il valore, c'è solo la chiave.</p>
+<h1 id="9-binaryheap-priority-queue"><a class="header" href="#9-binaryheap-priority-queue">9. BinaryHeap (Priority Queue)</a></h1>
+<p><img src="images/collezioni_di_dati/image%2016.png" alt="image.png" /></p>
+<p><strong>Priority queue</strong>, qui si chiamano <code>BinaryHeap</code>.</p>
+<p>Binary heap ammette soltanto oggetti che siano ordinabili e li tiene dal più grande al più piccolo. Chiaramente qui conviene mettere degli oggetti in cui si implementa il tratto <code>Ord</code> in modo coerente con il concetto di priorità che vogliamo dare. In prima posizione c'è sempre il più grande e a seguire quelli via via più piccoli. Possiamo guardare che cosa c'è all'interno con <code>peek()</code> e cose del genere.</p>
+<h1 id="10-riferimenti"><a class="header" href="#10-riferimenti">10. Riferimenti</a></h1>
+<p><img src="images/collezioni_di_dati/image%2017.png" alt="image.png" /></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="12-iteratori.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="14-file_io.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="12-iteratori.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="14-file_io.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

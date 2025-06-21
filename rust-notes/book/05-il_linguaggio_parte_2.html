@@ -1,0 +1,1012 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Il Linguaggio (Parte 2)</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="il-linguaggio---malnati-6-7"><a class="header" href="#il-linguaggio---malnati-6-7">Il Linguaggio - Malnati 6-7 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-box">1. Box</a>
+<ul>
+<li><a href="#11-esempio-box-1--insight-su-debug-e-display">1.1 Esempio Box 1 (+ insight su Debug e Display)</a></li>
+<li><a href="#12-esempio-box-2--insight-sul-movimento">1.2 Esempio Box 2 (+ insight sul movimento)</a></li>
+</ul>
+</li>
+<li><a href="#2-esempio-sul-movimento">2. Esempio sul movimento</a>
+<ul>
+<li><a href="#21-differenza-indirizzo-stack-e-indirizzo-heap">2.1 Differenza indirizzo stack e indirizzo heap</a></li>
+<li><a href="#22-distruttore">2.2 Distruttore</a></li>
+<li><a href="#23-movimento">2.3 Movimento</a>
+<ul>
+<li><a href="#231-il-tratto-copy">2.3.1 Il tratto copy</a></li>
+<li><a href="#232-il-tratto-clone">2.3.2 Il tratto clone</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-array">3. Array</a>
+<ul>
+<li><a href="#31-slice">3.1 Slice</a></li>
+</ul>
+</li>
+<li><a href="#4-vec">4. Vec</a></li>
+<li><a href="#5-stringhe">5. Stringhe</a>
+<ul>
+<li><a href="#51-str">5.1 str</a></li>
+<li><a href="#52-string">5.2 String</a>
+<ul>
+<li><a href="#521-esempio">5.2.1 Esempio</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#6-istruzioni-ed-espressioni">6. Istruzioni ed espressioni</a>
+<ul>
+<li><a href="#61-esempio-espressione">6.1 Esempio espressione</a></li>
+<li><a href="#62-funzioni">6.2 Funzioni</a>
+<ul>
+<li><a href="#621-esempi">6.2.1 Esempi</a></li>
+</ul>
+</li>
+<li><a href="#63-cicli">6.3 Cicli</a>
+<ul>
+<li><a href="#631-esempi">6.3.1 Esempi</a></li>
+</ul>
+</li>
+<li><a href="#64-notazione-">6.4 Notazione <code>..</code></a>
+<ul>
+<li><a href="#641-esempi">6.4.1 Esempi</a></li>
+</ul>
+</li>
+<li><a href="#65-match">6.5 Match</a>
+<ul>
+<li><a href="#651-esempi">6.5.1 Esempi</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#7-riga-di-comando-e-argomenti">7. Riga di comando e argomenti</a>
+<ul>
+<li><a href="#71-stdenvargs">7.1 std::env::args</a></li>
+<li><a href="#72-clap">7.2 Clap</a>
+<ul>
+<li><a href="#721-esempio-clap">7.2.1 Esempio Clap</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#8-io-da-console">8. I/O da Console</a></li>
+<li><a href="#9-convenzione-sui-nomi">9. Convenzione sui nomi</a></li>
+</ul>
+<h1 id="1-box"><a class="header" href="#1-box">1. Box</a></h1>
+<p><img src="images/il_linguaggio_2/image.png" alt="image.png" /></p>
+<p>Abbiamo visto che Rust ci presenta puntatori di tipo diverso per gestire situazioni di tipo diverso.</p>
+<p>In quelle situazioni in cui esiste una variabile che ha possesso di un dato, e quindi è responsabile del suo rilascio, ma ha bisogno di far sapere a una funzione, a un altro oggetto, il valore attualmente contenuto senza copiarlo, può passare un riferimento.
+Il riferimento è un prestito: io ti presto l'accesso a questa variabile.</p>
+<p>I riferimenti possono essere semplici, quindi condivisi, e non permettono la modifica, oppure i riferimenti possono essere mutabili e mutuamente esclusivi.</p>
+<p><strong>Finché esiste un riferimento di qualunque tipo, il dato non può cambiare.</strong></p>
+<p><strong>Se è presente un riferimento mutabile, non può essere presente nessun riferimento semplice e la variabile originale che possiede il valore non può accedere al valore</strong>, perché mentre esiste un riferimento mutabile questo è l'unico che può accedere, ed eventualmente modificare.</p>
+<p>I riferimenti sono puntatori che non hanno possesso. Vanno bene per ottimizzare: invece di muovere 200 byte ti muovo un puntatore.
+Siccome io ho la semantica della condivisione o della condivisione mutabile, sono tranquillo: non possono succedere cose strane — è evidente qual è lo scopo.</p>
+<p>In altre situazioni invece noi abbiamo bisogno di manipolare dei dati di cui magari non conosciamo a priori la dimensione.
+Potremmo aver bisogno di puntare un blocco da 10 byte, magari da 100, magari da 1000.
+Lo sapremo solo a runtime.</p>
+<p>Oppure abbiamo bisogno di prendere un dato la cui vita duri più a lungo della funzione in cui quel dato nasce.
+In queste situazioni non è possibile usare una variabile locale semplice che include il valore.</p>
+<p>Se il dato ha dimensione variabile non posso usare una variabile locale semplice perché i tipi hanno bisogno di avere una dimensione. Se quello non lo so non ce la faccio, mi serve un puntatore.</p>
+<p>Ma anche se il dato ha una vita che dura più a lungo devo fare in modo diverso, perché naturalmente la variabile, al termine del suo scope, della sua zona di visibilità, verrebbe buttata via e insieme a lei viene buttato via il valore che contiene.</p>
+<p>Quindi in questo tipo di situazioni mi serve gestire un puntatore.
+Un puntatore con una natura molto diversa da quello del reference, perché questo è un puntatore <strong>che possiede il suo dato</strong>.</p>
+<p>In Rust un puntatore che possiede il suo dato si chiama <strong>box</strong>.</p>
+<p><img src="images/il_linguaggio_2/image%201.png" alt="image.png" /></p>
+<p>Un box non è nient'altro che un puntatore che punta sullo heap e che quando esce di visibilità rilascia quel blocco.</p>
+<p>Creiamo i box semplicemente usando la sintassi <code>let b = Box::new(v);</code></p>
+<p>Quello che succede è che il valore che noi indichiamo viene preso, allocato dentro lo heap, quindi si cerca nello heap un blocco grande quanto serve per tenere quel valore, lo si mette dentro e nella variabile <code>b</code> ci arriva il puntatore a questo blocco.</p>
+<p>Nel momento in cui abbiamo bisogno di andare a vedere cosa c'è nella variabile <code>b</code> basta usare l'espressione <code>*b</code> che segue il puntatore e ci accede.</p>
+<p>Se ciò che c'è nella variabile <code>b</code> è un oggetto che ha dei metodi posso fare <code>(*b).qualcosa()</code> ma posso anche, come abbiamo visto prima, scrivere soltanto <code>b.qualcosa</code> perché la notazione <em>“punto”</em> guarda automaticamente cosa c'è prima di sé, e quando vede che c'è qualcosa che è un puntatore prima di tutto lo dereferenzia.</p>
+<p>Supponendo che la variabile <code>b</code> sia mutabile, se devo assegnare alla variabile <code>b</code> un qualche contenuto nuovo che finirà nello heap in quella zona che ho preparato, scriverò <code>*b = qualcosa;</code>.</p>
+<p>La caratteristica di un box è che possiede il blocco, di conseguenza il compilatore automaticamente nel momento in cui la variabile <code>b</code> giunge alla fine della propria vita e quindi sta per essere <em>ejected</em>, prima di buttarla via rilascia il blocco di memoria che la variabile <code>b</code> possiede, garantendoci quindi che non c'è perdita.</p>
+<p>Non dobbiamo essere noi a ricordare di fare la <code>delete</code> piuttosto che <code>free</code>.
+Automaticamente nel momento in cui <code>b</code> esce <em>out of scope</em> quel blocco viene rilasciato.</p>
+<p>Vediamo un esempio.</p>
+<h2 id="11-esempio-box-1--insight-su-debug-e-display"><a class="header" href="#11-esempio-box-1--insight-su-debug-e-display">1.1 Esempio Box 1 (+ insight su Debug e Display)</a></h2>
+<p><img src="images/il_linguaggio_2/image%202.png" alt="image.png" /></p>
+<p>Qui abbiamo una funzione ipotetica nella quale io comincio ad allocare, giusto per far vedere che nello stack succede qualcosa, una variabile locale <code>let i = 4</code>.</p>
+<p>La variabile <code>i</code> è una variabile locale semplice, nel momento in cui io eseguo questa funzione lo stack cresce e all'interno viene prolungato di un 4 byte (in questo caso), e all'interno di quei 4 byte viene messo un normalissimo 4 che sta lì.</p>
+<p><img src="images/il_linguaggio_2/image%203.png" alt="image.png" /></p>
+<p>Alla riga successiva metto una tupla <code>(5, 2)</code> dentro un box.
+Succede che innanzitutto nasce <code>b</code> e quindi lo stack si allunga un po' per contenere <code>b</code>, che di suo è una variabile locale.</p>
+<p>Quello che non è locale è il suo valore.</p>
+<p><em>Cosa ci metto dentro</em> <code>b</code><em>?</em>
+Automaticamente Rust va a cercare nello heap un blocco grande quanto gli serve per tenere la tupla, lo trova da qualche parte, inizializza la tupla nel modo opportuno, cioè ci scrive 5 e 2 in questo caso, e il puntatore al primo byte di questo blocco viene salvato all'interno di <code>b</code>.</p>
+<p>Di conseguenza <code>b</code> contiene il puntatore alla tupla.</p>
+<p><img src="images/il_linguaggio_2/image%204.png" alt="image.png" /></p>
+<p>Da qui in avanti io posso usarlo tranquillamente, ad esempio posso scrivere <code>(*b).1 = 7</code>, oppure <code>b.1 = 7</code> andrebbe bene ugualmente.</p>
+<p>Seguo <code>b</code>, vado nel campo 1 e lì ci scrivo 7. Quindi la tupla non è più 5 e 2, è diventato 5 e 7.</p>
+<p><img src="images/il_linguaggio_2/image%205.png" alt="image.png" /></p>
+<p>Poi lo stampo.
+Posso stampare <code>b</code> esplicitamente dereferenziandolo con l’asterisco (*b), oppure direttamente con <code>b</code>: non fa differenza in questo caso. Quando uso <code>println!("{:?}", ...)</code>, Rust cerca un’implementazione del tratto <code>Debug</code> per il tipo in questione, e se necessario applica automaticamente la dereferenziazione per accedere al valore interno e formattarlo correttamente.</p>
+<p>Vedete che <code>println!</code> qua, invece di usare come abbiamo visto le volte scorse <code>{ }</code> usa <code>{:?}</code>.
+Questo perché in Rust ci sono due modi di stampare.</p>
+<p>In Java mediamente se voi dovete stampare, sull'oggetto che stampate viene chiamato il metodo <code>to_string()</code> che ha il compito di trasformarlo in qualcosa di visibile.</p>
+<p>In Rust ci sono due metodi diversi che corrispondono a due tratti che i tipi possono implementare.</p>
+<p>Esiste il tratto <code>Display</code> che è l'equivalente di <code>to_string()</code> diciamo di Java, serve a dare una rappresentazione utile all'utente finale di che cosa c'è scritto lì dentro.</p>
+<p>E poi c'è il tratto <code>Debug</code> che viceversa il più delle volte in automatico deriva una rappresentazione che permette a un programmatore di capirci qualcosa ma non necessariamente a un utente finale.</p>
+<p>Le tuple automaticamente implementano il tratto <code>Debug</code>.</p>
+<p>Non ci devo fare niente perché una tuple dice “<em>vabbè io so che se per un programmatore che ha capito che cosa io significo io stampo direttamente come sono fatta</em>”.
+A un utente finale sta cosa qua dice poco perché un utente finale ragiona in termini del significato di quell'informazione lì.
+Se quello è un punto sul piano è una certa cosa, se è il numero di genitori piuttosto che il numero di cugini piuttosto che il numero di nipoti è tutta un'altra faccenda.</p>
+<p>Chiaramente quando noi usiamo le strutture dati, a quelle strutture dati diamo un significato nel dominio del nostro problema.</p>
+<p>Il tratto <code>Display</code> si occupa di fornire una rappresentazione comprensibile <em><strong>del dominio</strong></em> cioè di cosa quell'informazione rappresenta nel dominio.
+Non può essere generato in automatico, bisogna farlo a mano perché il programma non ne può avere la più palli d'idea di che cosa siano quelle cose lì.</p>
+<p>Mentre in automatico il più delle volte (non sempre perché ci possono essere dei punti ambigui dove dobbiamo intervenire) il tratto <code>Debug</code> è possibile generarlo in automatico.</p>
+<p><em>Come si selezionano le due cose?</em>
+Allora con <code>{ }</code> seleziona il tratto <code>Display</code> che è implementato per default sui numeri.
+Quindi quando stampiamo i numeri non fa nessuna differenza mettere <code>{:?}</code> o <code>{ }</code>, perché per Rust 7 è 7 senza dirgli nulla di particolare.</p>
+<p>Su tutto il resto invece c'è distinzione, e quindi <code>{:?}</code>  dice <em>“stampami la versione di debug”,</em> mentre <code>{ }</code> dice <em>“stampami la versione di display”.</em></p>
+<p>Ci sono altri modificatori: se nelle graffe scrivo <code>:p</code> quello che gli metto a fianco viene interpretato come puntatore, quindi mi fa vedere non cosa c'è nella memoria, ma dov'è! Ovviamente devo mettergli un puntatore, se non gli metto un puntatore e gli metto 7 il compilatore mi blocca.</p>
+<p><img src="images/il_linguaggio_2/image%206.png" alt="image.png" /></p>
+<p><img src="images/il_linguaggio_2/image%207.png" alt="image.png" /></p>
+<p>Abbiamo stampato <code>b</code> in un paio di modi, viene sempre la stessa faccenda, e arriviamo al chiusa graffa.</p>
+<p>Cosa succede quando arriviamo al chiusa graffa?
+Lo stack si contrae e cosa c'era nello stack?
+Nell'ordine c'era <code>b</code> che puntava qualcosa e poi c'era <code>i</code>.</p>
+<p>Lo stack si contrae in un primo passo, sta per buttare via <code>b</code>, ma <code>b</code> è un box!
+Il box ha un distruttore che si occupa di rilasciare il blocco di memoria, e quindi in questo momento quello che succede è che, per eliminare <code>b</code> quando lo stack si contrae, prima di tutto viene rilasciato il blocco.</p>
+<p>Ma c'è ancora <code>i</code>, lo stack si contrae anche per <code>i</code> che è un i32 semplice — non ha distruttori perché di suo non ha una semantica associata particolare.</p>
+<p>Quindi arrivato al chiusa graffa la situazione che vedo sullo stack è questa.</p>
+<h2 id="12-esempio-box-2--insight-sul-movimento"><a class="header" href="#12-esempio-box-2--insight-sul-movimento">1.2 Esempio Box 2 (+ insight sul movimento)</a></h2>
+<p><img src="images/il_linguaggio_2/image%208.png" alt="image.png" /></p>
+<p>Vediamo qua un altro pezzo: qui ho una funzione main che chiama la funzione <code>makeBox</code>, la quale funzione ritorna un <code>Box</code>.</p>
+<p>Questo serve per far vedere un dato che nasce in un punto ma che deve durare più a lungo.</p>
+<p>La funzione main chiama <code>makeBox</code>, la quale accetta un parametro e avrà un valore di ritorno, quindi per poter chiamare la funzione <code>makeBox</code> nel main viene preparato sullo stack uno spazio nel quale possa essere depositato il valore che <code>makeBox</code> ritornerà.</p>
+<p><img src="images/il_linguaggio_2/image%209.png" alt="image.png" /></p>
+<p>Dopo di che chiamo <code>makeBox</code>.
+Viene chiamata con un parametro, 5, perfetto.
+In realtà il main, subito prima di chiamare <code>makeBox</code>, ha anche depositato 5 all'interno dello stack in modo tale da arrivarci e si accinge a fare la sua operazione.</p>
+<p><img src="images/il_linguaggio_2/image%2010.png" alt="image.png" /></p>
+<p>Entrando nella funzione, viene creata una variabile locale <code>r</code>.
+Questa variabile locale dice “<em>crea un nuovo box che contiene una tupla composta in questo caso dal parametro e 1</em>”.
+Quindi al solito si va sullo heap, si cerca un blocco grande quanto serve, lo si inizializza e il puntatore viene salvato nella variabile <code>r</code>.</p>
+<p>Fino a qua tutto tranquillo.
+La riga successiva, che dice <code>return r</code>, ci farebbe dire “<em>ok, prendi r e mettilo dentro b, ma siccome r è arrivato al fondo distruggilo</em>”, e se distruggo <code>r</code> che cosa succede?
+Succede che quel blocco dentro cui c'è scritto <code>(5, 1)</code> viene rilasciato, ma <code>b</code> avrebbe già una copia!
+Problema!!!</p>
+<p><img src="images/il_linguaggio_2/image%2011.png" alt="image.png" /></p>
+<p>Ma qui emerge invece una delle caratteristiche fondamentali di Rust, che all'inizio mettono un po’ di difficoltà le persone: <strong>le assegnazioni, nella maggior parte dei casi, non copiano — spostano!</strong></p>
+<p><em>Cosa vuol dire che non copiano ma spostano?</em>
+Quando scrivo <code>return r</code> di fatto <code>r</code> viene copiato nello spazio che è stato preparato dal main in cui dovrà stare, e di fatto i byte vengono ricopiati a destinazione, ma il compilatore dice “<em>ah benissimo questo è stato uno spostamento</em>”, cioè <strong>il dovere di rilascio è transitato dalla variabile <code>r</code> alla variabile destinazione</strong>, in questo caso <code>b</code>.</p>
+<p><strong>Lo spostamento è una copia</strong> (quindi io di fatto passo tutti i byte), <strong>ma perdo il diritto di accesso perché ho ceduto i miei byte a un altro.</strong>
+E perdo il dovere del rilascio perché è transitato a quell'altro.</p>
+<p>Quindi adesso vedete che la riga da <code>r</code> è tratteggiata, perché dentro <code>r</code> ci sono ancora scritti 3b7f5942 (quello che è, l’indirizzo dell’heap in cui è memorizzata la tupla), ma il compilatore sa che quel dato lì non deve più essere guardato — non c'è lì la responsabilità del rilascio. La responsabilità del rilascio è transitata sul destinatario, cioè <code>b</code>.</p>
+<aside>
+💡
+<p><strong>Copia vs Movimento</strong></p>
+<p>La <strong>copia</strong> è una <strong>duplicazione</strong>: il nuovo valore è indipendente dall’originale.
+Tipi come gli interi (i32, u8, ecc.) vengono copiati quando vengono assegnati o passati a una funzione: si crea una nuova copia del dato, e l’originale resta valido.</p>
+<p>Invece, per tipi come Box<T>, l’assegnazione comporta un <em><strong>movimento</strong></em> (move): il valore viene <em>spostato</em>, e l’originale non può più essere usato.</p>
+<pre><pre class="playground"><code class="language-rust">/* This is fine */
+fn main() {
+    let x1 = 5;
+    let x2 = x1; // Copy
+    
+    println!("x1: {}", x1);
+    println!("x2: {}", x2);
+}</code></pre></pre>
+<pre><pre class="playground"><code class="language-rust">/* This doesn't compile */
+fn main() {
+    let b1 = Box::new(5);
+    let b2 = b1; // Movement
+    
+    println!("b1: {}", b1);     // this should thrown an error
+    println!("b2: {}", b2);
+}</code></pre></pre>
+<p>L’esempio a destra non funziona perchè, dato che i dati posseduti da <code>b1</code> vengono <em>spostati</em> in <code>b2</code> (che ne diventa il nuovo proprietario), quando proviamo a stampare <code>b1</code> dopo il movimento, il compilatore ci blocca.
+Ci suggerisce anche un modo per risolvere, qualora proprio volessimo tenere sia <code>b1</code> che <code>b2</code>: clonare <code>b1</code>.</p>
+<pre><pre class="playground"><code class="language-rust">/* This is fine */
+fn main() {
+    let b1 = Box::new(5);
+    let b2 = b1.clone();
+    
+    println!("b1: {}", b1);
+    println!("b2: {}", b2);
+}</code></pre></pre>
+</aside>
+<p><img src="images/il_linguaggio_2/image%2012.png" alt="image.png" /></p>
+<p>Di conseguenza nel momento in cui contraggo lo stack va via <code>r</code> (variabile locale), vanno via i parametri etc.. quello che potrebbe esserci e torno al main.</p>
+<p><img src="images/il_linguaggio_2/image%2013.png" alt="image.png" /></p>
+<p>A questo punto è <code>b</code> il vero proprietario di questo blocco, che sa assolutamente dove stava.
+E quindi posso creare la variabile <code>c</code> come somma delle due parti.</p>
+<p><img src="images/il_linguaggio_2/image%2014.png" alt="image.png" /></p>
+<p>Dopodiché arrivo al chiusa graffa del main.
+Qui avevo sullo stack <code>c</code>, che è un intero semplice e va via, avevo b, che è un box e prima di andar via rilascia, motivo per cui quando termina questa cosa qua lascio pulito lo heap — non ho perdite di memoria, tutto è stato rilasciato una e una sola volta.</p>
+<p>Il meccanismo del <em><strong>movimento</strong></em> è challenging perché le persone inizialmente fan fatica a capirlo.</p>
+<aside>
+💡
+<p>Nota che qua non stiamo dicendo che il box è mutabile: <code>r</code> non lo è.
+Ma avrei potuto dire in main <code>let **mut** b = makeBox(5);</code>, perché quando a <code>b</code> gli arriva, anche se il box è stato costruito senza mutabilità, <strong>la variabile che viene ritornata è proprietaria del box</strong> <strong>e chi è proprietario può in qualunque momento decidere che si dà il diritto di mutare</strong>.</p>
+<pre><pre class="playground"><code class="language-rust">/* This is fine */
+fn makeBox(a: i32) -&gt; Box&lt;(i32, i32)&gt; {
+    let r = Box::new( (a, 1) );
+    return r;
+}
+
+fn main() {
+    let mut b = makeBox(5);
+    b.0 = b.0 + 1;
+    
+    println!("{:?}", b);
+}</code></pre></pre>
+</aside>
+<p>Lo scegliere di non essere mutabili è una scelta conservativa per evitare <em>misunderstandings</em>, ma non è intrinseco nel valore, è intrinseco nel possessore!
+Nel momento in cui io cedo da un possessore a un altro, il possessore originale poteva aver scelto per quello che riguardava lui di non essere mutabile perché lui non aveva nessun bisogno di fare mutazioni, ma il nuovo possessore a cui viene ceduta la cosa può decidere di farlo.</p>
+<blockquote>
+<p><em>Proprio come un padrone di casa che possiede un appartamento e decide che anche se brutto gli va bene così, poi un giorno lo vende e il nuovo padrone decide che butta via tutto e lo rifà.
+È il nuovo padrone, quindi fa quello che vuole!</em></p>
+</blockquote>
+<h1 id="2-esempio-sul-movimento"><a class="header" href="#2-esempio-sul-movimento">2. Esempio sul movimento</a></h1>
+<p><img src="images/il_linguaggio_2/image%2015.png" alt="image.png" /></p>
+<p>Adesso introduciamo un pezzettino di sintassi i cui dettagli li vedremo in seguito, ma comunque li introduciamo già adesso per far vedere che cosa succede dietro le quinte.</p>
+<p>Prepariamo una struttura <code>S</code> all'interno della quale ci metto semplicemente un numero, quindi potrò creare degli oggetti di tipo S(1), S(54), S(-2) etc.. semplicemente una struct così è di fatto equivalente a un <code>Int</code> — è semplicemente un <code>Int</code> con un nome.</p>
+<p>A questa struct associo un paio di metodi che mi servono a far vedere che cosa succede.</p>
+<p><img src="images/il_linguaggio_2/image%2016.png" alt="image.png" /></p>
+<p>Per associare dei metodi si usa il costrutto <em><strong>impl</strong></em>.
+Associamo il metodo <em><strong>display</strong></em>.</p>
+<p>I metodi hanno un parametro che viene scritto nella loro definizione esplicitamente che dice “<em>tu verrai chiamato su un oggetto di questo tipo (<strong>self</strong>), cioè della classe S, e lo riceverai come riferimento non mutabile (in questo caso)</em>”.</p>
+<p><img src="images/il_linguaggio_2/image%2017.png" alt="image.png" /></p>
+<p>E qui possiamo fare print line e stampiamo una stringa che indica che si tratta di un oggetto S, che contiene un dato che si chiama <code>self.0</code> e che l’oggetto S vive ad un certo indirizzo, e l'indirizzo <code>self</code> è tale indirizzo.</p>
+<p>Questo metodo fondamentalmente serve per sapere cosa c'è dentro S e dove sta S.</p>
+<p>Facciamo una prova a chiamarlo nel main.</p>
+<p><img src="images/il_linguaggio_2/image%2018.png" alt="image.png" /></p>
+<p>Notate che il metodo <code>display()</code> prendeva il parametro <code>&amp;self</code> — questo parametro lui ce l'ha, ma siccome è <strong>self</strong>, è scritto prima: <code>s.</code> è il suo self.
+In Java noi sappiamo che quando scriviamo <code>s.to_string()</code>, il metodo <code>to_string()</code> ha un <strong>this</strong> implicito — in Rust, nell'implementazione del metodo, quello che negli altri linguaggi si chiama <em><strong>this</strong></em> si scrive esplicitamente <em><strong>self</strong></em>, perché noi lo possiamo passare in tanti modi.
+In questo caso lo abbiamo passato non modificabile perché il metodo <code>display()</code> non ha bisogno di cambiare niente.</p>
+<p>Lanciamolo:</p>
+<p><img src="images/il_linguaggio_2/image%2019.png" alt="image.png" /></p>
+<p>Quello è un indirizzo sullo stack — questa è un variabile locale.</p>
+<h2 id="21-differenza-indirizzo-stack-e-indirizzo-heap"><a class="header" href="#21-differenza-indirizzo-stack-e-indirizzo-heap">2.1 Differenza indirizzo stack e indirizzo heap</a></h2>
+<p><img src="images/il_linguaggio_2/image%2020.png" alt="image.png" /></p>
+<p><img src="images/il_linguaggio_2/image%2021.png" alt="image.png" /></p>
+<p>Modifichiamo l’esempio, creando anche un Box e chiamando il metodo <code>display()</code> anche sul Box.
+Lanciamo e vediamo che <code>s1</code> vive nello stack all'indirizzo indicato, mentre <code>s2</code> vive tutto da un'altra parte, sullo heap.</p>
+<h2 id="22-distruttore"><a class="header" href="#22-distruttore">2.2 Distruttore</a></h2>
+<p>Alla struct S aggiungiamo anche un <strong>distruttore</strong>, qualcosa che ci faccia vedere quando cessa di esistere.</p>
+<p><img src="images/il_linguaggio_2/image%2022.png" alt="image.png" /></p>
+<p>Per aggiungere un distruttore bisogna fare in questo modo.
+Vediamo che in questo caso la funzione <code>drop()</code>, che è predefinita dal linguaggio e che così come in C++ il distruttore si scrive <code>~nome_classe</code>, qua il distruttore si scrive in questo modo e ha possibilità di manipolare quello che c'è dentro — riceve sempre l'oggetto che sta per essere distrutto come <strong>mutabile</strong>, e quindi sa di poter farci delle cose dentro.</p>
+<p><img src="images/il_linguaggio_2/image%2023.png" alt="image.png" /></p>
+<aside>
+💡
+<p>Notiamo inoltre che stiamo fornendo una implementazione del tratto <code>Drop</code> per il tipo S che abbiamo definito noi, prima invece avevamo solo definito un metodo che abbiamo chiamato “display”, che appartiene al tipo da noi definito.</p>
+<p>Se avessimo voluto fornire l’implementazione del tratto <code>Display</code>, per poter stampare il nostro tipo usando la macro <code>println!(”{}”, …)</code> invece di fare <code>s1.display()</code>, avremmo dovuto fare così:</p>
+<pre><pre class="playground"><code class="language-rust">use std::fmt::Display;
+use std::fmt;
+
+struct S(i32);
+impl Display for S {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter&lt;'_&gt;) -&gt; fmt::Result {
+        write!(f, "S value: {}, @{:p}", self.0, self)
+    }
+}
+impl Drop for S {
+    fn drop(&amp;mut self) {
+        println!("Dropping.. S value: {}, @{:p}", self.0, self);
+    }
+}
+
+fn main() {
+    let s1 = S(5);
+    
+    println!("{}", s1); // Now this works!
+}</code></pre></pre>
+<p>Inoltre, in questo esempio, S è una struct che contiene tipi elementari, dunque non vi è allocazione di memoria sullo heap: le strutture di tipo S vivono quindi nello stack.
+Dunque di fatto, non vi è alcun “rilascio della memoria”, abbiamo implementato <code>Drop</code> giusto per fare una stampa.</p>
+<p>Per i tipi che invece allocano memoria sullo heap, <em>dopo</em> che viene eseguito il metodo <code>drop()</code> da noi implementato, il tratto <code>Drop</code> si occupa poi di rilasciare la memoria.</p>
+<p><img src="images/il_linguaggio_2/image%2024.png" alt="image.png" /></p>
+</aside>
+<p>Noi in questo momento serve solo stamparlo.</p>
+<p><img src="images/il_linguaggio_2/image%2025.png" alt="image.png" /></p>
+<p>Vediamo che è stato costruito S(1) sullo stack, è stato costruito S(2) sullo heap, poi senza che noi abbiamo fatto niente altro se non rendere esplicita la distruzione (che avveniva comunque, solo che per default non stampava niente).</p>
+<p>Vediamo che siccome abbiamo creato prima S(1) e poi S(2), nel contrarsi lo stack prima egetta S(2) e poi egetta S(1).</p>
+<h2 id="23-movimento"><a class="header" href="#23-movimento">2.3 Movimento</a></h2>
+<p>Ragioniamo meglio su questo movimento, questo passaggio per movimento.</p>
+<p><img src="images/il_linguaggio_2/image%2026.png" alt="image.png" /></p>
+<p>Momentaneamente ci dimentichiamo del Box e creiamo il nostro S(1), e verifichiamo dove sta, e poi diciamo <code>let s2 = s1;</code> — lo copio..? No: lo muovo!</p>
+<aside>
+💡
+<p><strong>Drop vs Copy</strong>
+Avendo implementato <strong><code>Drop</code></strong>, questo tipo <strong>non può avere anche il tratto <code>Copy</code>.</strong>
+Se non avessimo implementato il tratto <code>Drop</code>, essendo che questa struct contiene solo tipi elementari (un i32, nello specifico), allora avremmo potuto avere tranquillamente il tratto <code>Copy</code>.</p>
+</aside>
+<p><img src="images/il_linguaggio_2/image%2027.png" alt="image.png" /></p>
+<p>Faccio <code>s2.display()</code>, e provo a fare anche <code>s1.display()</code> ma il compilatore mi blocca!</p>
+<p>Ci dice <em>“sei partito da</em> <code>let s1 = S(1);</code><em>, poi hai chiamato display, bene, e poi me l'hai mosso dentro s2 — <strong>value moved here</strong></em>”.</p>
+<p>Dentro <code>s1</code> non c'è più niente, o meglio hai trasferito i byte dall'altra parte come qualunque copia, ma insieme hai trasferito diritti e doveri: non hai più il diritto di andarci a guardare e non hai più il dovere di distruggere.
+<code>s2</code> ha acquisito il diritto di andarci a guardare e il dovere di distruggere.</p>
+<p><img src="images/il_linguaggio_2/image%2028.png" alt="image.png" /></p>
+<p>Infatti mi dice “<em>lì l'hai mosso, alla riga 16, e alla 18 hai fatto l’errore: dopo aver detto che non era più tuo ci vai ancora a guardar dentro — <strong>value borrowed here after move</strong></em>”.</p>
+<p><img src="images/il_linguaggio_2/image%2029.png" alt="image.png" /></p>
+<p>Allora dobbiamo cancellare la riga 18 e a questo punto il programma diventa semplicemente: <code>s1 = S(1)</code>, che contiene un numero, → lo stampo → <code>let s2 = s1</code> (<strong>lo trasferisco</strong>) → e poi <code>s2</code> lo posso guardare tranquillamente perché a questo punto <code>s2</code> ha guadagnato lui il diritto di accesso e quindi lo può vedere, e il dovere di rilascio.</p>
+<p><img src="images/il_linguaggio_2/image%2030.png" alt="image.png" /></p>
+<p>Questa volta compila correttamente e qui vedo che <code>s1</code> l'avevo fatto, e l’ho stampato: conteneva 1 e stava all'indirizzo che finisce con 84.
+Nel momento in cui ho scritto <code>let s2 = s1;</code>, lui ha preso e quel valore lì l'ha spostato!
+Dentro <code>s2</code> c'è ancora scritto 1, ma il suo indirizzo non è più 84: è diventato 88, proprio perché l'ha spostato!</p>
+<p>Adesso quando lo stack si contrarrà per la parte di 84 non capiterà niente, quando lo stack si contrae per 88 invece capita il drop.
+L'informazione dropping ci viene stampata su 88, che è l'indirizzo della seconda variabile, perché la seconda variabile nell'acquisire il valore ha acquisito i diritti e i doveri.</p>
+<p><img src="images/il_linguaggio_2/image%2031.png" alt="image.png" /></p>
+<p>La variabile <code>s2</code>, se ci servisse, la possiamo anche rendere mutabile.</p>
+<p>Quindi nella maggior parte dei casi le assegnazioni sono in realtà dei <em><strong>movimenti</strong></em>, cioè io ti passo i byte e i diritti e i doveri.</p>
+<h3 id="231-il-tratto-copy"><a class="header" href="#231-il-tratto-copy">2.3.1 Il tratto copy</a></h3>
+<p>Ci sono piccole eccezioni: nel caso dei numeri, le assegnazioni sono semplici copie, perchè questi godono del tratto <code>Copy</code>, che dice che è lecito trasferire il valore senza trasferire i diritti e i doveri.
+Il tratto <code>Copy</code> è mutuamente esclusivo con il tratto <code>Drop</code> — <code>Copy</code> va bene per quelle situazioni in cui non ci sono doveri associati: noi nell’esempio abbiamo implementato <code>Drop</code> giusto per fare una <code>println!</code>, ma Box implementa <code>Drop</code> per poter fare il rilascio, non può farne a meno, altrimenti non rilascerebbe la memoria.</p>
+<p>Nella maggior parte delle situazioni le assegnazioni sono dei movimenti, che vuol dire che copio i byte e trasferisco diritti e doveri.
+Per quei tipi, come i numeri, che implementano il tratto <code>Copy</code> le cose sono più semplici, cioè io ho solo il trasferimento dei byte.</p>
+<p>Ma ci sono dei vincoli: il tratto <code>Copy</code> lo possono avere solo alcuni.</p>
+<h3 id="232-il-tratto-clone"><a class="header" href="#232-il-tratto-clone">2.3.2 Il tratto clone</a></h3>
+<p><em>E allora non duplico mai le cose?</em>
+C'è un altro tratto interessante che si chiama <strong><code>Clone</code></strong>.
+Il tratto clone è un tratto più impegnativo che dice “<em>io voglio davvero duplicare questa cosa <strong>in profondità</strong></em>” — in profondità vuol dire che non copio solo la superficie, ma vado avanti: se ad esempio clono il mio box di S, non è che duplico il puntatore del box, ma alloco nell’heap un'altra cosa della stessa dimensione di ciò a cui il box originale puntava, copio tutti i byte dalla sorgente alla destinazione e a quel punto lì ho due puntatori distinti e vado bene.</p>
+<p>Clone è in generale un'operazione onerosa — nella libreria standard del C c'è una funzione che si chiama <em><strong>strdup</strong></em> che duplica una stringa.</p>
+<p><em>Cosa fa strdup?</em>
+Dice <em>“se tu parti da una stringa terminata da zero io mi conto quanti byte ha, poi gli aggiungo uno, poi alloco un blocco grande quanto è venuto sto conteggio, poi copio tutti i byte originali nel loro blocco e poi ti restituisco il puntatore del blocco nuovo”</em> — quello fa strdup, una copia in profondità.</p>
+<p>Le copie in profondità sono onerose, possono essere estremamente onerose: dipende quanto è grande il blocco da copiare.
+Possono essere ricorsive, perché nel caso della stringa sono byte semplici, ma io posso avere delle cose che puntano a cose che puntano a cose etc..</p>
+<p>Allora l'operatore <code>=</code> , quello che fa le assegnazioni, può essere solo usato per il movimento (cioè trasferisco dati, diritti e doveri), o la copia semplice (trasferisco dati là dove non ci sono particolari doveri associati).
+Quando invece abbiamo bisogno di fare copia in profondità lo dobbiamo scrivere in modo esplicito: dobbiamo scrivere  <code>.clone()</code>, perché così siamo obbligati a renderci conto che quella è un'operazione potenzialmente onerosa.</p>
+<p><img src="images/il_linguaggio_2/image%2032.png" alt="image.png" /></p>
+<p>Prima abbiamo anche brevemente accennato che in realtà Rust ammette anche i tipi elementari <code>*const T</code> e <code>*mut T</code> che corrispondono ai puntatori del C con tutti i limiti dei puntatori del C. Questi però possono solo essere usati all'interno di blocchi <strong>unsafe</strong>.</p>
+<h1 id="3-array"><a class="header" href="#3-array">3. Array</a></h1>
+<p><img src="images/il_linguaggio_2/image%2033.png" alt="image.png" /></p>
+<p>Rust ci permette facilmente di gestire anche gli <strong>array</strong>.
+Un array è una sequenza contigua di n dati elementari di tipo T.
+Gli array sono omogenei: tutti i loro elementi sono dello stesso tipo.
+La lunghezza è nota a priori.</p>
+<p>Quando creo un array posso inizializzarlo direttamente, potrei scrivere <code>let a = [1, 2, 3, 4, 5];</code></p>
+<p>Posso anche rendere esplicito il suo tipo con <code>let a: [i32, 5] = 1, 2, 3, 4, 5];</code> — che vuol dire che ci sono 5 interi i32 consecutivi.</p>
+<p>Posso anche scrivere <code>let b = [0; 5]</code>, che vuol dire ci sono cinque 0 consecutivi (siccome gli zeri il compilatore tende a leggerli come degli i32, a meno che non hanno un suffisso, lui mi fa un array che ha la stessa dimensione di quello sopra ma questa volta è inizializzato con degli zeri).
+Questa seconda notazione è molto comoda perché se io devo allocare un array da un mega, posso scrivere <code>let buffer = [0; 1024*1024];</code> piuttosto che <code>let buffer = [0, 0, 0, …];</code> fino a 1024.</p>
+<p>Gli array hanno alcuni metodi built-in che ci vengono comodi: in particolare hanno il metodo <code>len()</code> che è molto comodo e ci dice quanto è lungo, perché a differenza del C dove gli array sono ridotti al puntatore al primo elemento (e quindi quando voi dichiarate un array di interi quello diventa di fatto un <code>int*</code> e il compilatore non sa più quanto è grande), qua invece gli array sono un tipo a tutti gli effetti e sanno quanto sono grandi e quindi in grado di dirti quanto è lungo.</p>
+<p><strong>Attenzione</strong>: la lunghezza di un array è immutabile — io ho creato questo array da 5 elementi, sarà 5 elementi tutta la vita.
+Dire che l'array è mutabile significa che cambiano i valori che contiene, ma non la sua lunghezza.</p>
+<h2 id="31-slice"><a class="header" href="#31-slice">3.1 Slice</a></h2>
+<p><img src="images/il_linguaggio_2/image%2034.png" alt="image.png" /></p>
+<p>Gli array hanno una dimensione fissa, ma a volte i nostri algoritmi nell’ambito di un array grosso che è già stato allocato hanno bisogno di essere agili e muoversi per segmenti di questo array, quindi considerare delle parti.</p>
+<p>Il C, e C++ come conseguenza, avevano elaborato l’idea <em><strong>dell’aritmetica dei puntatori</strong></em>: io alloco un array, l’array automaticamente diventa il puntatore al primo elemento ma io poi posso fare ptr+1, ptr+7, ptr+54 etc.. per muovermi all’interno di questa cosa.
+Ma l’aritmetica dei puntatori è tanto simpatica tanto quanto pericolosa, perché io posso sommare un miliardo e chissà dove vado a finire.</p>
+<p>Io voglio passarti delle parti, e le voglio passare in modo efficiente, cioè in realtà non ti voglio ricopiare i byte.</p>
+<p>Supponiamo di aver letto un grosso documento: stiamo facendo il syntax checker per vedere se ci sono parole strambe e una delle possibilità è dire <em>“io ricopio le singole paroline che trovo e le mando alla funzione controllo_nel_dizionario”,</em> ma è una cosa onerosissima perché i byte già li ho letti una volta in memoria e poi devo prendermene tutte le volte dei segmenti, ricopiarli in un’altra variabile e passarli.
+Alla fine ho scandito l’intero documento ma l’ho copiato praticamente tutto quanto, un po’ per volta ma l’ho copiato tutto.
+L’idea dell’aritmetica dei puntatori dice <em>“guarda io ce l’ho in memoria, parte qui e finisce lì, però ti do il puntatore. Vai a guardare la parola che comincia a questo punto, così non devi ricopiare e te la leggi direttamente dalla fonte”.</em></p>
+<p>In C++ l’idea è stata estesa introducendo il concetto di <em><strong>iteratore</strong></em>, ******che fa proprio leva sulla sintassi dell’aritmetica dei puntatori: l’iteratore è una cosa che <em>sembra un puntatore</em> — lo dereferenziate con asterisco, gli fate la somma o la differenza come come fossero dei puntatori e serve a muoversi dentro le strutture dati di vario tipo.
+Però è soggetto a tutti i problemi dell’aritmetica dei puntatori.</p>
+<p>Rust dice <em>“guarda io ti dò la possibilità di identificare dei segmenti all’interno di un array più grande senza bisogno di dover copiare i dati presenti al loro interno — ti dò il tipo che si chiama <strong>slice</strong></em>”.</p>
+<p>Una <strong>slice</strong> indica un segmento all’interno di un array.
+Una slice ha come notazione <code>&amp;[T]</code> dove T è il tipo del singolo elemento dell’array.
+Possiamo avere una slice non mutabile oppure <code>&amp;mut[T]</code> è una slice mutabile, ed è quindi un riferimento a un blocco di <code>[T]</code>.
+Notate che nel caso dell’array il tipo è <code>[T; n]</code>, dove n è un numero, invece qui abbiamo <code>[T]</code> che vuol dire <em>“ci sono dei T di fila”.</em>
+Quanti? Boh, nel tipo non si sa, perché io solo a runtime capirò se me ne servono 5, 12, 84 etc..</p>
+<p><strong>Le slice in quanto reference possono solo essere ricavate da un dato che esiste, quindi se non ho un dato a priori (il mio array di partenza) non ho le slice</strong>.</p>
+<p>Io posso prendere una slice all’intero array, posso prendere una slice di un pezzettino di quell’array, o posso decidere che comincia prima o che comincia dopo e cose del genere.. la slice può solo stare dentro l’array: se io cerco di andare fuori se lui può mi blocca già a compile time, se non può mi garantisce che a runtime mi bloccherà (panicando).</p>
+<p>Quando io dichiaro un array di tipo slice sto dicendo che quella variabile è un <em><strong>fat pointer</strong></em>, perché contiene il puntatore al primo elemento della mia fettina e subito a fianco il numero di elementi che fanno parte della mia fetta. Questo permette di passare il riferimento ad altri che avranno modo di sapere che loro potranno partire da quel puntatore e al massimo accedere all’ennesimo elemento e poi basta.
+Se cercheranno di andare oltre succederà esattamente una condizione di panic dicendo <em>index out of bound</em>.</p>
+<p>Io posso inizializzare una slice in modo esplicito con la scritta <code>let s1: **&amp;[i32]** = &amp;a;</code> — se io non avessi messo l’annotazione <code>&amp;[i32]</code> lui avrebbe detto che s1 è un ref al mio array, ma io in realtà gli voglio dire che quello lì è un ref a un array di interi senza cablare nel tipo di s1 il numero. Il numero effettivo è dentro il valore di s1 perché s1 contiene sia il puntatore al primo che quanti ne sono stati presi.</p>
+<p><strong>s2</strong> ha lo stesso tipo di s1, in questo caso la prima parte del del fat pointer coincide con quella di s1 ma il secondo pezzettino del fat pointer invece di essere 4 contiene 2.</p>
+<p><strong>s3</strong> ha lo stesso tipo di s1 e di s2 ma la prima parte del suo fat pointer non contiene l’inizio dell’array ma l’inizio dell’array spostato di due elementi (quindi punta al terzo elemento dell’array), e nella seconda parte del fat pointer c’è scritto 2 perché scrivendo da <code>[2..]</code> lui va a vedere “<em>quanto era grande l’array? Era 4, quindi da 2 a 4</em>”, e quindi ne prende 2.</p>
+<p>Scritte così sono tutte slice immutabili cioè ci permettono di guardare quei numeri ma di non copiarle, se l’array originale era mutabile possiamo estrarne una mutable slice.
+<strong>Mentre esiste una mutable slice l’intero array è inaccessibile!</strong>
+Anche se io ne guardo solo un pezzettino, perché in realtà lui non riesce a governarmi tutta la faccenda e dire “<em>la coda non la scrivi, mentre l’inizio sì</em>”.
+Quindi finché c’è una mutable slice l’array è inaccessibile, come avere un ref mut all’array nel suo intero.</p>
+<p>Se ho una slice accedo ai suoi elementi esattamente come farei con un array e se vado fuori dal tutto mi genera un panic.</p>
+<h1 id="4-vec"><a class="header" href="#4-vec">4. Vec<T></a></h1>
+<p><img src="images/il_linguaggio_2/image%2035.png" alt="image.png" /></p>
+<p>Gli array e le slice sono dei meccanismi abbastanza comodi, ma in realtà non sempre così versatili.
+Il vero cavallo di battaglia dei programmi che andremo a scrivere, che alimenta la maggior parte dei meccanismi dove abbiamo bisogno dinamicamente di usare le cose, è il <code>Vec</code>.</p>
+<p><code>Vec</code> è più o meno quello che in Java si chiama <em><strong>arraylist</strong></em>, ovvero rappresenta un blocco di elementi omogenei allocato sullo heap ridimensionabile, cioè che io posso far crescere, far diminuire e così via, e quindi in cui posso memorizzare tutti gli elementi che mi servono.</p>
+<p>Posso cercare quelli che mi interessano, posso ordinarlo (se gli elementi sono ordinabili, cioè hanno un modo di essere confrontati come “prima e dopo”), posso farci tante cose..</p>
+<p>Il <code>Vec</code> è un oggetto che gestisce in automatico la memoria che utilizza, e provvede a garantirne il rilascio corretto.
+All’interno di un <code>Vec</code> ci sono tre campi:</p>
+<ul>
+<li><strong>un puntatore ad un blocco sullo heap</strong> dove lui ha spazio per mettere le cose</li>
+<li><strong>un intero senza segno che dice quel blocco lì quanto è grande</strong> complessivamente — lui sa che sullo heap si è preso 50 elementi di tipo T, qualunque cosa sia T.</li>
+<li><strong>un intero senza segno che dice quanto, di quello spazio, stiamo effettivamente utilizzando</strong> —  quanti di quei 50 sono già usati: ovvero lui ha spazio per tenerne fino a 50 ma non ne ha necessariamente 50, perché ha riempito solo i primi tre e quindi ha ancora 47 caselle libere.
+Quando arrivasse a riempire tutte le 50 caselle e io gli dico “aggiungi”, lui dice “aspetta”, va dal sistema operativo e dice “mi dai un blocco da 100?”, e in quel blocco da 100 copia i suoi primi 50 e poi nella posizione 51 mette quello che volevamo aggiungere, dopodiché il vecchio blocco da 50 lo rilascia.</li>
+</ul>
+<p>Quindi dinamicamente cresce. Vediamolo.</p>
+<p><img src="images/il_linguaggio_2/image%2036.png" alt="image.png" /></p>
+<p>Partiamo da un programma molto semplice: creiamo una variabile mutabile perché dovremmo metterci delle cose dentro (se fosse immutabile ce ne faremmo pochissimo).</p>
+<p><code>let mut v = Vec::new();</code> — questo è il modo con cui costruiamo gli oggetti in Rust.
+La parola <code>new</code> non è una parola chiave del linguaggio, è un metodo.
+Convenzionalmente si chiama “new”, ma lo potremmo chiamare “francesco” e andrebbe bene lo stesso.
+Di solito i programmatori tendono a dare quel nome lì ma vedremo che c’è anche un altro modo di creare il nostro array — potremmo crearlo <code>Vec::with_capacity(32)</code>: in quel caso lì preallocheremmo già un vettore che ha spazio per 32 elementi; questo va bene in quei casi in cui sappiamo già immaginare con un buon grado di probabilità quanto spazio potrebbe servirci.</p>
+<p>In questo caso gli stiamo dicendo <code>Vec::new()</code>, che vuol dire “<em>guarda io non so neanche se ti metterò mai qualche cosa</em>”, quindi Rust mi restituisce un oggetto che sta quindi sullo stack perché v è una variabile locale che ha dentro di sé tre campetti: il primo è un <em><strong>puntatore</strong></em> che è nullo, ma io non lo vedo tanto quel puntatore e non lo so che è nullo, il secondo è il campo <em><strong>size</strong></em> che ci dice quanti elementi hai in utilizzo sulla capienza totale (per ora nessuno), e l’altro è il campo <em><strong>capacity</strong></em>.</p>
+<p><img src="images/il_linguaggio_2/image%2037.png" alt="image.png" /></p>
+<p>Nel momento in cui io cerco di salvare dentro questo array un dato lo faccio col metodo <em><strong>push</strong></em>, che vuol dire “<em>aggiungi al fondo, nella prima posizione libera, un dato</em>”.
+Succede che lui dice “aspetta io non ho spazio, allora momento: sistema operativo mi dai un blocchettino?”.
+Grande quanto? Si prende quattro interi.
+Si salva il puntatore, si segna dentro capacity che ne ha presi quattro, e nel primo ci mette il dato che abbiamo pushato, e quindi si segna che il size in questo momento è 1.</p>
+<p><img src="images/il_linguaggio_2/image%2038.png" alt="image.png" /></p>
+<p>Subito dopo gli diciamo <code>v.push(4)</code> — benissimo, abbiamo spazio libero? Si: size è più piccolo di capacity, dunque vado nell’array che ho allocato nell’heap, vado all’indirizzo del size e ci metto 4.</p>
+<p><img src="images/il_linguaggio_2/image%2039.png" alt="image.png" /></p>
+<p>Poi posso prendermi un riferimento e in questo caso sto dicendo “<em>mi dai valori che hai scritti dentro così che io li possa anche eventualmente cambiare?</em>”.
+Cosa succede? Viene creato uno slice agli elementi che contiene solo quelli che sono validi in questo momento.
+Siccome è un ref al vettore, di fatto il vettore fin tanto che esistesse è inaccessibile, ha temporaneamente ceduto il suo valore.</p>
+<p><img src="images/il_linguaggio_2/image%2040.png" alt="image.png" /></p>
+<p><img src="images/il_linguaggio_2/image%2041.png" alt="image.png" /></p>
+<p>Usando <code>s</code>, e dentro s vedete uno slice perché contiene il puntatore al primo elemento e la dimensione, posso andarci dentro e scrivere.</p>
+<p><img src="images/il_linguaggio_2/image%2042.png" alt="image.png" /></p>
+<p>Poi qui arrivo al fondo della mia funzione e cosa succede?
+Si contrae lo stack una prima volta, si contrae buttando via s (buttare via s non ha effetti), perché s non ha possesso (è un ref e quindi ha accesso ma non possesso), poi devo contrarre ancora, c’è <code>v</code>.
+Siccome s non esiste più, v adesso è di nuovo tornato in pieno possesso delle sue facoltà, quindi ci posso posso invocare il metodo drop relativo.
+Cosa fa il metodo drop di v? Fa un rilascio del blocco di memoria che aveva a disposizione e lo restituisce al sistema operativo, e poi se ne va.</p>
+<h1 id="5-stringhe"><a class="header" href="#5-stringhe">5. Stringhe</a></h1>
+<p><img src="images/il_linguaggio_2/image%2043.png" alt="image.png" /></p>
+<p>Il mondo delle stringhe in Rust è articolatissimo.
+Le stringhe sono un oggetto estremamente utile nella programmazione perché spesso e volentieri abbiamo bisogno di trattare del testo comprensibile alle persone.</p>
+<p>Le stringhe però sono anche una faccenda un po' complicata, perché ci sono tanti possibili caratteri.
+Inizialmente le cose erano un po' approssimative, c'erano i caratteri ASCII, che vuol dire <em>American Standard Code for Information Interchange</em>. Pensato per gli americani. Gli americani hanno 26 lettere. Non hanno gli accenti.
+E quindi l'hanno disegnato a propria misura.</p>
+<p>L'ASCII da solo è stato problematico: è un codice a 7 bit.
+I byte sono 8 bit. Quindi qualcuno ha subito detto <em>“visto che ASCII definisce i primi 128 simboli, usiamo i simboli successivi per metterci altre lettere”.</em>
+E sono nati una serie di alfabeti incompatibili. Per cui quelli dell'Europa centrale, che avevano lettere accentate e qualche simbolo un po' più strano, tipo la Cedille in francese piuttosto che la doppia S in tedesco o cose del genere, hanno fatto l'alfabeto Latin 1.
+Quelli dell'Europa orientale, che hanno simboli a volte un po' più diversi, hanno fatto il Latin 2. Poi c'è il greco, poi c'è il cirillico. Tutti incompatibili perché gli stessi numeri da 128 a 255 vogliono dire cose diverse in alfabeti diversi.
+Ne è venuta fuori una babella ingestibile. Ma soprattutto, con quei simboli lì, il cinese non lo scrivevi, perché il cinese ha gli ideogrammi e gli ideogrammi sono tanti.</p>
+<p>Quindi è nato, guidato da Apple, tanti anni fa, un consorzio che si chiama Unicode.
+Unicode ha cominciato a definire e standardizzare gli alfabeti in modo formale.
+Ha assegnato a ciascun carattere un code point, cioè un numero, che è partito da quelli standard, quindi ha accettato che il code point della A maiuscola fosse 41 esadecimale, cioè 65, e 97 quello della A minuscola, cioè ha tenuto buono l'ASCII, perché non avrebbe avuto nessun senso fare diversamente, però è andato avanti e ha cominciato a standardizzare tutto quello che veniva dopo.</p>
+<p>Attualmente ci sono più di due milioni di code point rappresentati, che contengono al loro interno tutti gli alfabeti scritti moderni, ma anche quelli antichi, per cui c'è il siro babilonese, piuttosto che il fenicio o cose del genere, ma ci trovate sopra anche rappresentati le simbologie tecniche di vari tipi. Tutti i caratteri usati in matematica, l'integrale, la derivata, il segno di equivalenza, etc..</p>
+<p>Lo Unicode, di base, avrebbe bisogno per rappresentare un code point, uno spazio tale da poter tenere almeno il numero due milioni.
+Quindi ci vogliono sostanzialmente 24 bit.
+24 è un numero scomodissimo, e di conseguenza la scelta è stata 32.
+Quindi un carattere Unicode richiede 32 bit.</p>
+<p>Dopodiché Unicode ha definito delle rappresentazioni compatte per poter memorizzare questi dati.
+Perché se mentre io elaboro il dato mi va bene avere un array di code point per farci dei ragionamenti, in realtà quando memorizzo il dato questo mi porta uno spreco enorme, perché la maggior parte dei testi archiviati e cose del genere in realtà sono poi scritti in ASCII.
+E quindi io avrei quadruplicato il fabbisogno della memoria.
+E quindi hanno scelto di avere delle rappresentazioni più compatte che si chiamano UTF-8, 16 e 32.</p>
+<p>UTF-32 è banale. Un carattere è 32 bit, quindi 4 byte, fine, non c’è bisogno di conversione.
+Nell’UTF-8, viceversa, un carattere può occupare un solo byte se il suo code point è nel range degli ASCII.
+Due byte se il suo code point è tra 193 e 48 mila qualcosa.
+Tre code point se è tra 48 mila e 640 mila.
+Quattro byte per arrivare fino al fondo.</p>
+<p>Quindi è una rappresentazione multi byte.
+Nelle rappresentazioni multi byte c’è sempre un’ambiguità.
+Se ho più byte consecutivi scritti, come sono scritti questi byte? Big-endian o little-endian?</p>
+<p>E allora i file UTF possono cominciare con un particolare marcatore che si chiama BOM, <em><strong>byte order marker</strong></em>, che vale <code>FFFE</code>, e che è un simbolo impossibile altre volte, e permette, guardando, se io incontro nell’ordine leggendo i byte prima <code>FF</code> e poi <code>FE</code>, vuol dire che quello lì è little-endian.
+Se invece incontro <code>FE</code>, e poi <code>FF</code>, vuol dire che è un’architettura big-endian e di conseguenza da lì in avanti so cambiare le cose.</p>
+<p>Quindi quando prendete Notepad e salvate un testo, guardate Save As, vi da le opzioni, potete salvarlo come file ASCII semplice oppure come UTF e se lo salvate come UTF vi dice “with BOM” o “without BOM”.</p>
+<p>Questo giusto per darvi un minimo di idee.</p>
+<p>Rust decide che i caratteri li rappresenta come Code Point a 32 bit, ma le stringhe non le gestisce in quel modo lì, perché sennò avrebbe bisogno di una montagna di memoria.
+Quindi le stringhe le gestisce come UTF-8, senza BOM, perché tanto per un certo processore è big-endian e quindi userà la versione big-endian per tenersi le stringhe in pancia.
+Quell’altro sarà little-endian e se li terrà little-endian.</p>
+<p>Fintanto che io i dati non li muovo da un processore o un altro, l’endianess non è un problema.
+Tengo quella di default della mia macchina che è la più efficiente possibile.</p>
+<p>Detto questo, però, la stringa è una sequenza di byte.</p>
+<p>Non tutte le sequenze di byte sono lecite in UTF, proprio perché UTF definisce questo meccanismo e le sequenze che richiedono due byte ricadono in certi range, ma ci sono delle sequenze impossibili.
+Quindi non è detto che se io ho un array di byte, quello è interpretabile come array di carattere UTF-8.</p>
+<p>Al contrario, se io ho un array di UTF-8, quello lo posso tranquillamente guardare anche come array di byte, semplicemente che certe combinazioni non le potrò mai osservare.</p>
+<p>Detto questo, c’è il problema della <strong>mutabilità</strong>.
+Io posso avere delle stringhe immutabili e posso avere delle stringhe mutabili perché mi interessa cambiare delle cose.</p>
+<h2 id="51-str"><a class="header" href="#51-str">5.1 str</a></h2>
+<p>Le stringhe immutabili sono di fatto degli <strong>slice di byte</strong>, con la restrizione che sono valide.
+In realtà, le stringhe immutabili sono rappresentate da un tipo primitivo che si chiama <code>str</code> e di fatto sono accedute sempre come <code>&amp;str</code>.</p>
+<p>Quando io scrivo <code>let s = "ciao";</code>, <code>s</code> ha tipo <code>&amp;str</code>.
+Questo perché "ciao", essendo una costante, viene scritto nella zona statica del programma, nell'area dei dati. Dentro <code>s</code> ci finisce uno slice, cioè il puntatore al primo di questi byte, affiancato dal numero dei byte possibili: "ciao" ha quattro lettere, quindi c'è <code>3B7F5924</code> e accanto c'è scritto 4.
+Notate che non c’è il terminatore 0, perché la lunghezza è espressa nello slice, quindi non ho bisogno di avere il terminatore. Queste sono le <code>&amp;str</code>.</p>
+<p>Non tutte le slice sono statiche, cioè allocate in questa parte di memoria.
+Le stringhe che scrivete tra virgolette lo sono, ma potreste anche manipolare stringhe recuperate da altre fonti.
+Le costanti stringa hanno durata illimitata perché sono integrate nell'eseguibile del programma - esistono dall'inizio alla fine e sono immutabili (il compilatore impedisce di modificarle). D'altra parte, i riferimenti stringa presi da un buffer hanno una durata limitata e più breve.</p>
+<h2 id="52-string"><a class="header" href="#52-string">5.2 String</a></h2>
+<p>Spesso noi abbiamo bisogno di modificarle le stringhe, magari vogliamo trasformarle da minuscole a maiuscole, oppure vogliamo spezzarle, etc…</p>
+<p>Allora Rust introduce il tipo <strong><code>String</code></strong>, con la S maiuscola.</p>
+<p>Il tipo <code>String</code> è di fatto molto simile al <code>Vec</code>, ovvero esattamente come il <code>Vec</code> contiene tre pezzettini:</p>
+<ul>
+<li>il primo è un <strong>puntatore sullo heap</strong>, dove c’è il buffer su cui opera</li>
+<li>il secondo è un numero che mi dice quanti di quegli <strong>elementi sono occupati</strong></li>
+<li>il terzo è la <strong>capacità</strong> che mi dice quel buffer lì in generale quanto è grande, in modo tale che nel momento in cui io lo riempissi tutto, ne vado a prendere un altro più grande ancora</li>
+</ul>
+<p><code>&amp;str</code> e <code>String</code> sono parenti, ci sono moltissimi metodi già definiti per <code>&amp;str</code>, quindi se io scrivo <code>“ciao”.</code>, mi si apre un menu bello lungo di cose che posso fare su una costante stringa.</p>
+<p>Sono tutte cose che non mutano la costante stringa, necessariamente.</p>
+<p>Se io ho un oggetto <code>String</code> e ci metto <code>&amp;</code> davanti, lui diventa automaticamente, diventa automaticamente un <code>str</code>, quindi beneficia di tutto quello che <code>str</code> può fare.</p>
+<p>A questo si aggiungono le cose che può fare solo una <code>String</code>. Adesso li vediamo.</p>
+<h3 id="521-esempio"><a class="header" href="#521-esempio">5.2.1 Esempio</a></h3>
+<p><img src="images/il_linguaggio_2/image%2044.png" alt="image.png" /></p>
+<p><code>let hello: &amp;str = “hello,”;</code> → Cosa succede?</p>
+<p>Il compilatore quando incontra questa cosa, oltre a generare il codice assembler di <code>let hello: &amp;str = “hello,”;</code> e cosa via, da qualche parte nella mappa di memoria che prepara per il run time del programma (la zona disegnata in azzurrino in basso), si copia quei caratteri lì e ci scrive “hello,”.</p>
+<p>Quando introduco la variabile <code>let hello</code>, questa variabile non fa nient’altro che puntare allo slice.
+È uno slice, quindi contiene il puntatore, che finisce nella zona statica, e la dimensione.</p>
+<p><img src="images/il_linguaggio_2/image%2045.png" alt="image.png" /></p>
+<p>Poi vado avanti e dico <code>let mut s = String::new();</code></p>
+<p>Quindi lo stack cresce e fa spazio per una String. Una String contiene 8 byte di puntatore (con l’architettura 64 bit), 8 byte di size, 8 byte di capacity.
+Inizialmente il puntatore è nullo, il size è zero, la capacity è zero.</p>
+<p><img src="images/il_linguaggio_2/image%2046.png" alt="image.png" /></p>
+<p>Siccome s è mutabile, posso invocare i metodi che ne cambiano il contenuto: <code>s.push_str(hello);</code>.
+Cioè, voglio aggiungere al fondo della mia stringa questo slice.
+Allora devo vedere se ho spazio per uno slice! Quanto e’ grande sto slice? 6!
+Ce li ho 6 byte liberi? No: la capacity è 0, la size è 0, la differenza fa 0, 0 e’ più piccolo di 6.
+Quindi devo allungare la mia capacity.</p>
+<p>Vado al sistema operativo e gli chiedo “<em>mi dai un po’ di byte? Ne ho bisogno di 6, ma dammene 8 che è la prima potenza di 2 utile</em>”, e lui mi da 8 byte.</p>
+<p>Aggiorno un attimo la stringa, adesso size e’ ancora 0, capacity è diventata 8. Ce li posso mettere i 6 che avevo? Si, posso, e quindi faccio questa operazione: porto il mio size a 6 e copio i singoli byte.
+E quindi dentro s mi comincia a venire “hello,”, e poi ho ancora due posti liberi.</p>
+<p><img src="images/il_linguaggio_2/image%2047.png" alt="image.png" /></p>
+<p>A questo punto faccio <code>s.push_str(” world”);</code>.</p>
+<p>Quanto e’ grande “ world!”? 7 byte!
+Ce li ho 7 byte liberi? No, <code>capacity</code> meno <code>size</code> fa 2.</p>
+<p><em>A quanto dovrei andare?</em>
+Io sono 8, ne ho due liberi, me ne servono altri 5, dovrei andare a 13.
+13 e’ un numero strambo: <em>“Sistema operativo, dammene direttamente 16”.</em></p>
+<p>Dunque da qualche parte nello heap c’era scritto “hello,”, poi abbiamo preso un altro blocco grosso il doppio dentro cui lui ha temporaneamente ricopiato “hello,”, e poi ci ha appiccicato “ world!”, dopo di che il blocco originale dove c’era solo “hello,” l’ha buttato via, e quando tutta l’operazione finisce, la stringa punta a un nuovo indirizzo, dentro di sè il puntatore è da qualche altra parte dentro cui c’è scritto “hello, world!”.</p>
+<p>Questo succede, quindi la stringa contiene dei dati che possono crescere.</p>
+<p><img src="images/il_linguaggio_2/image%2048.png" alt="image.png" /></p>
+<p>Quando arrivo al chiusa graffa lo stack si contrae.</p>
+<p>Cosa c’era sullo stack?
+Due cose: c’era <code>s</code> che possiede un buffer e che quindi quando viene eliminata ha un drop da fare. Cosa fa il suo metodo <code>drop()</code>? Rilascia, e quindi tutto quel buffer lì esce.</p>
+<p>Poi c’era <code>hello</code>, che era uno slice; lo slice non ha possesso, quindi va via senza fare nulla.
+Lo spazio statico rimane scritto così, ma tanto quello era stampato nella pietra, non ci poteva fare nulla.</p>
+<p>E quindi quando questo finisce, lo stack è pulito, lo heap è pulito, e nello spazio statico continua a starci scritto quello che c’era scritto fin dall’inizio.</p>
+<p><img src="images/il_linguaggio_2/image%2049.png" alt="image.png" /></p>
+<p>Come manipolo le stringhe?
+Posso creare le stringhe in tanti modi, ne vediamo alcuni.</p>
+<p><code>let s0 = String::new();</code>
+Questo crea una stringa vuota. Se avrò bisogno ci metterò dentro delle cose e internamente si rialloca proprio come un Vec che va a prendersi la memoria quando ne ha bisogno.</p>
+<p>Oppure, se so già che voglio che contenga qualche contenuto, posso fare <code>let s1 = String::from("some text”);</code>.
+In questo caso mi crea una stringa inizializzata con il valore che gli ho messo.</p>
+<p>Posso anche fare al contrario <code>let s2 = "some text".to_string();</code>.
+Il metodo <code>to_string()</code> va a tradurre quello slice di byte in una stringa corrispondente.</p>
+<p>Se ho una <code>String</code> e voglio averne una versione congelata, quindi solo leggibile ma non modificabile, la posso ricavare con <code>s2.as_str()</code>.
+Questo mi ritorna un <code>&amp;str</code> semplice. Notate che non esiste il <code>&amp;mut str</code>. Il linguaggio non ce l’ha. La stringa mutabile è <code>String</code> e l’altro è <code>&amp;str</code> e basta.</p>
+<p>Se ho una <code>String</code> che ho dichiarato mutabile, posso farci delle cose.
+Ad esempio posso <code>push_str(”…”)</code>, aggiungere al fondo, concateno.</p>
+<p>Oppure <code>insert_str(”…”)</code>.
+<code>insert_str()</code> dice <em>“metti non al fondo ma nella particolare posizione che ti indico”.</em> In questo caso “0”: questo vuol dire che tutto quello che c’era scritto l’ho sposto più avanti e davanti ci inietto questo pezzo qua.</p>
+<p>Oppure posso eliminare un carattere <code>remove(4)</code>. Tolgo il quarto carattere.
+Dove sta il quarto carattere?
+Potrebbe stare nel quarto byte, o potrebbe stare nel quinto byte se uno dei caratteri precedenti era lungo due, oppure potrebbe stare nel sesto byte se due dei caratteri precedenti erano lunghi due o uno era lungo tre. Potrebbe stare nel dodicesimo byte se quelli che precedevano erano lunghi quattro.
+Quindi quando io dico <code>remove(4)</code> gli sto dicendo <em>“toglimi il quarto carattere”</em> e la stringa si occupa di capire qual era effettivamente il quarto carattere.</p>
+<p>Posso anche pulirla tutta la stringa, <code>clear()</code>.</p>
+<p>Alcuni metodi come questi <strong>cambiano</strong> la stringa, altri metodi partono da una stringa e <strong>ne generano una nuova</strong>.
+Ad esempio il metodo <code>to_uppercase()</code> o  <code>to_lowercase()</code> partono da una stringa e ne generano una completamente nuova.</p>
+<p>Perché?
+Perché la faccenda dell’uppercase e lowercase è complicata.
+Innanzitutto perché non tutte le lingue hanno il concetto di uppercase e lowercase — in cinese l’ideogramma maiuscolo non c’è.
+Poi perché in alcune lingue vengono fuori degli obbrobri — in tedesco esiste il carattere che sembra una beta che rappresenta la doppia S minuscola. Peccato che la sua versione maiuscola si scrive con due S, per cui la lunghezza è differente. E così via.</p>
+<p>Il metodo <code>replace()</code> crea una nuova stringa che contiene i caratteri della precedente tranne alcuni che sono stati sostituiti con qualcos’altro.</p>
+<p>Il metodo <code>trim()</code> crea una nuova stringa che contiene i caratteri della precedente tranne gli spazi iniziali e finali.</p>
+<p>E tanti altri. Poi se vi mettete lì e guardate un attimo la documentazione imparate un po’ di cose utili..</p>
+<p><img src="images/il_linguaggio_2/image%2050.png" alt="image.png" /></p>
+<p>Ma di stringhe non ce ne sono solo due (<code>&amp;str</code> e <code>String</code>).
+Rust ce ne dà un bel po’, specializzate per fare cose diverse.
+Al contrario C vi dà <code>char*</code>, e siate contenti.</p>
+<p>Vediamo, citiamone alcune.
+<code>&amp;str</code> e <code>String</code>, le abbiamo già viste. Di fatto <code>&amp;str</code> è uno slice di byte.
+Da un certo punto di vista, lo posso considerare simile a uno slice di byte di tipo <code>&amp;[u8]</code>.</p>
+<p>Sono la stessa cosa? <em>Ni</em>: <code>&amp;str</code> è effettivamente uno slice di byte, nel senso che è fatto di un <strong>puntatore a una sequenza</strong> e di <strong>un numero che mi dice quanti byte è lunga</strong> quella sequenza.</p>
+<p>Rispetto a un <code>&amp;[u8]</code> la differenza è che non tutte le combinazioni di byte in un <code>&amp;str</code> sono lecite, invece in un <code>&amp;[u8]</code>, in uno slice di byte, lo sono.
+Però, a volte ci viene comodo così, perché noi riceviamo, ad esempio, un pacchetto di rete che di per sé contiene uno slice di byte, potenzialmente quindi qualunque combinazione di numeri uno dopo l’altro, ma sappiamo che quel pacchetto lì contiene, che ne so, il metodo GET.
+E vogliamo trasformarlo in stringa, per poterlo manipolare come stringa.
+E quindi ci sono metodi che il tipo <code>String</code> offre per passare da un slice di byte a un oggetto str, restituendo un errore se quella sequenza di byte è illecita.</p>
+<p>O al contrario, ci sono metodi che <code>&amp;str</code> offre per ricavare lo slice di byte corrispondente.
+Questo non dà mai errore, perché passo da un sotto insieme, vado verso un insieme più grande, e quindi sono tranquillo.</p>
+<p>Può essere uno slice, può essere un riferimento a un vettore: <code>&amp;[u8; N]</code>, vado a finire in un caso particolare, dove ho esattamente N byte.
+L’oggetto String, per lo stesso motivo, di fatto è equivalente a un Vec di byte.
+Nel senso che se io guardo com’è fatto, è fatto proprio come un Vec di byte.
+Qual è la differenza? È che nel Vec di byte posso metterci <code>.push(7)</code>, <code>.push(54)</code>, <code>.push(89)</code>.
+Nella stringa non necessariamente questa sequenza è lecita, perché potrebbe rappresentare un carattere illecito.</p>
+<p>Il singolo <code>&amp;u8</code>, puntatore riferimento a un singolo byte, può essere visto come una stringa di carattere di dimensione 1, sotto certe condizioni.</p>
+<p>Poi abbiamo le <code>OsStr</code> e le <code>OsString</code>.
+Sono le stringhe mutabili (le <code>OsString</code>) e non mutabili (le <code>OsStr</code>) come piacciono al sistema operativo.
+Unix, internamente, tratta i caratteri come utf-8, e quindi va tutto bene, non devo fare nessuna modifica.
+Windows, i caratteri li tratta come utf-16. Se devo chiamare la system call <code>create_file()</code>, che è quella che Windows mi mette a disposizione per creare un file, il nome del file non glielo posso passare come utf-8, perché si spaccherebbe, Windows lo vuole utf-16.
+E quindi se il file si chiama <code>f</code>, quella cosa lì sono due byte, il primo dei quali è il decimale <code>4f</code>, il codice della “f”, e il secondo è <code>0</code>.</p>
+<p>Per lo stesso motivo i path esistono nella duplice versione: <code>Path</code>e <code>PathBuf</code>.
+Il <code>Path</code> è un path immutabile, che differenza c’è?
+Mentre un <code>OsStr</code> comprende semplicemente che è una stringa, senza sapere che fa riferimento al file system, e quindi è divisibile in segmenti come gli slash, un <code>Path</code> è una stringa del sistema operativo che è segmentabile con gli slash. Quali slash? Dipende: in Unix con lo slash dritto, e in Windows con lo slash al contrario.</p>
+<p>Poi ci sono le <code>CString</code>.
+Se io devo chiamare una funzione del C, il C vuole lo 0 come terminatore, altrimenti non va bene, ma Rust 0 non ce l’ha, perché si tiene la lunghezza, che è molto più sicuro.
+Però se io devo poter chiamare una funzione unsafe scritta in C, devo tradurre la mia stringa in una stringa del C. <code>CStr</code> è una stringa immutabile, semplicemente un buffer più lungo di 1, che contiene anche lo 0 finale, e <code>CString</code> è un buffer mutabile che contiene lo 0 finale.</p>
+<p>Tra tutte le <code>&amp;str</code>, ce n’è un sottogruppo che è l’insieme delle <strong>costanti</strong>, cioè quelle che avete scritto voi tra doppi apici.
+Queste, oltre a essere degli <code>&amp;str</code>, hanno una caratteristica: hanno un tempo di vita che coincide con l’intero processo.
+E quindi il loro vero nome è, <code>&amp;’static str</code>.
+Perché? Perché lì il compilatore sa che quel particolare tipo di stringhe esistono da sempre e per sempre.
+Tutti gli altri ref, invece, sono soggetti al tempo di vita del buffer da cui nascono, e quindi esistono da un certo punto, e solo finché il buffer corrispondente non si toglie dai piedi.</p>
+<h1 id="6-istruzioni-ed-espressioni"><a class="header" href="#6-istruzioni-ed-espressioni">6. Istruzioni ed espressioni</a></h1>
+<p><img src="images/il_linguaggio_2/image%2051.png" alt="image.png" /></p>
+<p>In termini di istruzioni che abbiamo a disposizione, sono istruzioni, cioè non danno nessun risultato.
+Se io scrivo <code>let i = 0</code>, non posso fare come invece farei in C. In C posso dire <code>int i = j = k = 0</code>, perché l’assegnazione ha come risultato il valore assegnato, che quindi può essere propagato.</p>
+<p>Le istruzioni tipo <code>let</code> e <code>let mut</code>, viceversa, non restituiscono nessun valore.</p>
+<p>Invece, quello che scriviamo tra graffe è un’espressione.
+Qual è il valore ritornato da un blocco di graffe? È l’ultimo elemento presente nel blocco, a condizione che non abbia il <code>;</code>.</p>
+<p><code>If else</code> è un’espressione, <code>loop</code> è un’espressione.</p>
+<h2 id="61-esempio-espressione"><a class="header" href="#61-esempio-espressione">6.1 Esempio espressione</a></h2>
+<p><img src="images/il_linguaggio_2/image%2052.png" alt="image.png" /></p>
+<p><img src="images/il_linguaggio_2/image%2053.png" alt="image.png" /></p>
+<p>E infatti se vado a vedere cosa mi ha stampato, mi ha stampato <code>fsf</code> perché è entrato nel blocco, ha fatto le cose che c’erano scritte lì, e poi l’ultimo pezzo, poiché non aveva un <code>;</code>, è finita dentro <code>i</code>.
+Infatti <code>i</code> me lo dice che è un <code>i32</code>.</p>
+<p><img src="images/il_linguaggio_2/image%2054.png" alt="image.png" /></p>
+<p>Se io 43 avessi messo <code>43;</code>, mi dice che <code>i</code> diventa <code>void</code>, di fatto la tupla unitaria.</p>
+<p><img src="images/il_linguaggio_2/image%2055.png" alt="image.png" /></p>
+<p>Posso anche dire <em>“if 3 maggiore di 2, i vale 43, else vale 54”</em>.</p>
+<p><em><strong>Quindi il blocco restituisce un valore, l’if restituisce un valore, il while restituisce un valore.</strong></em></p>
+<h2 id="62-funzioni"><a class="header" href="#62-funzioni">6.2 Funzioni</a></h2>
+<p><img src="images/il_linguaggio_2/image%2056.png" alt="image.png" /></p>
+<p>Le funzioni si scrivono <code>fn nome_funzione(param1, param 2, ...) -&gt; valore_ritorno</code></p>
+<p>Se la funzione non ritorna niente, la freccia valore di ritorno si può omettere — il valore di ritorno sarebbe <code>()</code>, la tupla unitaria.</p>
+<p><code>add_numbers</code> è una funzione che ritorna un i32, notate che non c’è il <code>;</code> finale, perché?
+La funzione prende come valore il blocco corrispondente, questo blocco restituisce l’ultimo elemento se non ha il <code>;</code>, questo non ce l’ha e quindi questa funzione qui ritorna <code>x+y</code>, senza bisogno di scrivere la parola chiave <code>return</code>.
+La parola chiave return mi è utile quando ho bisogno di uscire a metà di una funzione, quindi senza arrivare fino al fondo.</p>
+<h3 id="621-esempi"><a class="header" href="#621-esempi">6.2.1 Esempi</a></h3>
+<p><img src="images/il_linguaggio_2/image%2057.png" alt="image.png" /></p>
+<h2 id="63-cicli"><a class="header" href="#63-cicli">6.3 Cicli</a></h2>
+<p><img src="images/il_linguaggio_2/image%2058.png" alt="image.png" /></p>
+<p>In generale è possibile avere più cicli, loop e while annidati all’interno, è possibile mettere delle etichette, delle label, mettendo apice qualcosa, e questo ci dà la possibilità di uscire da un ciclo più esterno.</p>
+<p>Di solito le istruzioni break e continue riguardano il ciclo più stretto, dentro cui vengono messe, se io voglio uscire dal ciclo esterno, ciclo esterno è bisogno che sia etichettato con <em>‘qualcosa</em>, e faccio <code>break ‘qualcosa</code>, e lui esce dal ciclo più esterno.</p>
+<p><code>for</code> ha una sintassi particolare.
+La sintassi del C, <code>for(i=0;i&lt;n;i++)</code>, non c’è.
+Potete solo scrivere <code>for variabile in qualcosa</code>.
+Dove <code>for</code> e <code>in</code> sono keyword, la variabile è una variabile basta, cioè quindi ci mettete il nome di un identificatore, e l’espressione deve essere un’espressione <strong>iterabile</strong>.
+Cioè qualcosa che rappresenta una molteplicità.</p>
+<p>Cos’è che rappresenta una molteplicità? Un array rappresenta una molteplicità.
+Se avete la variabile <code>let a =[2, 3, 4]</code> , <code>for s in a</code>, a <code>s</code> viene dato prima 2, fa le sue cose, poi viene dato 3, poi viene dato 4.
+Quindi gli array sono naturalmente iterabili. Anche gli slice sono naturalmente iterabili. Lui tanto lo slice sa quanti pezzi sono e li va a prendere uno per volta.</p>
+<p>I range sono iterabili: <code>for i in 0..10</code>.</p>
+<h3 id="631-esempi"><a class="header" href="#631-esempi">6.3.1 Esempi</a></h3>
+<p><img src="images/il_linguaggio_2/image%2059.png" alt="image.png" /></p>
+<p>Qui vediamo l’uso degli apici per fare il break, per cui ho un loop esterno che si chiama <code>‘outer</code>, e poi ne ho uno interno <code>'inner</code>, giusto per dargli dei nomi, e così via.
+E posso fare <code>break</code> dalle varie parti interrompere.</p>
+<p><img src="images/il_linguaggio_2/image%2060.png" alt="image.png" /></p>
+<p>Questo è un esempio più che altro fa vedere l’uso della libreria standard.
+A volte abbiamo bisogno di servirci di tipi un po’ più sofisticati — non c’è bisogno di inventare l’acqua calda, la libreria di Rust viene già con montagne di cose!</p>
+<p>Ad esempio se avete bisogno di rappresentare la data corrente (data e ora corrente, cioè il momento), esiste la libreria <code>std::time::instant</code>, che offre un metodo <code>now()</code>, che va a cercare sul vostro sistema operativo l’orologio, il real time clock, si fa dire che ore sono, e vi restituisce quel valore lì.</p>
+<p>Così come c’è anche il <code>duration</code>, che rappresenta un intervallo di tempo.
+Mentre un instant è un punto specifico sull’asse temporale, un duration è un segmento sull’asse temporale, una durata. Quindi rappresenta una distanza tra due instant.</p>
+<p>Se voi avete due instant potete sottrarli e ottenete una duration.
+Se voi avete un instant e una duration, li potete sommare per ottenere una nuova durata.</p>
+<p>Qui crea una duration di un secondo, duration prende il numero di secondi e il numero di nanosecondi, quindi io prendo un secondo e zero nanosecondi, quindi una quantità pulita, e poi mi faccio dire che ore sono, e poi provo a interrogare l’orologio di sistema.</p>
+<p>While instant now meno start e minore di un secondo incrementa, e questo mi fa vedere più o meno quanto è efficiente il sistema operativo dal milore a corrente, perché io gli chiedo l’ora continuamente, ma a un certo punto sarà passato un secondo. E alla fine mi faccio dire quanto viene.</p>
+<h2 id="64-notazione-"><a class="header" href="#64-notazione-">6.4 Notazione <code>..</code></a></h2>
+<p><img src="images/il_linguaggio_2/image%2061.png" alt="image.png" /></p>
+<p>Il <em>range</em> lo posso scrivere nella forma <code>inizio..fine</code>, e questo vuol dire da inizio compreso a fine escluso, oppure <code>inizio..=fine</code>, e questo vuol dire da inizio a fine inclusi entrambi.</p>
+<p>Laddove io ho un certo dominio possibile, posso usare delle notazioni compatte: la notazione <em>“punto punto”</em> rappresenta tutti i valori di un certo dominio.
+<code>for i: u8 in ..</code>Che cosa fa? u8 ha un dominio che va da 0 a 256 escluso, for i: u8, è bene che glielo scriva altrimenti diventa un problema, in .. lui mi dà 0, 1, 2, e arriva a 255 e si ferma.</p>
+<p>Se <code>i</code> invece di essere un u8 fosse un u16, partirebbe da 0 e si fermerebbe a 65.575, e così via.
+Se io scrivo <code>for i: u8 in 25..</code>, parte da 25 e si ferma a 255, e così via.</p>
+<h3 id="641-esempi"><a class="header" href="#641-esempi">6.4.1 Esempi</a></h3>
+<p><img src="images/il_linguaggio_2/image%2062.png" alt="image.png" /></p>
+<h2 id="65-match"><a class="header" href="#65-match">6.5 Match</a></h2>
+<p><img src="images/il_linguaggio_2/image%2063.png" alt="image.png" /></p>
+<p>C’è poi un’istruzione particolare, <code>match</code>, che adesso citiamo semplicemente, ma la tratteremo meglio appena parliamo delle enum, perché al momento fa casino.
+Diciamo che serve più o meno come serve in C o in Java avere lo switch.
+Scegliere non tra due strade, come il caso di if, ma quando io devo scegliere tra molte strade.</p>
+<p>Quindi uso match per scegliere una di molte strade.</p>
+<p>La caratteristica di match è che le strade che vado a indicare devono essere <strong>comprensive di tutte le possibili situazioni</strong>.
+Cioè il compilatore verifica che quando io uso un valore per scegliere, scrivo dei blocchi che coprono tutte le possibilità. Se esiste almeno una possibilità che non è coperta, il match mi blocca e mi dice “<em>non va bene perché qui manca qualcosa”</em>.</p>
+<p>Ciò che caratterizza il match rispetto al costrutto switch, il costrutto switch è stupido, perché switch <code>i</code>, case 1, case 2, case 3. Potete solo chiedervi questo.</p>
+<p>Qua il match invece utilizza il criterio proprio del <em><strong>pattern matching</strong></em>.
+Cioè voi potete dire se <code>i</code> è tra 5 e 7, se è divisibile per 3, etc..</p>
+<p>Quindi rispetto al concetto di switch che vi pone a fare delle cose e vi fa fare poi delle porcate del tipo case 1, break, se non metto break finisco nel case 2 e cose del genere, ecco qui abbiamo dei match che sono mutuamente esclusivi, sono valutati in ordine e quindi io vedo se ricado nel primo caso faccio una cosa, basta.
+Se non ricado nel primo caso verifico se ricado nel secondo caso, faccio quella cosa lì, etc..
+E in ogni caso in uno devo sicuramente caderci e il compilatore me lo verifica.</p>
+<h3 id="651-esempi"><a class="header" href="#651-esempi">6.5.1 Esempi</a></h3>
+<p><img src="images/il_linguaggio_2/image%2064.png" alt="image.png" /></p>
+<p>Ad esempio, supponendo che <code>item</code> sia un numero, se è 0 restituisco il valore 0.
+Se è tra 10 e 20 inclusi restituisco la stringa “tra dieci e venti”.
+Se è 40 oppure 80 scrivo 40-80.
+In tutti gli altri casi dico qualcos’altro.
+Se non mettessi quest’ultima riga il compilatore mi bloccherebbe e direbbe “<em>no, attenzione, non mi hai coperto tutte le possibilità</em>”.</p>
+<p><img src="images/il_linguaggio_2/image%2065.png" alt="image.png" /></p>
+<p><img src="images/il_linguaggio_2/image%2066.png" alt="image.png" /></p>
+<p>Vado a cercare, guardo la slice di quell’array lì e dico “<em>se è una slice che comincia con 0 e</em> <em>prosegue per i fatti suoi, dico che comincia con 0”</em>.
+Se invece comincia in qualche modo e poi c’è una variabile <code>v</code>, e quella variabile <code>v</code> sta nel range 3, 5 compreso, allora dico che finisce con <code>v</code>, che diventerà o 3 o 4 o 5”.
+Se viceversa c’è un primo elemento che ignoro, poi c’è la variabile <code>v</code> e poi c’è altro, dico il secondo valore è <code>v</code>.
+Se è fatto di un solo elemento, che chiamo <code>v</code>, dico ha un solo elemento ed è questo.
+Ed infine se è vuoto, dico che è vuoto.</p>
+<p>Anche in questo caso ho considerato tutti i casi possibili, perché se l’array è vuoto, se la slice è vuota passo nell’ultimo, se la slice contiene un solo elemento, quello che sia, cado nel penultimo.</p>
+<p>Se ci sono due o più elementi, cado sicuramente in uno dei tre, perché se il primo elemento è 0, qualunque sia la continuazione finisco lì, se il primo elemento non è 0, finisco sicuramente nel terzo, perché nel secondo potrei passarci prima e va bene, ma in ogni caso il terzo mi comprende, perché ignora il primo valore, prende il secondo, quello che sia, e ignora tutto quello che segue.</p>
+<p>E quindi ho la garanzia di aver coperto l’intero dominio del mio slice.</p>
+<p>Vedete che è un costrutto potentissimo, consente di esprimere delle logiche molto sofisticate.
+Ma ci torneremo perché c’è bisogno di un po’ per ragionarci sopra.</p>
+<h1 id="7-riga-di-comando-e-argomenti"><a class="header" href="#7-riga-di-comando-e-argomenti">7. Riga di comando e argomenti</a></h1>
+<h2 id="71-stdenvargs"><a class="header" href="#71-stdenvargs">7.1 std::env::args</a></h2>
+<p><img src="images/il_linguaggio_2/image%2067.png" alt="image.png" /></p>
+<p>Esattamente come in C possiamo passare dei parametri alla riga di comando.</p>
+<p><em>Come li passiamo questi parametri alla riga di comando?</em>
+Qui è un po’ diverso, in C il metodo <code>main()</code> prende <code>int argc, char **argv</code>, quindi riceve dei parametri espliciti che indicano quanti sono gli argomenti che sono stati passati dalla riga di comando e quali sono già segmentati per spazio.</p>
+<p>Qua il main invece è sempre vuoto, se abbiamo bisogno di avere accesso alla riga di comando dobbiamo servirci del tipo predefinito che si chiama <code>std::env::args</code> e ci facciamo dare questi pezzi col comando <code>args.collect()</code>.</p>
+<p><code>args</code> ci dà un iteratore ai singoli elementi: il primo è il nome del programma stesso, quindi se il mio programma l’ho chiamato “test” e lo lancio scrivendo <code>test 25 -f 44</code>, gli args comprendono la stringa <code>test</code>, la stringa <code>25</code>, la stringa <code>-f</code>, la stringa <code>44</code>.</p>
+<p>Di solito il nome del programma non mi interessa, per cui <code>args.skip(1)</code>, per buttare via il primo, e tutti quelli che restano <code>.collect()</code>, per prenderli insieme e metterli in un vettore, a questo punto li ho nel vettore e vedo cosa farmene.</p>
+<p>Il singolo argomento è una <strong>String</strong>, quindi la posso poi mutare in qualche modo.</p>
+<p>Se ho bisogno <code>args.len()</code> mi dice a priori quanti sono, se no li metto nel vettore e poi chiedo il vettore quanta roba c’è dentro.</p>
+<h2 id="72-clap"><a class="header" href="#72-clap">7.2 Clap</a></h2>
+<p><img src="images/il_linguaggio_2/image%2068.png" alt="image.png" /></p>
+<p>In realtà i programmi Rust raramente accedono in quel modo lì ai loro parametri, perché la comunità open source ha sviluppato una libreria potentissima che si chiama <code>clap</code>, che permette di gestire in modo dichiarativo i parametri che ottengo.</p>
+<p>Il problema non è accedere ai parametri, è che quando tu mi passi <code>-f</code> qualcosa devo fare certi mestieri, quando mi passi <code>--help</code> devo stamparti l’help, etc...</p>
+<p>Quindi il problema è che nei programmi <em>command line</em> io devo raccoglierli questi parametri e poi devo agire di conseguenza.</p>
+<p>Le azioni che faccio vanno misurate perché se ce n’è solo uno faccio una cosa, magari se sono presenti in due devo vedere se sono compatibili e così via.</p>
+<p>Clap mi facilita tantissimo, mi permette di descrivere con poche righe le varie combinazioni lecite che io voglio gestire, mi automatizza buona parte dei comportamenti (ad esempio mi implementa di suo già un help, mi implementa già di suo una serie di descrizioni, etc..) e quindi è tipicamente qualcosa di utile.</p>
+<p><em>Come faccio a servirmi di questa libreria?</em>
+Devo nel file <code>cargo.toml</code>, che descrive le mie cose, andare nella sezione <code>Dependencies</code> e scrivere che voglio usare <code>clap</code>.</p>
+<h3 id="721-esempio-clap"><a class="header" href="#721-esempio-clap">7.2.1 Esempio Clap</a></h3>
+<p><img src="images/il_linguaggio_2/image%2069.png" alt="image.png" /></p>
+<p>Questo mi mette a disposizione un insieme di macro strutture dati su cui posso fare delle cose.</p>
+<p><em>Come lo scrivo un programma che usa clap?</em>
+Vedete, qui c’è un main, che invece di andare a cercare <code>std::env::args</code>, va a prendere la libreria <code>clap::Parser</code>.</p>
+<p>E <code>Args</code> è la struttura che ho definito lì sopra, che è compilata, dice “Vattele a leggere tutte, e poi per quelli che ci sono, salutami”.</p>
+<p>La struttura <code>Args</code> è definita con dei campi, dice <em>“Guarda, io ho un nome e un count”.</em></p>
+<p>Questi mi devono arrivare dalla command line.</p>
+<p><em>Come mi arrivano?</em>
+Allora, innanzitutto, name mi deve arrivare dalla command line con un <strong>prefisso</strong>.
+Quel prefisso può essere o <code>short</code> o <code>long</code>.
+<em>Che vuol dire?</em>
+Potrò chiamare il mio argomento con <code>-n</code>, oppure <code>--name</code>.</p>
+<p>Dire <code>#arg(short)</code> vuol dire automaticamente vai a cercare se c’è il corrispondente <em>“-lettera_iniziale”</em>.
+Se c’è il long vuol dire automaticamente vai a cercare se c’è <em>“--nome_completo”</em>, <code>name</code> in questo caso.</p>
+<p>Quello sotto, <code>count</code>, anche lui è short e long, quindi posso mettere <code>-c</code>, e posso mettere <code>--count</code>, e c’è anche <code>default_value</code> (in questo caso se non metto argomenti, default_value fa finta che l’abbia messo e che ce ne sia scritto 1).</p>
+<p>Quindi io posso invocare il mio programma, che in questo caso ho chiamato “demo”, in vari modi.</p>
+<p>Oltre a questi due, che sono parametri che io userò, in questo caso per count volte stamperò nel main <code>args.name</code>, lui me ne aggiunge alcuni altri.
+Ad esempio mi aggiunge la versione, mi aggiunge un about e così via.</p>
+<p>Compilando questa cosa qua, quello che mi viene fuori è che se lancio il mio programma <code>--help</code>, di suo mi mette già una stringa.
+<em>Dove se l’è presa quella stringa?</em> Dal commento.
+Perché era un commento con <strong>tre slash</strong> — i commenti con tre slash servono a fare la documentazione, e di conseguenza lui ha capito immediatamente che quello è la descrizione generale del programma.</p>
+<p>Non solo mi ha stampato quel commento lì, ma mi dà anche istruzioni su come posso eseguirlo.</p>
+<p>Dicendo <em>“guarda, tu lo lanci col comando demo, che è il suo nome, eventualmente exe se sei sotto Windows, puoi metterci delle opzioni, che dopo ti dico, e poi obbligatoriamente devi almeno mettermi --name”.</em></p>
+<p><em>Quali sono le opzioni possibili?</em>
+<em>“Guarda, se mi metti -n mi può andar bene, sarebbe l’equivalente di --name, ma dopo ci deve venire una stringa.”</em></p>
+<p><em>Che cosa è questa stringa?</em>
+È il nome della persona da salutare.</p>
+<p><em>Dove si è preso quella stringa lì?</em>
+Dal commento col tre slash, etc…</p>
+<p><em>Poi devi mettere un <code>-c</code> o un <code>--count</code>, indicando quante volte. Che cosa vuol dire?</em>
+<em>”Indica il numero di volte che ti saluterò. Se non me lo metti, guarda che ci metto io uno.”</em></p>
+<p>Oppure mi chiami con <code>-h</code> o <code>--help</code>. Oppure mi chiami con <code>-v</code> o <code>--version</code>.
+E in questo caso ti stampo la versione del programma.</p>
+<p><em>Dove la prendo la versione?</em>
+Dal file <code>cargo.toml</code>, perché nella descrizione del <code>cargo.toml</code> c’è <code>version</code>, che di solito è 0.1.0 se non la toccate.</p>
+<p>Vediamo come con poca roba ci siamo arricchiti tantissimo e creiamo un’interfaccia che è professionale. Permette a chi usa il vostro programma di capirci qualcosa.</p>
+<h1 id="8-io-da-console"><a class="header" href="#8-io-da-console">8. I/O da Console</a></h1>
+<p><img src="images/il_linguaggio_2/image%2070.png" alt="image.png" /></p>
+<p>Abbiamo visto che stampare si fa con <code>println!</code>.
+Print line è una macro: spacchetta quello che c’è dentro e lo espande.</p>
+<p>Oltre a print line è presente <code>print!</code>, che fa la stessa cosa, semplicemente dopo non va a capo.
+Quindi vi serve se volete stampare più pezzi, uno a fianco all’altro, sulla stessa riga.</p>
+<p>A volte volete leggere.
+Quando leggete, la maggior parte in realtà delle operazioni di I/O possono andare a buon fine o meno.
+Lo riconoscete perché se guardate i metodi offerti vi restituiscono degli oggetti di tipo <code>Result</code>.</p>
+<p>I Result sono delle <strong>monadi</strong> che incapsulano il risultato. Il result può essere <code>Ok</code> o <code>Error</code>.
+Se è Ok, dentro Ok c’è scritto il vero risultato. Se è Error, dentro Error c’è scritto la ragione dell’errore.</p>
+<p><em>Cosa ve ne fate di un tipo Result?</em>
+Innanzitutto potete controllare se è buono o meno — il metodo <code>.is_ok()</code> restituisce un booleano.</p>
+<p>Nella maggior parte dei casi, se non siete riusciti a leggere da tastiera, per esempio, non è tanto importante perché non siete riusciti, l’importante è che non siete riusciti e quindi magari dovete piantarla lì.</p>
+<p>Se viceversa, siete riusciti, quindi se <code>.is_ok()</code> vi dà true, potete chiamare il metodo <code>unwrap()</code>.</p>
+<p><em>Cosa fa unwrap?</em>
+Sbusta: tira fuori il valore che è prigioniero dentro la monade.
+Chiaramente dovete chiamare <code>unwrap()</code> solo se quello che è stato lì è buono, perché se c’è stato un errore, <code>unwrap()</code> vi pianta il programma, panicando, esattamente come se cercaste di accedere fuori dal range di un array, perché non avete fatto il controllo.</p>
+<p><img src="images/il_linguaggio_2/image%2071.png" alt="image.png" /></p>
+<p><em>Quindi, come leggo da tastiera?</em>
+Mi preparo una stringa, <code>let mut s = String::new()</code>, e poi chiamo <code>io::stdin().read_line(&amp;mut s)</code>, a cui passo <code>s</code> come mutabile, passo un riferimento mutabile a <code>s</code>.</p>
+<p>Questo permette a <code>read_line()</code> di scriverci dentro. Il metodo <code>read_line()</code> mi può dare un risultato che è <code>Ok</code>, oppure un <code>Error</code>.
+Se è Ok, dentro <code>s</code> mi trovo scritto quello che <code>read_line()</code> ha avuto.</p>
+<p>Se sono sicuro che <code>read_line()</code> non mi dà errori, posso invocare come scritto sotto: <code>io::stdin()::read_line(&amp;mut s).unwrap()</code>.
+<strong>Attenzione:</strong> se qui non sono riuscito a leggere, questa riga mi provoca un panic e il programma si arresta.</p>
+<h1 id="9-convenzione-sui-nomi"><a class="header" href="#9-convenzione-sui-nomi">9. Convenzione sui nomi</a></h1>
+<p><img src="images/il_linguaggio_2/image%2072.png" alt="image.png" /></p>
+<p>La comunità Rust ha sviluppato una serie di regole sulla nomenclatura, sull’uso degli identificatori e cose del genere.
+L’ambiente di compilazione è molto sofisticato e pistino, cioè va a controllare che voi siate attenti a questa convenzione.</p>
+<p><em>Quali sono le convenzioni?</em>
+<strong>I tipi</strong> si scrivono nel formato <strong>upper camel case</strong>: cominciano con una lettera maiuscola, e se sono formati da due o più parole, tutte le iniziali successive sono maiuscole.</p>
+<p>Viceversa, per <strong>i valori</strong> (variabili, funzioni, metodi), si usa la notazione <strong>lower snake case</strong>: tutto minuscolo separando più parole con l’underscore.</p>
+<p>Se non fate così vi beccate dei warning.</p>
+<p>È bene che voi impariate a compilare i programmi senza warning, cioè eliminandoli.
+È vero che il warning non è bloccante, ma è indice di uno smell, di qualcosa che non va bene.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="05-il_linguaggio_parte_1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="06-possesso.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="05-il_linguaggio_parte_1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="06-possesso.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

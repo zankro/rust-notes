@@ -1,0 +1,336 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Allocazione della Memoria (Parte 1)</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="allocazione-della-memoria---malnati-1"><a class="header" href="#allocazione-della-memoria---malnati-1">Allocazione della memoria - Malnati 1</a></h1>
+<p><img src="images/allocazione_della_memoria_1/image.png" alt="image.png" /></p>
+<p>Un programma eseguibile non è nient’altro che un insieme di istruzioni macchina mescolate con dei dati mescolate con dei valori di configurazione e controllo tutti codificati sotto forma di byte di sequenze di byte.</p>
+<p>Il significato di questi byte è legato alla tipologia di informazione che mettiamo dentro — per la parte di istruzioni il significato è <strong>cablato</strong> dentro il processore.
+Sui processori 8080 che venivano usati nel PC IBM originale, il byte 3E serviva a rappresentare l’istruzione <code>MOV A</code>, dove A era l’accumulatore (il registro principale della CPU): 3E 7B voleva dire <em>carica nel registro accumulatore il valore binario 7B</em>.</p>
+<p>Quindi lì e nei processori moderni ci sono codifiche analoghe, quindi a ogni byte corrisponde una e una sola interpretazione come istruzione macchina.
+Cambiando processore chiaramente cambiano le istruzioni e quindi bisogna generare delle sequenze diverse.</p>
+<p>La presentazione dei dati o delle informazioni di controllo in parte è desunta dalle istruzioni macchine.
+Io ho scritto un programma che legge una stringa e la trasforma in numero. La stringa è impiantata insieme al mio codice, mischiata lì dentro. L’interpretazione della stringa per trasformarla in un numero sta nelle istruzioni che ho generato.
+La parte dell’informazione di controllo è in realtà invece governata dal sistema operativo: il fatto che il mio programma inizia con una certa sequenza binaria, che il particolare sistema operativo riconosce e trasforma in qualcosa, dipende dal sistema operativo stesso.</p>
+<p>Il programma normalmente vive dentro il disco, in un file. Tipicamente su una macchina Windows abbiamo i file .exe che rappresentano i binari eseguibili. Per poter essere eseguito in realtà occorre che questo file sia trasferito all’interno della RAM, dove il processore è in grado poi di andare a prendere le singole istruzioni.</p>
+<p>Come avviene questa cosa qua?
+Nei sistemi più banali, come l’Arduino, il disco neanche c’è, il programma è cablato dentro la flash e banalmente il modo per portarselo nella flash è grazie a un hardware specifico che fa da programmatore (mi dà la possibilità di andarci a scrivere dentro) e in qualche modo lo posso andare a pescare per essere eseguito.
+Nei sistemi più grandi, in realtà, c’è un componente specifico del sistema operativo, il <strong>loader</strong>, che è responsabile di trasferire dal disco alla RAM per permettere l’esecuzione.</p>
+<p><img src="images/allocazione_della_memoria_1/image%201.png" alt="image.png" /></p>
+<p>Una volta che il programma è in memoria, può essere eseguito.</p>
+<p>Come avviene l’esecuzione?
+Banalmente c’è un ciclare continuo.
+Il processore preleva un’istruzione da una certa cella di memoria indirizzata da uno specifico registro contenuto al suo interno, negli x86 si chiama IP, instruction pointer, preleva il dato presente a quell’indirizzo, se lo porta in pancia, lo capisce e fa quello che c’è scritto lì dentro.
+Poi ne prende un altro, poi ne prende un altro..
+Questo alternarsi è chiamato il ciclo fetch, decode, execute — prelevo, capisco, faccio.</p>
+<p><img src="images/allocazione_della_memoria_1/image%202.png" alt="image.png" /></p>
+<p>Il processore fa riferimento alla specifica cella in cui sta un’istruzione indicandone l’indirizzo.
+L’indirizzo è l’offset all’interno della memoria del calcolatore dove quell’istruzione è memorizzata.</p>
+<p>Il <em><strong>program counter</strong></em> (l’instruction pointer) è un registro che, a seguito dell’operazione fetch, viene automaticamente incrementato, in modo tale che la prossima volta che preleverà un’altra istruzione la prende dalla cella successiva. E se quella è un’istruzione multibyte l’instruction pointer viene incrementato di un offset corrispondente così da poter andare avanti a prelevare istruzioni successive.</p>
+<p>Non solo l’instruction pointer ricorda qual è la prossima cella da cui prelevare un’istruzione, altri registri dedicati ricordano altri tipi di informazioni.
+Ad esempio lo <em><strong>stack pointer</strong></em> è un altro registro presente nella maggior parte dei processori che si ricorda dove certi dati temporanei devono essere messi o da dove devono essere prelevati.</p>
+<p><img src="images/allocazione_della_memoria_1/image%203.png" alt="image.png" /></p>
+<p>L’esecuzione del programma avviene nel contesto del suo spazio di indirizzamento.
+Che cos’è lo <strong>spazio di indirizzamento</strong>?</p>
+<p>Noi sappiamo che il nostro sistema di elaborazione ha un processore e della RAM.
+Ma al singolo programma non viene data visibilità dell’intera RAM, ma di una piccola porzione che costituisce lo spazio di indirizzamento di quel particolare processo.</p>
+<p>Tutto quello che noi abbiamo nel nostro file EXE finisce dentro questa piccola porzione della RAM totalmente disponibile.
+Noi possiamo immaginare il nostro spazio di indirizzamento come fosse un array di byte consecutivi che parte da zero e va fino a un qualche livello.</p>
+<p>Questo spazio di indirizzamento è composto da celle che a secondo del livello di parallelismo del processore sono lette un byte alla volta, due byte alla volta, quattro byte alla volta, otto byte alla volta.
+Il numero di celle potenzialmente presenti nello spazio di indirizzamento dipende dal processore.</p>
+<p>Nel caso dell’x86, nelle versioni a 64 bit, lo spazio di indirizzamento è limitato a 48 bit.
+Quindi, di fatto, un x64 può indirizzare al massimo due alla 48 celle.
+Altri tipi di processore fanno altre cose. Un ARM può estendersi su 64 bit o cose simili.
+Nominalmente, quindi, i nostri programmi potrebbero accedere a qualunque indirizzo compreso tra zero e due alla qualcosa meno uno.
+Con l’x86 due alla 48 meno uno. Sul processore a 32 bit, lo spazio di indirizzamento varierà da zero a due alla 32 meno uno.</p>
+<p>Nominalmente! Ma gli spazi di indirizzamento <strong>non sono completi né contigui</strong>.
+Cioè, all’interno dello spazio di indirizzamento, solo una piccola porzione di indirizzi è effettivamente presente.
+Il nostro programma ha l’illusione di averceli tutti, ma non è vero: ne ha alcuni.
+Se prova a leggere o scrivere fuori dal seminato, fuori di quelle piccole zone che gli sono date, il sistema operativo interviene e lo uccide.
+Quest’operazione si chiama <em><strong>segmentation fault</strong></em>. Sei uscito dal tuo segmento.</p>
+<p>Questo non si vede nell’astrazione del linguaggio di programmazione.
+Quando voi in C, in Java, in quello che volete, scrivete un programma, non avete la percezione che gli indirizzi possono solo stare in certi pezzi. Un indirizzo è un indirizzo, è un numero.
+Ma in realtà, per il sistema operativo, non tutti i numeri vanno bene. Solo alcuni.</p>
+<p><img src="images/allocazione_della_memoria_1/image%204.png" alt="image.png" /></p>
+<p>Non solo.
+Gli indirizzi che il programma maneggia, quelli cioè che voi scrivete fisicamente dentro il vostro programma, che potete vedere se li stampate a video o cose del genere, non corrispondono al posto in cui il processore va a leggere o a scrivere. Cioè, gli indirizzi che voi maneggiate prendono il nome di <strong>indirizzi virtuali</strong>. E nominalmente possono assumere un range tra 0 e 2 alla n-1.
+Nella realtà, se noi attaccassimo un analizzatore di stati logici al bus di sistema per vedere nel momento in cui viene eseguita un’operazione di lettura dove vado a leggere, mi accorgerei che, anche se il programma era stato costruito per dire “vai a leggere alla cella al cui indirizzo è 3b7f”, attaccandomi al bus hardware, vedo che lui va a leggere alla cella 59472657.
+Tutto un’altra parte.</p>
+<p>Questa discrasia tra dove io gli dico di andare e dove lui va è ciò che permette ai sistemi operativi di avere più programmi che pensano di essere loro proprietari dell’intero sistema e non darsi fastidio.
+È reso possibile del fatto che dentro le CPU moderne c’è un blocco che si chiama <strong>MMU</strong>, <em><strong>Memory Management Unit</strong></em>, che ha il compito di tradurre gli indirizzi virtuali che il programma usa in indirizzi fisici, in quelli in cui effettivamente avviene la scrittura e la lettura.</p>
+<p>È un po’ come se qualcuno mi dicesse “<em>metti questa tastiera nel terzo cassetto</em>” e io invece di infilarlo nel terzo cassetto lo infilassi nel cinquantaseiesimo.
+Fintanto che io mi ricordo che quando lui mi parla del terzo cassetto devo andare nel cinquantaseiesimo, non fa nessuna differenza.
+Questo permette a uno di dirmi “<em>mettilo nel terzo cassetto</em>” e io lo infilo qua, e a un altro di dirmi “<em>metti questo microfono, sempre nel terzo cassetto</em>” e io posso ricordarmi che per quell’altro il terzo cassetto invece è il tredicesimo.</p>
+<p>Tutti e loro sono contenti perché mi hanno detto il terzo cassetto quando loro mi chiedono il terzo cassetto all’uno dove ho la tastiera e all’altro dove ho il microfono ma in realtà i cassetti sono distinti e non si impicciano.</p>
+<p>Quindi il sistema operativo al proprio interno sostanzialmente mantiene per ciascun processo in esecuzione questa tabella delle corrispondenze.
+Questo fa sì ad esempio che io posso avere due notepad aperti ciascuno dei quali è convinto di andare a leggere all’indirizzo 7F793950000, ad esempio, ma in realtà vanno in posti diversi della RAM fisica.</p>
+<p>Nella parte centrale dell’illustrazione sono riportati gli indirizzi fisici, quelli in cui effettivamente avvengono le scritture.
+Nei due estremi ci sono le viste che ciascuna delle due istanze in funzione di notepad hanno della memoria.
+Tutti e due sono convinti di andare a leggere in un certo posto ma il sistema operativo li devia e li fa andare tutti da un’altra parte.</p>
+<p>Questo fa sì che un unico programma notepad possa essere instanziato 100 volte senza avere casino.</p>
+<p>Sennò dovrei cambiare ogni volta il contenuto del programma per dire “<em>no ma tu sei un po’ più in qua, tu sei un po’ più in là</em>” invece loro sono tranquilli, sanno che in certi posti trovano certe cose e di fatto le trovano ma fisicamente quelle cose lì sono altrove di dove loro pensano.</p>
+<p>La traduzione quindi garantisce che programmi diversi, o istanze diverse di uno stesso programma, mentre sono in esecuzione non possano interferire — non si danno fastidio perché il sistema operativo me li tiene lontani, e non ha bisogno di farmi sapere dove fisicamente li ha messi, basta che sia coerente: quando parla con uno gestisca le informazioni dell’uno e quando parla con l’altro gestisca le informazioni dell’altro.</p>
+<p>Questo mapping tra l’indirizzo virtuale (che è l’unico che il nostro programma vede) e quello fisico è soggetto ad alcune annotazioni. Non solo il sistema operativo, attraverso l’opportuna configurazione del blocco MMU, mi mappa gli indirizzi da logico a fisico ma mi segna anche a quali vincoli quel mapping è soggetto: mi dice “guarda qui l’indirizzo 7F793950000 va là quando leggi e quando scrivi, ma se lui ti chiede invece di fare la fetch, bloccalo! Perché questa è un’area in lettura e scrittura, ma non in esecuzione”. O al contrario mi può dire “questa è un’area per l’esecuzione ma non può essere scritta”.</p>
+<p>Questo è prezioso perché vi para un po’ dai virus: il fatto che un programma sia mappato in una zona che è read and execute only impedisce a un virus di andare a cambiare le istruzioni e di far fare al vostro programma qualcosa di diverso. Protegge anche da voi stessi perché a volte quando usiamo i puntatori male uno potrebbe sporcare la propria area di memoria.</p>
+<p>C’è un fatto in più: l’esistenza di questa corrispondenza tra la memoria virtuale e la memoria fisica fa si che un programma possa allocare una quantità di memoria che può essere molto superiore alla memoria fisica effettivamente presente. E come?</p>
+<p>Ci verrebbe da dire che, per via di questa partizione, ogni volta che un programma parte si mangia un po’ di memoria fisica e quindi io al massimo accedo a un ennesimo della quantità di memoria.</p>
+<p><img src="images/allocazione_della_memoria_1/image%205.png" alt="image.png" /></p>
+<p>In realtà il sistema operativo interviene in tanti modi.
+La riga sopra è l’immagine dello spazio di indirizzamento virtuale che un programma in esecuzione ha. Il programma lanciato pensa di poter accedere dalla cella numero 0 fino alla cella 2^n-1 — questa è la sua idea potenziale: siccome i puntatori sono grandi 64 bit io immagino di poter andare da 0 a 2^64-1. Questo è il mio spazio potenziale.</p>
+<p>In questo spazio potenziale alcuni blocchi sono quelli effettivamente presenti: sono evidenziati in un verde un pochino più scuro e mappano da qualche parte sulla memoria fisica, che invece è riportata sotto. Notate che questo mapping avviene a pagine, non a singolo byte (che sarebbe ingestibile) — si prende un blocco di 4096 byte piuttosto che 65.536 byte o comunque una potenza del 2 e si dice “<em>tutto questo blocco finisce in questa zona della memoria fisica”</em> così da rendere le tabelle un pochino più piccole.</p>
+<p>Sono mappate con le loro relazioni: alcune sono mappate xr che vuol dire execute and read (posso leggere cosa c’è scritto lì e posso fare il fetch di quell’istruzione, ma non posso scrivere).
+Ma ci sono anche delle zone che non sono mappate sulla memoria fisica, ma <strong>sono mappate sul disco</strong> — i sistemi operativi diversi fanno cose leggermente diverse: su windows c’è il file page.sys (è un file nascosto che vive tipicamente in C:) dentro il quale vengono presi dei blocchi da 4k in cui temporaneamente tenere dei dati che il programma vuole poter usare ma che non mi stanno fisicamente nella ram fisica perchè in questo momento non ho nessuna pagina libera. Fin tanto che il programma non ha bisogno di andare a leggere adesso va benissimo che stiano lì.</p>
+<p>Siccome il vostro programma non legge contemporaneamente tutto, ma mentre guarda questa variabile qui non guarda quella lì, può lavorare in questo modo, dice “<em>guarda tu hai bisogno di tanta roba ok, un po’ te la do fisica, mentre quella che non riesco a darti fisica, te la salvo nel disco. Una volta che hai bisogno di andare a leggere quella cosa che è nel disco vado a vedere se c’è una pagina fisica libera, se c’è te la carico lì. Se non avessi nessuna pagina fisica libera ne prendo una delle tue occupate, la scarico sul disco e a questo punto quella è diventata una pagina libera e quindi prendo quella che vuoi leggere e te la piazzo lì</em>”.</p>
+<p>Questo permette a un programma potenzialmente di manipolare una memoria virtuale molto più grande di quella fisica.
+Con le stesse prestazioni? Ma manco per idea!
+Ovvero, fin tanto che voi accedete alle pagine che sono mappate in memoria la lettura e la scrittura è bella veloce, ma nel momento in cui accedete a una pagina che sta sul disco, c’è da aspettare.. se per caso quella cosa che è finita sul disco è un pezzo di programma vuol dire che l’esecuzione del vostro programma, ad esempio chiama la funzione f che è finita sul disco, lì ha un salto!
+Perché mentre cerca di andare a prendere la funzione f, la funzione f non c’è aspetta, deve essere recuperata dal disco..</p>
+<p>Le zone grigie dello spazio virtuale sono non accessibili: se il vostro programma prova ad andare a leggere, a scrivere o ad eseguire in una qualunque zona grigia, viene ucciso.</p>
+<p><img src="images/allocazione_della_memoria_1/image%206.png" alt="image.png" /></p>
+<p>Le cose sono ancora più complicate.. perché nei sistemi non elementari (cioè non nell’arduino, ma già sul raspberry) il processore non legge direttamente dalla ram, perché se leggesse direttamente dalla ram andrebbe a manovella perché la ram è lenta. Tra il processore e la ram è interposta la memoria cache. La memoria cache che può essere a un livello, a due livelli a tre livelli.</p>
+<p><em>A cosa serve la memoria cache?</em>
+A velocizzare l’accesso alle informazioni contenute nella ram.</p>
+<p><em>E come fa a velocizzarlo?</em>
+Con l’idea che in qualche modo io posso anticipare il bisogno di quell’altra</p>
+<p><em>E sulla base di cosa?</em>
+L’idea è che c’è un principio molto importante che è il principio di località.</p>
+<p>Quando leggo la cella 100 mi conviene portarmi più vicino al processore, in un posto che leggo più agilmente, non solo la 100 ma anche la 101 e la 102 così le ho già lì pronte. La memoria cache si basa sull’uso di dispositivi che hanno poca capacità di memoria ma tempi di eccesso molto più rapidi della ram tradizionale.</p>
+<p><img src="images/allocazione_della_memoria_1/image%207.png" alt="image.png" /></p>
+<p>La memoria cache è spesso organizzata su livelli, che sono via via più capaci ma anche più lenti. Qui è schematizzata una CPU moderna con 4 core.
+I core sono queste unità di elaborazioni individuali che permettono di eseguire delle istruzioni; nascono dal fatto che non è possibile più di tanto velocizzare il clock, o non è conveniente velocizzare il clock perché questo porta a delle rese termodinamiche bassissime e il processore si scalda troppo e alla fine non dissipa a sufficienza, e quindi conviene usare la capacità di fare del silicio piccolo per far stare i transistor in spazi microscopici e permettere tante unità di elaborazione che possono svolgersi in parallelo così da avere più flussi di elaborazione.</p>
+<p>Il singolo core legge e scrive direttamente da una quantità di memoria piccolissima: la cache di livello 1, che però è molto veloce.
+Se occorre riempire la cache di livello 1, la si va a riempire dalla cache di livello 2 che è un po’ più grande e anche un po’ più lenta.
+A sua volta, se occorre riempire la cache di livello 2 la si va a prendere dalla cache di livello 3 che è ancora più grande e ancora più lenta, e infine la cache di livello 3 prende i suoi dati dalla RAM.</p>
+<p>Normalmente tutto questo voi non lo vedete: quando scrivete il vostro programmino hello world, non c’è scritto da nessuna parte che c’è la cache, ma c’è!
+E il sistema operativo e l’hardware si occupano di nascondere tutto questo — voi non lo vedete!
+Quasi, in realtà.. perchè incontrando la programmazione concorrente saremo obbligati a vederlo.</p>
+<p>Perché?
+Perché se il core 0 sta incrementando una variabile, e quindi ha preso la variabile i e ha fatto i++ per farla diventare il valore successivo, beh, quell’i++ è finito scritto nella cache di livello 1 del core 0, ma se il core 3 anche lui volesse incrementare quella variabile non vedrebbe mica il valore incrementato perché quello che l’altro ha già scritto nel suo core 0 non è ancora risalito al livello 2, non è ancora risalito al livello 3 e non è ancora risalito nella RAM per permettere all’altro di vederlo!
+E quindi c’è un momento in cui uno ha già fatto una cosa e l’altro ancora non lo sa, e siccome non lo sa dice “allora lo faccio io”, e a quel punto l’hanno fatto in due ed è un disastro.</p>
+<p>Questo simpatico giochetto che normalmente ci fa andare solo veloce e ci piace tanto dobbiamo vederlo e gestirlo..
+Se un dato condiviso viene scritto da un core, e un altro core lo vuole leggere, devo prima invalidare la sua cache e dire “<em>vattelo a prendere dalla RAM</em>” oppure se lo vuole scrivere devo dirgli “<em>non fermarti lì dove ti fermeresti normalmente, propaga la scrittura fino alla RAM</em>”.</p>
+<p>Quelle operazioni lì diventano molto più costose ma necessarie per garantirmi la correttezza. Quindi programmare a livello di sistema vuol dire guardare questi fatti e rendersi conto che le cose avvengono in questa maniera.</p>
+<p><img src="images/allocazione_della_memoria_1/image%208.png" alt="image.png" /></p>
+<p><img src="images/allocazione_della_memoria_1/image%209.png" alt="image.png" /></p>
+<p>Usando i programmi di alto livello tutte queste cose che abbiamo raccontate sono invisibili — non emergono assolutamente, ma ci sono!
+E quindi i programmi di alto livello sono obbligati a introdurre delle sovrastrutture che permettono di nasconderli.
+L’effetto che il programmatore trova è che è molto più facile scrivere il suo codice. Pari menti è che quel codice lì va a singhiozzo: si ferma ogni tanto.
+Possiamo prenderci la briga di garantire che se quello è il codice dell’ABS non ci schiantiamo?
+No, perché avvengono delle cose che sono fuori dal nostro controllo.
+In più la presenza di queste varie sovrastrutture introducono una serie di vincoli e restrizioni di cui dobbiamo essere pienamente coscienti, ad esempio la restrizione del garbage collector che dice “<em>la memoria la libero io quando ho voglia</em>”.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="00-introduzione.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="02-allocazione_della_memoria_parte_2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="00-introduzione.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="02-allocazione_della_memoria_parte_2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

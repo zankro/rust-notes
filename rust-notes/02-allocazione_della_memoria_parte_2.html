@@ -1,0 +1,577 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Allocazione della Memoria (Parte 2)</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="allocazione-della-memoria---malnati-2"><a class="header" href="#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2</a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice</a></h1>
+<ul>
+<li><a href="#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2</a></li>
+<li><a href="#indice">Indice</a></li>
+<li><a href="#1-modello-di-esecuzione">1. Modello di esecuzione</a></li>
+<li><a href="#2-stack">2. Stack</a>
+<ul>
+<li><a href="#21-esempio-limite-stack">2.1 Esempio limite stack</a></li>
+</ul>
+</li>
+<li><a href="#3-heap">3. Heap</a>
+<ul>
+<li><a href="#31-esempio-heap">3.1 Esempio heap</a></li>
+</ul>
+</li>
+<li><a href="#4-organizzazione-dello-spazio-di-indirizzamento">4. Organizzazione dello spazio di indirizzamento</a></li>
+</ul>
+<h1 id="1-modello-di-esecuzione"><a class="header" href="#1-modello-di-esecuzione">1. Modello di esecuzione</a></h1>
+<p><img src="images/allocazione_della_memoria_2/image.png" alt="image.png" /></p>
+<p>Ogni linguaggio di programmazione ha un proprio modello specifico di esecuzione, più o meno articolato.</p>
+<p><em>Che cos’è il <strong>modello di esecuzione</strong>?</em>
+È quell’insieme di comportamenti che l’elaboratore attua a fronte dei costrutti di alto livello che il linguaggio propone.
+Ci sono linguaggi un po’ esoterici che hanno modelli di esecuzione particolari.
+Ad esempio il linguaggio Prolog è basato sul concetto di <strong>unificazione</strong> e di <strong>ricerca della prova</strong>, che lo pone a esplorare la sua base di conoscenza usando una serie di regole di produzione, facendo delle cose completamente diverse da quello che fa qualunque altro linguaggio standard che voi conoscete.</p>
+<p>Il JavaScript, ad esempio, assume che il programma sia costituito in parte dalle istruzioni immediate che vengono fornite, che possono determinare delle invocazioni di funzioni, che possono avere degli effetti sul futuro, per cui mantiene al suo interno una coda degli eventi nella quale vengono pubblicate le cose che succederanno.
+E attinge da questa coda per fare le proprie operazioni.
+Questo tipo di comportamento non si ritrova altrove, se non adottando delle librerie che lo vadano a emulare, mentre nel JavaScript è intrinseco nel linguaggio stesso.</p>
+<p>E così via.</p>
+<p>Il modello che ciascun linguaggio propone, in generale, non corrisponde neanche un po’ al dispositivo reale.
+Il compilatore si prende la briga di trasformare le istruzioni scritte nel linguaggio di alto livello X in comportamenti tipici di un particolare processore.
+Questa trasformazione in parte è legata alla sequenza di istruzioni che vengono generate per ciascun costrutto di alto livello (quando qui scrivo for, cosa genero? Quando qui scrivo if, cosa genero? Eccetera..).</p>
+<p>In parte è dovuta al fatto che inframezzate a queste istruzioni, che sono la traduzione diretta dei costrutti di alto livello del linguaggio, vengono messe chiamate a libreria, che servono a garantire che certe cose avvengano come debbono avvenire.
+Questi pezzi di chiamate a libreria, che sono inserite automaticamente dal compilatore, servono a generare questa astrazione, a fare in modo che l’astrazione funzioni.
+La libreria prende il nome di <em><strong>RTL</strong></em>, <em>Runtime Support Library</em>, o <em>Runtime Library</em> semplicemente, e dipende dai diversi linguaggi.</p>
+<p><img src="images/allocazione_della_memoria_2/image%201.png" alt="image.png" /></p>
+<p>Quindi quello che succede è che la compilazione trasforma il programma sorgente che noi abbiamo scritto in un nuovo programma, che ha un modello di esecuzione più semplice, e che è associato a una libreria di esecuzione scritta specificatamente per quel particolare sottosistema.</p>
+<p>Notate che il livello più semplice può voler dire cose molto diverse.</p>
+<p>Può voler dire, ad esempio, che è direttamente eseguibile da un particolare elaboratore, oppure che può essere eseguito attraverso l’intervento di un programma ulteriore che lo abbassa di livello.</p>
+<p>Nel caso di Java, voi compilate il vostro programma in bytecode, e poi la JVM, la Java Virtual Machine, traduce questo bytecode, just in time, in codice eseguibile per l’elaboratore concreto.</p>
+<p>Che poi va in esecuzione.</p>
+<p>Va in esecuzione su una macchina fisica? Forse.
+A volte va in esecuzione su una macchina virtuale.</p>
+<p>A volte c’è un ulteriore livello.
+Ad esempio, sui Mac che montano l’ARM, c’è un software chiamato Rosetta, che trasforma dei programmi eseguibili x86 in ARM.
+E quindi, ignorando tutto il resto, guarda “Ah, questa qui è l’istruzione <em>LOAD SP qualcosa</em>. Magnifico!”. Qual è il corrispondente ARM? Non c’è, e allora simulo: diventa queste altre tre istruzioncine.
+Però dà la possibilità di poter lanciare qua un programma scritto per la versione macOS x86, pur avendo un processore completamente diverso.</p>
+<p>A volte questa trasformazione è fatta nel contesto di una virtual machine, perché avete lanciato, che ne so, VirtualBox o qualcosa di simile, Docker, e così via.
+Contesti che ulteriormente trasformano di livello in livello.</p>
+<p><img src="images/allocazione_della_memoria_2/image%202.png" alt="image.png" /></p>
+<p>Cosa c’è nelle librerie di esecuzione?
+Beh, ci sono quei meccanismi di base che permettono ai programmi di alto livello di funzionare come ci aspettiamo che funzionino.
+Da un lato supportano le astrazioni che quel particolare linguaggio vuole offrire, dall’altro si prendono la briga di interfacciarsi col sistema operativo nascondendo le differenze.</p>
+<p>Per cui se voi dovete aprire un file, in C, scrivete sempre <code>fopen</code>, non preoccupandovi del fatto che su Windows quella <code>fopen</code> in alcuni casi diventa <code>Create File</code>, e invece su Linux quella <code>fopen</code> diventa una <code>Open</code>, System Call di livello 2.</p>
+<p>Perché questo livello di dettaglio il linguaggio ve lo nasconde, almeno in parte.</p>
+<p>All’interno delle librerie di esecuzione troviamo due tipologie di funzioni.
+Alcune sono completamente invisibili al programmatore, vengono inserite automaticamente dal compilatore per supportare l’esecuzione.
+Ad esempio, tutte le volte che voi chiamate una funzione, nella chiamata c’è anche un pezzo di codice che va a vedere “<em>sto mica facendo traboccare lo stack?”</em>, perché se trabocca lo stack perdo dei dati e quindi il programma deve interrompersi.</p>
+<p>Oppure, ce ne sono altre per cui quando assegnate a una struttura un’altra struttura, lì bisogna fare una memcpy, e viene fatta in automatico: voi scrivete a=b, vi perdete il dettaglio che a sono 200 byte e b anche, e che lui li deve copiare sopra.
+Ci pensa il compilatore a generare questo pezzo di operazione.</p>
+<p>Altre sono invece evidenti al programmatore, come la <code>fopen</code>, per cui il linguaggio vi espone un’astrazione di alto livello, e si prende poi lui la briga di tradurla nel dettaglio che serve per il sistema operativo X, o cose del genere. Fopen, malloc, e così via.</p>
+<p><img src="images/allocazione_della_memoria_2/image%203.png" alt="image.png" /></p>
+<p>Nel linguaggio C e C++, l’astrazione che viene offerta al programmatore è quella che il programma si presenta come se fosse l’esecutore, l’utilizzatore unico dell’intero sistema, che si immagina completamente dedicato al programma stesso.</p>
+<p>Quindi il programma crede di aver accesso all’intero spazio di indirizzamento, i puntatori vi lasciano scrivere un numero qualunque tra 0 e 2 alla n-1, potete immaginare di allocare quanta memoria vi pare, potete pensare di avere tutto il tempo che volete.</p>
+<p>Il fatto che poi fisicamente voi non possiate impicciare gli altri è garantito dal sistema operativo che, adottando il meccanismo della memoria virtuale, confina l’esecuzione del singolo programma nel suo spazietto e impedisce che questo interferisca con altri.</p>
+<p>Il fatto che i puntatori potenzialmente possono contenere qualunque numero compreso tra 0 e 2 alla n-1 dà l’impressione che sia lecito andare a cedere a qualunque locazione.
+Ma sappiamo che non è così.</p>
+<p>I limiti, gli indirizzi effettivamente accessibili sono molti molti di meno e sono uno spazio sparso, proprio come disegnato prima nella slide, a pezzettini.
+Tra l’altro ogni volta in posti leggermente diversi.</p>
+<p>Perché in posti leggermente diversi?
+E’ sempre per difendersi dai virus. Inizialmente non era così. I sistemi operativi allocavano a un indirizzo specifico il punto di partenza del programma. E i virus lì ci si buttavano a capofitto.</p>
+<p>E allora i programmi, i sistemi operativi, hanno introdotto la randomizzazione per cui il programma inizia a una certa cella più o meno delta, dove delta è random. Questo sposta un po’ le cose e rende più difficile la vita ai virus.</p>
+<p><img src="images/allocazione_della_memoria_2/image%204.png" alt="image.png" /></p>
+<p>Il C, mi presenta un’astrazione tipica in cui io scrivo delle istruzioni di alto livello che posso immaginare essere eseguite una per volta nell’ordine indicato dal programmatore.</p>
+<p>Quindi se ho scritto:</p>
+<pre><code class="language-c">if A &gt; B {
+	printf(...);
+else {
+	// etc..
+}
+</code></pre>
+<p>immagino che le cose vanno esattamente nell’ordine in cui le ho scritte.</p>
+<p>Non è detto che succeda quello.
+Perché <strong>il compilatore</strong> può decidere che certe cose, fin tanto che nessuno se ne accorge, le può scambiare.</p>
+<p><strong>Il processore</strong> può decidere che, fin tanto che nessuno se ne accorge, può fare delle cose diverse (varie tecniche di ottimizzazione: dei branch, esecuzione speculativa, etc..).</p>
+<p>Non è detto che se scrivo <code>i=25</code>, 25 venga scritto dentro i.</p>
+<p>Perché il processore o il compilatore hanno la facoltà, fin tanto che non rompono l’astrazione sequenziale, di riordinare i pezzi lì dentro.</p>
+<p>Se tu mi dici, prima scrivi qui e poi scrivi lì, e qui e lì sono due cose distinte, beh, chi se ne frega, le posso scambiare. Tanto che differenza fa?
+Fin tanto che il programma è costituito da un unico flusso di elaborazione, non fa nessuna differenza.</p>
+<p>Ma se il programma è costituito da due flussi di elaborazione, e i due flussi possono <em>osservarsi</em>, cioè io posso vedere cosa tu stai facendo, il fatto che tu prima abbia scritto in un posto e poi nell’altro mi cambia la vita.</p>
+<p>Non ci sono limiti sul numero di istruzioni da eseguire, sul tempo richiesto all’esecuzione, né sulla memoria necessaria: io scrivo il mio programma così com’è, il linguaggio non mi dà evidenza. Ma i limiti esistono.
+E il programmatore deve capire, perché se io devo garantire che quella roba lì mi gestisce l’ABS, per stare nell’esempio di prima, deve gestirmi l’ABS, sempre.</p>
+<p>All’interno del flusso principale di esecuzione possiamo abilitare degli ulteriori flussi di esecuzione secondari, chiamati <strong>thread</strong>.
+Questi permettono di fare più cose quasi contemporaneamente.
+Davvero in parallelo se la CPU è multicore, o alternando un po’ l’una e un po’ l’altra cosa se la CPU non è multicore.
+E, come abbiamo già avuto modo di dire prima, introducono un ordine di grandezza nella complessità del programma, creando delle situazioni completamente inattese.</p>
+<p><img src="images/allocazione_della_memoria_2/image%205.png" alt="image.png" /></p>
+<p>Il singolo flusso di esecuzione standard di un programma C o C++ è costituito da una computazione che si dipana dalla funzione main.
+Noi abbiamo l’impressione che il nostro programma incominci invocando il main e termini nel momento in cui il main finisce.</p>
+<p>Non è così.
+Ci possono essere delle parti che vengono eseguite prima, anzi ce ne sono sicuramente parti che vengono eseguite prima, sia di sistema sia aggiunte da noi.
+Ci sono delle parti che vengono eseguite dopo, sia di sistema sia da noi.</p>
+<p>Ad esempio, se sono in C++ e ho costruito delle variabili globali di tipo classe, queste possono avere un costruttore.
+Il costruttore delle variabili globali viene invocato prima che il main parta.
+Il distruttore delle variabili globali viene invocato dopo che il main è terminato.</p>
+<p>Quindi già questo mi cambia un po’ le carte in tavola.</p>
+<p>Ma prima che il costruttore venga chiamato parte la funzione di setup del sistema operativo che mi prepara l’ambiente di esecuzione e fa cose.</p>
+<p>In più, il C e il C++ assumono l’esistenza di due strutture dati ausiliarie.</p>
+<ul>
+<li>Una a forma di pila, chiamata lo <strong>stack</strong>, che serve a gestire le chiamate, la storia delle chiamate (e quindi dei punti di ritorno), e le variabili locali.
+In C++, all’interno dello stack, è anche gestita la parte, la gestione strutturata delle eccezioni.</li>
+<li>E una seconda struttura ausiliaria, lo <strong>heap</strong>, che serve a usare la memoria dinamica.</li>
+</ul>
+<p>Queste due strutture crescono e si contraggono via via che il programma va in esecuzione.
+Mentre lo stack è fortemente prevedibile e, a fisarmonica, si allarga e comprime, in modo compatto, lo heap evolve in modo non compatto, sotto il controllo del programmatore. Che quindi diventa responsabile della sua gestione.</p>
+<h1 id="2-stack"><a class="header" href="#2-stack">2. Stack</a></h1>
+<p><img src="images/allocazione_della_memoria_2/image%206.png" alt="image.png" /></p>
+<p>Lo stack è un blocco che viene allocato automaticamente all’avvio del programma.</p>
+<p>Lì dentro c’è la storia delle chiamate a funzione, degli argomenti passati a ciascuna funzione, dei valori di ritorno, delle variabili locali e così via.
+Viene utilizzato a partire da un estremo, si espande verso il basso e si contrae quando le funzioni ritornano.</p>
+<p>Poiché la dimensione è finita, limita la profondità della ricorsione.
+Così anche come la dimensione delle variabili che possono essere allocate come variabili locali.</p>
+<h2 id="21-esempio-limite-stack"><a class="header" href="#21-esempio-limite-stack">2.1 Esempio limite stack</a></h2>
+<p><img src="images/allocazione_della_memoria_2/image%207.png" alt="image.png" /></p>
+<p>Questa funzione f alloca una variabile locale. Supponiamo <code>uint_8t</code>, un intero a 8 bit, quindi un byte, e lo chiamiamo <code>buffer</code>, di 1024 per 1024. È un array di un mega.</p>
+<p>Quando io chiamo f di 1, quello che succede è che verrà chiamato, entro dentro f, alloco questa cosa. Poi stampo quanto vale i. Poi mi chiamo ricorsivamente f con <code>i+1</code>.</p>
+<p>Questo cosa vuol dire?
+Che io ho invocato f nel main, che ha preso il suo simpatico buffer da un mega, mi stampa 1 e poi si richiama.</p>
+<p>Cosa succede richiamandosi?
+Che alloca un altro buffer da un mega, stampa 2 e poi si richiama. E alloca un altro buffer da un mega.</p>
+<p>Quando si romperà questa ricorsione?
+Alla settima chiamata.</p>
+<p><code>Program finished with the exit code 139 (interrupted by signal 11: SIGSEGV)</code> → <em><strong>Segment violation</strong></em>.</p>
+<p>Ho messo 7 blocchi da un mega e mentre cercavo di mettere l’ottavo ho già traboccato.</p>
+<p>Perché in realtà lo stack, sulla macchina su cui stiamo eseguendo l’esempio, è esattamente 8MB, ma ad ogni array da 1MB che allochiamo si aggiungono qualche byte in cui c’è l’indirizzo di ritorno, perché via via che mi chiamo la funzione f devo scrivere dove devo tornare, poi c’è lo spazio per la variabile i che devo passare, quindi si mangia una decina di byte in più a giro, e quindi in realtà l’ottavo non ci sta, perché quando cerco di allocarlo, vado fuori.</p>
+<p>Questo ci dice che noi sullo stack più di 8MB non mettiamo.</p>
+<p><img src="images/allocazione_della_memoria_2/image%208.png" alt="image.png" /></p>
+<p>Chiaramente se invece di mettere 1024 per 1024 mettiamo di meno, qui arriva.
+Non arriva a 8 mila, si ferma prima a 7800.</p>
+<p>Perché?
+Perché adesso i 12 byte in realtà di overhead che io ho, 8 per il ritorno più 4 dell’intero, a ogni giro, pesano di più.
+Perché sono 12 su 1024. Prima erano 12 su 1 mega, quindi erano una frazione piccola.</p>
+<p><img src="images/allocazione_della_memoria_2/image%209.png" alt="image.png" /></p>
+<p>Adesso se addirittura abbatto e qui scendo a 1, e quindi ho messo un singolo byte, non arrivo a 8 milioni. Arrivo molto prima.</p>
+<p>Questo ci dice che lo stack è limitato. Non possiamo permetterci di ricorrere più di tanto. Non possiamo allocare sullo stack cose grosse. O perlomeno se lo facciamo dobbiamo farlo un po’ con cautela, altrimenti si spacca.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2010.png" alt="image.png" /></p>
+<p>Questo tipo di situazione si chiama stack overflow: lo stack trabocca.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2011.png" alt="image.png" /></p>
+<p>Quando il nostro programma parte, lo stack <strong>non è vuoto</strong>.
+C’è già l’indirizzo a cui la funzione main dovrà ritornare, perché la funzione main non è l’inizio del nostro programma.</p>
+<p>L’inizio del nostro programma è un pezzo di funzione che dipende dal sistema operativo, che può chiamarsi <em>CRT startup</em> (CRT → C Runtime) o qualcosa del genere, che serve a preparare lo stack, lo heap, insomma a costruire tutti i pezzi che servono e poi dopo che ha fatto tutto, chiama il main.</p>
+<p>Quindi quando il main arriva, sullo stack già c’è l’indirizzo a cui dovrà tornare, perché il main finisce con una <code>return 0</code>.
+E dopo che il main è ritornato, quello 0 servirà per far sapere come finisce il nostro processo: diventerà l’exit code del processo.</p>
+<p>Comunque, il main parte e sullo stack già c’è qualcosa.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2012.png" alt="image.png" /></p>
+<p>Poi qui, la prima cosa che succede, viene dichiarato una variabile locale, int v=9. Lo stack cresce. Si allunga e lì ci infilo v, che vale 9.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2013.png" alt="image.png" /></p>
+<p>Poi dico <code>v = f(v)</code>.</p>
+<p>Per poter chiamare f(v) devo fare un po’ di pezzi. Siccome f(v) restituirà qualcosa, mi darà un valore di ritorno, devo prima di tutto fare uno spazio dove questo valore di ritorno verrà scritto. Ci sono quei tre puntini chiamati <code>res</code>: è il posto dove lì depositerò il mio risultato. Cioè il risultato che f avrà. Io devo prepararlo prima lo spazio.</p>
+<p>Poi siccome a f passo un parametro, devo metterglielo. Devo metterglielo perché io potrei passargli v, ma potrei passargli v+1, potrei passargli v per 5 diviso 54.
+Quindi di per sé quella roba lì è un’espressione.
+Quindi valuterò l’espressione, metterò il risultato dell’espressione sullo stack.</p>
+<p>f ancora non l’ho chiamata, ma ho già preparato i pezzi perché possa essere eseguita.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2014.png" alt="image.png" /></p>
+<p>Dopo che ho fatto spazio per il posto di ritorno, ho messo tutti i parametri di cui la mia funzione f ha bisogno, posso effettivamente eseguire l’istruzione assembler <code>call</code>.</p>
+<p>L’istruzione assembler call fa sì che nello stack venga aggiunto il valore dell’instruction pointer aggiornato, cioè la prossima istruzione che dovrò eseguire quando f sarà finita.</p>
+<p>Quindi lo stack è cresciuto ulteriormente.
+Mi è entrato dentro l’indirizzo di ritorno che punta a quello che dovrò fare, prendere il valore che f restituisce e metterlo dentro v, e l’instruction pointer si è trasferito all’inizio di f.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2015.png" alt="image.png" /></p>
+<p>Entrando dentro f, f dice “<em>a me serve una variabile i</em>”.
+Notate che f, il suo parametro (che per l’altro era il risultato dell’espressione v nell’invocazione della funzione) l’ha chiamato a. Ma sono la stessa cosa.</p>
+<p>Quindi quel 9 che c’è lì prima del return address, nel contesto di f, si chiama a.
+f dice “<em>a me serve una variabile locale, che chiamo i</em>”.
+Lo stack cresce ancora. Lo piazzo lì.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2016.png" alt="image.png" /></p>
+<p>Poi c’è un if: <code>a</code> è maggiore di 0 (vale 9), quindi salta direttamente al blocco then, e dice “<em>return a+i</em>”.</p>
+<p>Aspetta, a+i: calcoliamo questa espressione — <code>a</code> vale 9, <code>i</code> vale 5, <code>a+i</code> vale 14.</p>
+<p><em>Dove lo scrivo sto 14?</em>
+Al posto dei tre puntini, là dove già avevo lo spazio.</p>
+<p>Sono tutti indirizzi relativi alla cima dello stack.
+Altrimenti ritornerei un’altra cosa.</p>
+<p>Ma return non solo dice il valore, quindi prende a+i, 14, e lo scrive nello spazio dei tre puntini.
+Ma dice anche “piantala lì”.</p>
+<p>Piantala lì cosa vuol dire? Vuol dire che lo stack deve contrarsi.
+Nel tornare al livello, i viene egettata, sparisce.
+L’indirizzo di ritorno viene preso e messo nell’instruction pointer.</p>
+<p>In modo tale che lui vada a eseguire quell’istruzione lì, al ciclo prossimo.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2017.png" alt="image.png" /></p>
+<p>Torno all’altezza dell’uguale. All’altezza dell’uguale vengono fatte due operazioni.
+Si prende quello che c’era nei tre puntini e lo si deposita, in questo caso, dentro <code>v</code>.
+E si tira via quello che, quel pezzo di incastellatura che era stata fatta per poter chiamare f.</p>
+<p>Quando ho chiamato f, ho preparato lo spazio per il valore di ritorno, ho preparato lo spazio del suo parametro, e poi ho chiamato fisicamente f.</p>
+<p>Quando f ritorna, tiro via automaticamente l’indirizzo di ritorno, perché quello è l’esecuzione dell’istruzione assembler ret, return, che mi fa tornare al mio posto, ma nel posto in cui atterro, così come prima erano stati messi delle istruzioni assembler che mi dicevano “infila questo, infila quello” sullo stack, subito prima di poter fare le altre cose, ora fa “togli questo, togli quello” e mi ripulisce la situazione.</p>
+<p>Quindi al termine della chiamata di f io vedo lo stack come era prima che la facessi.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2018.png" alt="image.png" /></p>
+<p>Dopodiché qui ho finito questa cosa, <code>return 0</code>, lo zero viene messo nello spazio dove lui può già tornare, che era stato preallocato dal chiamante, la CRT Startup.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2019.png" alt="image.png" /></p>
+<p>E infine lo stack si contrae, lasciando spazio in questo caso solo allo zero, perché lo zero me l’aveva messo il chiamante e lo deve trovare lui ancora, perché poi lo toglierà lui.</p>
+<p>Questa è la storia dello stack.</p>
+<p>Quindi lo stack si allunga ogni volta che dichiaro una variabile locale, si contrae quando la variabile locale non si vede più.</p>
+<p>Attenzione: se la variabile locale è definita in un blocco, quindi</p>
+<pre><code class="language-c">if (somecondition) {
+	int i
+} // finisce di vivere qui
+</code></pre>
+<p>quella <code>i</code> inizia a esistere mentre entro dentro il then dell’if, e finisce di esistere quando arrivo alla chiusa graffa corrispondente.
+Quindi <strong>non tutte le variabili locali durano quanto l’intera funzione.</strong>
+Le variabili che sono definite in un blocco durano quanto il blocco.
+Appena l’esecuzione raggiunge la chiusa graffa del blocco, quelle variabili vengono espulse.</p>
+<p>Se ho una variabile locale dentro un for, k viene creata e distrutta dieci volte.</p>
+<pre><code class="language-c">for i=0, i&lt;10, i++ {
+	int k = something // k creata e distrutta ad ogni iterazione del for
+}
+</code></pre>
+<p>Quindi quello stack per dieci volte fa, si allunga, si accorcia, si allunga un po’ di cose e si accorcia, eccetera, e va avanti così.</p>
+<p>Quindi la durata in vita delle variabili locali è circondata, cioè è delimitata dal tempo in cui il programma sta nel blocco in cui sono definite.</p>
+<p>Chiaramente, in questo caso, la variabile <code>v</code> che inizia all’inizio del main ragionevolmente dura fino a che non raggiungo la fine del main. È una variabile che ha una vita più lunga.</p>
+<p>La variabile <code>i</code> che è nella funzione f esiste soltanto mentre è in corso una chiamata f. Una volta che la chiamata f è finita, la variabile <code>i</code> non esiste più.</p>
+<p>Questo ci fa intravedere qualche possibile problema.
+Se la funzione f, invece di ritornare un intero, ritornasse un puntatore e scegliesse per qualche motivo di ritornare come puntatore l’indirizzo della variabile <code>i</code>, sarebbe un problema.</p>
+<p><em>Perché?</em>
+Certamente mentre la funzione f è in esecuzione, la variabile <code>i</code> esiste e ha un suo indirizzo. Non sappiamo qual è, ma fa lo stesso. Nel momento in cui va in esecuzione lo saprà.</p>
+<p>Piccolo problema: lo può ritornare quel puntatore, è un numero, quindi come ritorno 5 ritorno anche un’altra cosa. Ma quel numero lì appena f ritorna, non rappresenta più una locazione lecita, perché in quello spazio lì io potrei farci altro, dipende da cosa c’è scritto dopo.</p>
+<p>Quindi questo ci pone il problema di dire: <em>ma i puntatori come funzionano?</em></p>
+<p><img src="images/allocazione_della_memoria_2/image%2020.png" alt="image.png" /></p>
+<p>Quindi, il fatto che lo stack cresca a fisarmonica fa sì che allocazione e rilascio siano due operazioni efficientissime.</p>
+<p>Perché?
+Perché se io ho bisogno di spazio devo solo incrementare lo stack pointer (o decrementarlo, visto che in realtà vado verso il basso).</p>
+<p>Lo stack pointer parte da 7FFFFFFF e scende verso il basso.
+Quindi farmi spazio sullo stack pointer equivale a sottrarre dallo stack pointer il delta di cui ho bisogno.
+Liberare memoria vuol dire sommare allo stack pointer per farlo tornare verso l’alto.</p>
+<p>Però ho un vincolo. I dati che sono nello stack durano solo, al massimo, quanto l’intera funzione in cui sono definiti. In realtà durano quanto il blocco in cui sono definiti, che può essere molto meno della funzione.</p>
+<p>Quindi se io ho bisogno di salvarmi un’informazione che dura più a lungo, ecco lì me la perdo.
+Per questo motivo il valore di ritorno è <strong>preallocato dal chiamante</strong>. Così quel dato lì mi rimane.</p>
+<p>E il chiamante usa quello spazio per poi metterci quello che è, per prendere poi il risultato e poi lo libera.</p>
+<p>Inoltre, poiché lo spazio totale dello stack è definito a priori, il sistema operativo quando il programma parte stabilisce quanto è grande lo stack, abbiamo visto sulla macchina dell’esempio di prima sono 8MB, quello lì è il dato più grande che ci posso mettere.</p>
+<p>Se avessi bisogno, che ne so, perché sto facendo un film e ho bisogno di tenerci 64GB, o sto facendo un modello LLM, che ne so, qualunque cosa che ha bisogno di memoria, sullo stack non ce lo metto.</p>
+<h1 id="3-heap"><a class="header" href="#3-heap">3. Heap</a></h1>
+<p><img src="images/allocazione_della_memoria_2/image%2021.png" alt="image.png" /></p>
+<p>C’è una seconda struttura però che ci interessa tantissimo, si chiama lo heap.</p>
+<p>Heap vuol dire il mucchio, dove le cose sono buttate così, una a fianco all’altra, come capita.</p>
+<p>Tutte le volte in cui un dato ha un ciclo di vita che non è collegato alla funzione in cui quel dato nasce, oppure, pur essendo legato a quella funzione, è grosso e quindi potenzialmente mi potrebbe provocare uno stack overflow, oppure ha una dimensione che al momento della compilazione non è nota (e quindi ho bisogno di allocare un certo numero di byte, ma quanti esattamente lo saprò solo a run time, deducendolo da uno dei parametri), quella cosa lì non può stare sullo stack, perché il compilatore non ha abbastanza informazioni per poterla fare.
+Se non è nota la size, io non so di quanto abbassare lo stack e quindi non ce lo posso mettere lì dentro, oppure, se me lo può mandare in overflow, non ce lo devo mettere perché se no mi spacca tutto, oppure, se il suo tempo di vita non è collegato all’esecuzione della funzione, devo metterlo da un’altra parte dove abbia un tempo di vita possibilmente più lungo, o a volte più breve, perché magari mi serve solo all’inizio della mia funzione, ma non esattamente in questo blocco, in una zona un po’ più indefinita che non coincide proprio con un blocco.</p>
+<p>Quindi lo devo tenere altrove.</p>
+<p>Nel caso di C, C++ e Rust, questa zona a parte si chiama heap, o anche in alcuni libri è chiamato free store, sono la stessa cosa.</p>
+<p>Lì dentro si ottiene un blocco di memoria che rimane disponibile fino a che esplicitamente non gli diciamo “<em>basta, non mi serve più</em>”.</p>
+<p>Lo heap ha più spazio dello stack.</p>
+<p>Quanto di più? Dipende.
+In generale noi sappiamo che è più grande. Le cose grosse devono andare nello heap.</p>
+<p>Ci sta qualunque cosa, dipende dal sistema operativo.</p>
+<p>Se faccio le prove qua su macOS posso provare ad allocare 1000 giga, un tera. Mi dice “yes”, me le fa allocare. Poi quando vado dentro a un certo punto si rompe, ma allocare me le lascia allocare.</p>
+<p>A differenza di quanto avviene per lo stack, dove le singole aree hanno un nome, ed è il nome della variabile che abbiamo messo, per cui quella cosa lì noi la chiamiamo i, j, k, l etc.. come i nomi che gli abbiamo dato, e lui internamente le fa diventare bp+4, bp+8, cose del genere, le zone sullo heap <strong>non hanno un nome</strong>, sono <strong>solo accessibili tramite dei puntatori</strong>.</p>
+<p>Io chiedo di avere un blocco grande 64 byte, mi viene restituito il puntatore all’inizio di questo blocco. Lo devo memorizzare in una variabile di tipo <code>qualcosa *</code> : <code>int *</code>, <code>uint8 *</code> etc.. ma una variabile di tipo puntatore.</p>
+<p>Per accedere al suo contenuto dovrò <em><strong>dereferenziare</strong></em> il puntatore.</p>
+<p>Se la mia variabile di tipo int* si chiama <code>ptr</code>, per sapere cosa c’è scritto dentro o per scriverci qualcosa dentro, devo mettere <code>*ptr</code>, cioè devo dereferenziarlo, dire “<em>prendi quel numero lì, consideralo indice nello spazio di indirizzamento e vai a vedere</em>”.</p>
+<p>Questo è il primo problema, quindi necessariamente se devo manipolare dati grossi che hanno durata diversa da quella di una funzione o hanno dimensione non nota in fase di compilazione, devo avere dei puntatori tra le mani.</p>
+<p>Secondo problema, questi puntatori inizialmente devo richiederne l’uso allocando in modo esplicito la memoria, invocando la funzione che va a cercare un posto e mi restituisce l’indirizzo del punto d’inizio.</p>
+<p>E ho la responsabilità prima o poi di rilasciarli, cioè di dire “<em>runtime execution environment, sappi che questa zona non mi serve più, te la restituisco, potrebbe servire a qualcun altro”.</em></p>
+<p>Notate che il riciclo è il principio fondamentale, sullo stack il riciclo è frequentissimo, io chiamo la funzione f, usa lo stack per farci delle cose allungandolo, la funzione f ritorna, lo stack si ricontrae, e poi dopo aver chiamato la funzione f chiamo la funzione g, lo stack si riespande e va a occupare gli stessi spazi che prima usava la funzione f, ma ormai la funzione f è ritornata, chi se ne frega, va benissimo, quindi quella zona lì è usata più e più volte, ed è il motivo per cui è pericolosissimo lasciare dei puntatori sparsi nello stack, perché io ti lascio adesso questo dato, che vale una certa cosa, ma poi io torno, è rimasto un puntatore farlocco, parte qualcun altro che in quella zona scrive altre cose, quindi quel puntatore non so più che cosa contiene.</p>
+<p>Sullo heap anche, solo che mentre sullo stack io non devo fare nulla per causare questo riciclo, sullo heap il riciclo lo devo provocare io dicendo “<em>tu mi hai dato questa zona, io l’ho usata, adesso non mi serve più, te la restituisco</em>”, e questo permetterà, dopo che io ho restituito un blocco di memoria, se da qualche altra parte del mio programma servirà dell’altra memoria, di poterla eventualmente riusare.</p>
+<p>Se io non rilascio la memoria, cosa succede?
+Beh, il sistema operativo dice “<em>ne hai bisogno ancora? tienila, non c’è problema</em>”.</p>
+<p>Piccolo problema, se io ne chiedo un pezzo, ok, ne chiedo un altro, ok, ne chiedo un altro, eccetera, lo heap è esattamente come lo stack: ha dimensione, <strong>finita</strong>.</p>
+<p>E’ molto più grande dello stack, ma è finito, e dopo un po’ si esaurisce.
+Esaurendosi, verrà il momento in cui gli chiedo ancora un pezzo, ma non ne ha più.</p>
+<p>E a quel punto il programma si rompe, proprio come si rompe con lo stack overflow.</p>
+<p>C’è una responsabilità in più: io lo devo rilasciare <strong>una e una sola volta</strong>.
+Non meno- <a href="#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2</a></p>
+<ul>
+<li><a href="#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2</a></li>
+<li><a href="#indice">Indice</a></li>
+<li><a href="#1-modello-di-esecuzione">1. Modello di esecuzione</a></li>
+<li><a href="#2-stack">2. Stack</a>
+<ul>
+<li><a href="#21-esempio-limite-stack">2.1 Esempio limite stack</a></li>
+</ul>
+</li>
+<li><a href="#3-heap">3. Heap</a>
+<ul>
+<li><a href="#31-esempio-heap">3.1 Esempio heap</a></li>
+</ul>
+</li>
+<li><a href="#4-organizzazione-dello-spazio-di-indirizzamento">4. Organizzazione dello spazio di indirizzamento</a></li>
+</ul>
+<p>E vengono dei mostri. Per cui il programma compila, e poi quando esegue capitano cose a caso. Questi sono gli <strong>undefined behavior</strong>.</p>
+<h2 id="31-esempio-heap"><a class="header" href="#31-esempio-heap">3.1 Esempio heap</a></h2>
+<p><img src="images/allocazione_della_memoria_2/image%2022.png" alt="image.png" /></p>
+<p><img src="images/allocazione_della_memoria_2/image%2023.png" alt="image.png" /></p>
+<p>Vediamo la storia dello heap.</p>
+<p>Ripartiamo con la nostra, con il nostro main.</p>
+<p>Parto al solito con lo spazio per valore di ritorno, alloco la variabile locale V, sta nello stack esattamente come prima.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2024.png" alt="image.png" /></p>
+<p>Poi chiamo, introduco la variabile <code>buf</code> che è di tipo int*.
+Quindi lo stack cresce per avere spazio per la variabile buf.</p>
+<p>E a quanto inizializzo la variabile buf? La inizializzo con il valore di ritorno di f di V.
+Dunque devo chiamare f e passargli V. E mi serve un valore di ritorno.</p>
+<p>Quindi non solo sullo stack ho messo buf, ma faccio anche spazio per <code>res</code>, il posto dove verrà messo il ritorno, e faccio anche lo spazio per il parametro di f, che in questo caso è il risultato dell’espressione <code>v</code>, che vale 2.</p>
+<p>E quindi preparo questi tre pezzi.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2025.png" alt="image.png" /></p>
+<p>E poi fisicamente chiamo f. Quindi lo stack cresce ancora e ci metto l’indirizzo di ritorno.
+Adesso che ho fatto tutte queste simpatiche cose, vedo cosa succede dentro f.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2026.png" alt="image.png" /></p>
+<p>Che fa f?
+Guarda al solito se A è maggiore di 0 e chiede di allocare un blocco di memoria.</p>
+<p>Qui lo faccio con la sintassi del C++: <code>new int[a];</code>
+Quel new vuol dire “<em>lo alloco nello heap</em>”.</p>
+<p>Che cosa alloco? Un array di interi.</p>
+<p>Quanti interi? Eh non lo so. A differenza dell’esempio che vi ho fatto vedere prima con lo stack overflow, dove scrivevo <code>uint8_t[1024x1024]</code>, lo sapevo in compilazione, faceva un milione qualcosa, qui è int di a.</p>
+<p>A runtime lo saprò, in questo caso è 2. In un altro caso potrebbe essere 27, o 2500 etc...</p>
+<p>Questa scrittura mi permette di andare a cercare sullo heap da qualche parte dove c’è un blocco con almeno due interi vicini disponibile.</p>
+<p>Quindi <code>new int[a]</code> trova sullo heap uno spazio sufficiente per tenermi due interi, in questo caso.
+Prende il puntatore al primo, al byte iniziale del primo intero, e me lo restituisce.</p>
+<p>Cosa me ne faccio di questo valore restituito?
+Lo passo al return, che quindi lo deposita nell’apposita casellina che il chiamante mi ha preparato per mettere il risultato.</p>
+<p>E quindi ci mette dentro questo.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2027.png" alt="image.png" /></p>
+<p>E poi contrae tutto.</p>
+<p>Quindi contrae tutto, torno al chiamante, cosa succede?
+Il chiamante prende il valore che era stato restituito e lo deposita, in questo caso dentro buff.</p>
+<p>Quindi adesso mi ritrovo che buff punta da qualche parte nella memoria, dove ci sono due interi, quello che gli ho chiesto.</p>
+<p>Bene. Che faccio?
+Quello che voglio, lo uso, f è tornata ma buf è ancora lì, tranquillo.</p>
+<p>Quindi ho in questo caso sia una variabile la cui dimensione è nota solo a run time, sia la cui durata è più lunga della funzione in cui è nata.</p>
+<p>La memoria puntata da buf nasce nella funzione f ma rimane in vita, accessibile, dopo che la funzione f è finita.</p>
+<p>Faccio tutto quello che devo all’interno di quella memoria, quando non mi serve più ho la responsabilità di rilasciarla.</p>
+<p><img src="images/allocazione_della_memoria_2/image%2028.png" alt="image.png" /></p>
+<p>Come la rilascio? L’ho creato con new, lo rilascio con <code>delete</code>.</p>
+<p>Delete vuol dire “<em>quell’array lì non mi serve, buttalo via</em>”. Il sistema operativo prende atto e rilascia la memoria, si segna che non è più in uso, e la può dare a un altro se ne avesse bisogno.</p>
+<p><strong>Attenzione</strong>: dentro buf però è rimasto il numerino che c’era prima, non è che è sparito, dentro buf supponiamo che la new avesse trovato uno spazio all’indirizzo 3b7f59: quello è scritto dentro buf.</p>
+<p>Se non ci sto attento, io vedo che dentro buf c’è un valore lecito, e potrei cercare di guardare dove punta, ma adesso punta a casa di altri!</p>
+<p><img src="images/allocazione_della_memoria_2/image%2029.png" alt="image.png" /></p>
+<p>Qui va tutto bene perché scrivo return 0, quindi metto 0 nella celletta che mi è stata preparata per il valore di ritorno, contraggo lo stack e ho finito.</p>
+<h1 id="4-organizzazione-dello-spazio-di-indirizzamento"><a class="header" href="#4-organizzazione-dello-spazio-di-indirizzamento">4. Organizzazione dello spazio di indirizzamento</a></h1>
+<p><img src="images/allocazione_della_memoria_2/image%2030.png" alt="image.png" /></p>
+<p>Cosa ci trovo nello spazio di indirizzamento?</p>
+<p>Un po’ di cose:</p>
+<ul>
+<li>il <strong>codice eseguibile</strong>, tutte le istruzioni che sono state generate tipicamente sono scritte in modo compatto, vicino una all’altra per convenienza, tipicamente questa zona qui ha un accesso che è in lettura e in esecuzione, ma non in scrittura.</li>
+<li>l’<strong>area delle costanti</strong>, che è un blocco, se io nel programma ho dichiarato una serie di costanti (es. <code>const float p=3.14</code>), ecco, quella zona lì è una zona di nuovo che viene compattata insieme, e che viene marcata come read only, in modo da non rischiare di sporcarla.</li>
+<li>una zona dentro cui ci sono le <strong>variabili globali</strong>, ammesso di averne scritta qualcuna, che è una zona in lettura e scrittura.</li>
+<li>lo <strong>stack</strong>, che è una zona accessibile in lettura e scrittura preallocata di una certa dimensione.</li>
+<li>lo <strong>heap</strong>, che è una zona disponibile in lettura e scrittura, di per sé molto grande, ma in cui non ho diritto di scrivere e leggere dove cavolo voglio. Perché è soggetta ai limiti del fatto che il sistema, la runtime library, me le dà lui o lei che sia, quei pezzettini, che io gli vado a chiedere chiamando <code>new</code> e rilascio con <code>delete</code>, oppure se sono in C, che chiedo con <code>malloc</code> e rilascio con <code>free</code>. Quindi devo farci un po’ di attenzione.</li>
+</ul>
+<p><img src="images/allocazione_della_memoria_2/image%2031.png" alt="image.png" /></p>
+<p>Come sono messe queste aree?
+Ogni sistema operativo le sceglie a modo proprio. In Linux è molto facile vederle.</p>
+<p>Se voi prendete un processo qualunque di quelli esistenti, in una macchina Linux o una macchina virtuale, andate a guardare nel file system, trovate che nel file system c’è una cartella che si chiama /proc. /proc contiene degli pseudo directory, cui nome è un numero, 27521760.</p>
+<p>Quei numerini lì sono semplicemente i process ID dei processi attualmente in funzione.
+È una cartella fittizia, non corrisponde a un vero dato sul disco, è il modo con cui il sistema operativo permette l’introspezione, cioè vi fa vedere com’è fatto.</p>
+<p>Se prendete un processo che esiste, qui io banalmente quando ho stampato sta cosa avevo in esecuzione un processo che si chiamava 4742, dentro questa pseudo cartella c’è un altro file che si chiama /maps.</p>
+<p>È un file di testo, è sempre un file virtuale che viene generato.
+Dentro vi mette una per riga i blocchi dello spazio di indirizzamento in uso.</p>
+<p>In questo caso cosa ci trovo?
+C’erano un po’ di cose, qui adesso condensate per stare nella slide, e ho messo in evidenza i tre pezzi che mi interessavano.</p>
+<p>C’è un blocco da 7F4E3161D000, che è readable ed executable ma non writable (p ha semplicemente a che fare con il modo del mapping lì sopra), dove c’è una sequenza di 3538 byte che corrisponde all’eseguibile che stavo provando, home/user/testmem.</p>
+<p>C’è un’altra area che è l’area dello heap, c’è un’altra area, un po’ più in su, che è l’area dello stack, e c’è un’altra area che in questo caso è usata da un driver, un virtual driver del sistema operativo, e così via.</p>
+<p>Quindi avete la possibilità di andare a vedere, notate che lo spazio andrebbe da 0 a FFFFFFFF, ma solo dei pezzettini piccoli sono usati, tutto il resto è inaccessibile.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="01-allocazione_della_memoria_parte_1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="03-allocazione_della_memoria_parte_3.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="01-allocazione_della_memoria_parte_1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="03-allocazione_della_memoria_parte_3.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

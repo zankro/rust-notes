@@ -1,0 +1,353 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Lifetime</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="lifetime---malnati-13-14"><a class="header" href="#lifetime---malnati-13-14">Lifetime - Malnati 13-14 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-introduzione">1. Introduzione</a>
+<ul>
+<li><a href="#11-esempio">1.1 Esempio</a></li>
+</ul>
+</li>
+<li><a href="#2-riferimenti-e-funzioni">2. Riferimenti e funzioni</a></li>
+<li><a href="#3-riferimenti-e-strutture-dati">3. Riferimenti e strutture dati</a></li>
+<li><a href="#4-elisione-dei-tempi-di-vita">4. Elisione dei tempi di vita</a></li>
+</ul>
+<h1 id="1-introduzione"><a class="header" href="#1-introduzione">1. Introduzione</a></h1>
+<p>Tutti i valori hanno un <strong>tempo di vita</strong>.
+Un valore comincia a esistere nel momento in cui viene creato e memorizzato all'interno di una variabile che lo possiede, e resta in vita fino a quando la variabile che lo possiede (o quella che eventualmente l’ha ricevuto dopo un movimento) non viene distrutta.</p>
+<p>Nel momento in cui creiamo dei prestiti attraverso il concetto di riferimento, il tempo di vita di un singolo valore comincia a legarsi al tempo di vita di altri valori e questo in Rust è tracciato in modo esplicito. Adesso vogliamo capire meglio le regole che ci stanno dietro.</p>
+<p><img src="images/lifetime/image.png" alt="image.png" /></p>
+<p>Noi già sappiamo che un valore inizia a esistere all'interno del blocco in cui è definito e se non viene mosso cessa di esistere nel momento in cui esce dal proprio blocco, quando l'esecuzione cioè raggiunge il chiusa graffa corrispondente. Se di questo valore noi ricuperiamo il riferimento, il riferimento potrà esistere e quindi essere acceduto in vari modi soltanto nell'intervallo di tempo in cui il valore cui il riferimento si riferisce esiste, altrimenti si romperebbe tutto.</p>
+<p>Questa è la grossa differenza che Rust pone rispetto al C e al C++. In C e in C++ voi potete <em>recuperare</em> l'indirizzo di un valore quando vi pare, poi però il linguaggio non tiene traccia della durata dell’indirizzo, cioè del puntatore che ne avete ricavato, rispetto alla durata del valore stesso. Conseguentemente può succedere che il puntatore ci sia ancora quando il valore non c'è più e questo genera i vari problemi di dangling pointer, wild pointer, doppio rilascio o cose del genere.</p>
+<p>Tuttavia garantire il controllo dell'esistenza in vita del valore nel momento in cui ho un riferimento a questo pone dei vincoli sul linguaggio stesso, cioè devo occuparmi di gestirlo.</p>
+<p><em>Cosa succede nel momento in cui io recupero il riferimento di un valore e lo passo a una funzione?</em>
+Se lo passo a una funzione e la funzione ritorna subito, verosimilmente vuol dire che ho potuto prendere il riferimento a un valore e chiamare una funzione, quindi l'invocazione della funzione è sintatticamente tutta compresa nello scope in cui il riferimento è stato passato e di conseguenza per la durata strettamente della funzione le cose vanno bene.</p>
+<p>A condizione però di mettere alcuni puntini sulle i: questo riferimento ha una durata, una durata che il più delle volte noi non esplicitiamo perché Rust riesce in moltissime situazioni a capire quale sia effettivamente la durata e non ci chiede di annotare. Tuttavia se noi decidiamo di invocare una certa funzione passandogli uno o più riferimenti, in qualche modo internamente il compilatore si segna che questa invocazione è soggetta ai vincoli di quel tempo di vita.</p>
+<p>La cosa diventa particolarmente importante nel momento in cui la funzione ricevesse non un solo riferimento ma ne ricevesse due o più perché occorre che le azioni che la funzione fa siano compatibili con i tempi di vita dei relativi riferimenti. Quindi se noi avessimo una funzione come quella che è riportata a metà slide <code>fn f(p: &amp;i32)</code>, di fatto il compilatore trasforma questa notazione (di cui noi abbiamo fatto l'omissione del tempo di vita) nella sua forma esplicita, ovvero quella è una funzione che è soggetta a un tempo di vita chiamato <code>a</code> che coincide col tempo di vita del suo riferimento, cioè è lecito chiamare questa funzione nel momento in cui quel riferimento esiste, altrimenti non è lecito chiamare questa funzione.</p>
+<p>Questa annotazione permette al compilatore di rendersi conto che quel riferimento lì non esiste per sempre, esiste in un certo periodo e le azioni che vengono svolte all'interno della funzione sono soggette all'esistenza in vita del parametro.</p>
+<p>Nel caso in cui la funzione ricevesse più riferimenti, quello che succede è che il compilatore tenderebbe ad assumere che questi riferimenti abbiano un tempo di vita tendenzialmente <em><strong>disgiunto</strong></em> e quindi se avessimo due riferimenti la riscrittura diventerebbe una cosa <code>fn &lt;'a, 'b&gt;</code>, che vuol dire che ho due riferimenti, il primo gli do un tempo di vita che chiamo a, il secondo un tempo di vita che chiamo b e vado a dire che i parametri sono rispettivamente un riferimento che ha tempo di vita <code>a</code> e si chiama <code>p1</code> e un altro che ha un tempo di vita che si chiama <code>b</code> e il parametro si chiama <code>p2</code>. In questo modo il compilatore prende atto che i due riferimenti sono in qualche modo <strong>indipendenti</strong>.</p>
+<p>Ci possono essere delle situazioni in cui noi vogliamo far sapere in modo esplicito al compilatore che quei due riferimenti necessariamente devono durare la stessa quantità di tempo. In questo caso dovremmo in modo esplicito andare a dire che la nostra funzione di tempi di vita ne ha uno solo, lo possiamo chiamare come ci pare, di solito si usano le lettere a, b, o c per farla semplice, ed entrambi i riferimenti condividono il tempo di vita.</p>
+<p><em>Cosa vuol dire condividere il tempo di vita?</em>
+Significa che facciamo delle assunzioni sull'uso dei riferimenti <code>p1</code> e <code>p2</code> passati alla funzione: non solo durante l'esecuzione della funzione stessa, ma anche per le loro conseguenze successive, questi riferimenti devono avere un periodo di sovrapposizione. Le operazioni che la funzione può eseguire sono quindi vincolate all'intersezione dei due tempi di vita — il periodo in cui entrambi i riferimenti esistono.</p>
+<p>Notate che la notazione dei tempi di vita assomiglia un po' alla <strong>notazione generica</strong>, perché usa le parentesi angolari alla stessa maniera. Tuttavia, per il compilatore è solo una notazione. Se la nostra funzione fosse davvero generica, potrebbe ricevere, oltre agli indicatori del tempo di vita, nelle parentesi angolari, anche le metavariabili di tipo(<code>T</code>, <code>U</code>, <code>V</code>, o quelle che vogliamo usare, che normalmente si indicano con una singola lettera maiuscola).</p>
+<p><strong>Per sintassi</strong>, il linguaggio prevede che i tempi di vita precedano sempre le eventuali metavariabili di tipo usate nella programmazione generica. Quindi, se abbiamo una funzione generica che prende dei riferimenti, prima ci sono tutte le cose con l'apice, e poi tutte le parti restanti. Ma questo basta saperlo e uno lo fa.</p>
+<p>È importante anche rendersi conto che, quando quella funzione generica venisse usata, il compilatore costruirà delle versioni specifiche per i tipi con cui la funzione è stata utilizzata: se io ho detto che la mia funzione agiva su un riferimento al tipo <code>T</code>, qualunque esso sia, nel momento in cui io la chiamo passandogli un riferimento a tipo <code>i32</code>, la funzione verrà rigenerata dicendo ok, questo <code>T</code>, in questo caso è un <code>i32</code>, e quindi costruirà la versione specializzata per gli <code>int32</code>. Questo processo, abbiamo detto, è la <em>monomorfizzazione</em>.</p>
+<p><strong>Gli indicatori di tempo di vita</strong> <strong>non partecipano al processo di monomorfizzazione</strong>, sono solo utili, una notazione sintattica utile, affinchè il borrow checker possa capire quali sono le conseguenze dei particolari puntatori che noi stiamo passando e quindi possa verificare che non facciamo schifezze.</p>
+<p><img src="images/lifetime/image%201.png" alt="image.png" /></p>
+<p>Il punto cruciale ****in cui diventa evidente che la nostra funzione ha bisogno dei tempi di vita espliciti comincia a prendere forma nel momento in cui la funzione ritornasse un riferimento.
+Qui abbiamo un esempio di un'ipotetica funzione <code>f</code>, che prende due riferimenti <code>p1</code> e <code>p2</code>, a qualunque cosa esse siano (<code>Foo</code> e <code>Bar</code> non ci importa in questo momento cosa siano), e ci ritorna un riferimento. Questa funzione qua ritorna un riferimento a un singolo intero.</p>
+<p>È essenziale dire: <em>"ma questo intero di cui ci viene tornato il riferimento da dove è preso?"</em>
+Non certo da dentro la funzione stessa, deve essere preso <strong>da uno dei suoi parametri</strong>.
+Allora, il fatto che noi abbiamo esplicitato che i due parametri avevano tempo di vita <code>'a</code> e <code>'b</code> ci consente di andare a dire che l'<code>i32</code> che viene restituito viene da uno dei due parametri in modo particolare. In questo caso noi stiamo evidenziando il fatto che derivi dal secondo parametro. E infatti andando a leggere nel codice vediamo che il valore restituito è <code>p2.y</code>, immaginando che il tipo <code>bar</code> abbia un campo <code>y</code>, riferimento a <code>p2.y</code>.</p>
+<p>Quindi ciò che è fondamentale da capire è che la notazione dei tempi di vita ci serve.</p>
+<p>Perché? Perché se io passo due cose che possono svanire, quindi due cose che ho in prestito, e te ne restituisco una terza, che è sempre un prestito, devo farti capire questo ulteriore prestito quanto potrebbe durare.</p>
+<p>Indicata in questa maniera (nell’esempio della slide), il compilatore capisce che le conseguenze dell'invocazione di questa funzione sono valide solo nello stesso intervallo di tempo del secondo parametro. Se io invece avessi etichettato la funzione con un'unica lettera, quindi <code>'a p1</code>, <code>'a p2</code>, le conseguenze del risultato erano vere solo nell'<em><strong>intersezione</strong></em>, cioè potevo accedere al valore risultante solo nell'intervallo di tempo in cui esistevano ancora entrambi i parametri.</p>
+<p>Notate che il compilatore da solo non riesce a estrapolare che cosa viene fuori. Tocca a noi farglielo sapere. Questo è lo sforzo che noi abbiamo nel momento in cui vogliamo costruire una funzione che ritorna un riferimento. E costruire una funzione che ritorna un riferimento ci interessa in tutte quelle situazioni in cui vogliamo esplorare una struttura dati senza fare delle copie, perché fare delle copie è mediamente un'operazione costosa. Esplorare una struttura dati ci piace di più.</p>
+<p>Nel caso in cui il compilatore, vedendo che noi abbiamo indicato delle cose, trovasse che c'è almeno una situazione in cui il risultato della funzione viene usato fuori dal tempo in cui è lecito usarlo, ci blocca e ci dice <em>"guarda che questa cosa non la puoi fare"</em>.</p>
+<p>Vediamo degli esempi.</p>
+<h2 id="11-esempio"><a class="header" href="#11-esempio">1.1 Esempio</a></h2>
+<p><img src="images/lifetime/image%202.png" alt="image.png" /></p>
+<p>Qui abbiamo una funzione che riceve due riferimenti. Una funzione molto semplice. Il primo è un riferimento a una stringa (uno slice sostanzialmente), il secondo è un riferimento mutabile a un vettore. E la funzione, in modo molto banale, inserisce lo slice all'interno del vettore.</p>
+<p>Se noi scrivessimo direttamente questa cosa, per il compilatore quello vuol dire <em>“io ho una stringa che può esistere per un tempo</em> <code>a</code><em>, qualunque esso sia, la metto dentro un vettore che esiste in un tempo</em> <code>b</code><em>, qualunque esso sia. Caspita, problema! E chi mi garantisce che il tempo</em> <code>a</code> <em>in cui la stringa esiste è più grande del tempo in cui esiste il vettore?”</em>
+Se io metto la stringa nel vettore, vuol dire che il vettore la terrà, ma se posso usare il vettore quando quella stringa non è più valida, potrei ritrovarmi in una situazione che non va bene. Quindi è necessario che la stringa duri almeno quanto il vettore, altrimenti non va bene.</p>
+<p>Quindi, se io mi limitassi a scrivere questo blocco di codice qua, il compilatore mi blocca con l'errore che viene mostrato nella slide.
+Dice <em>"guarda, tu hai due tipi. Siccome non mi hai detto che tempi di vita hanno, per me sono due tempi diversi. Li chiamo genericamente</em> <code>a</code> <em>e</em> <code>b</code><em>. Ma siccome me ne metti uno dentro l'altro e sono diversi, io come faccio a garantirmi che coincidano? Non lo posso sapere”</em>.</p>
+<p><img src="images/lifetime/image%203.png" alt="image.png" /></p>
+<p>Quindi aggiungo una notazione e ti dico <em>"guarda, questo slice che ti passo ha tempo di vita</em> <code>a</code><em>, che coincide con il tempo di vita del vettore. O meglio, mi impegno a garantire che duri almeno quanto il vettore, altrimenti me lo segnalerai"</em>.
+Perfetto. Ora so che questo vettore, che continuerà a esistere successivamente, esisterà certamente almeno quanto la stringa che vi ho inserito.</p>
+<p>Ma il compilatore non è contento ancora, perché sapere che il vettore esiste per il tempo di quella stringa non mi è ancora garante che il vettore contenga <strong>solo</strong> cose che sono valide. E quindi mi dice <em>"guarda che non solo il vettore deve durare quanto quello slice, ma tu mi devi anche dire che questo vettore contiene solo cose che sono valide per tutto il suo tempo di vita"</em>. E quindi la notazione <code>'a</code> non va aggiunto solo al riferimento del vettore, ma va aggiunto <strong>anche a ciò che il vettore contiene</strong>. Quindi quello è un vettore che ha tempo di vita <code>a</code> e che contiene cose che durano almeno <code>a</code>. E a questo punto gli possiamo aggiungere un'altra cosa che dura almeno <code>a</code>.</p>
+<p>Per cui, il compilatore ci aiuta da questo punto di vista e ti dice <em>"aggiungi il tempo</em> <code>a</code> <em>al tipo di</em> <code>v</code><em>, ovvero dimmi che</em> <code>v</code> <em>è un ref mut (che dura</em> <code>a</code><em>) a un vettore che contiene slice che durano</em> <code>a</code><em>"</em>. Questo è come il compilatore ci guida per capire. Così non capita che noi mettiamo nel vettore cose che durino di meno, perché diventa parte della sua firma esplicita.</p>
+<p>A questo punto abbiamo corretto questa cosa e la funzione <code>f</code> compila.</p>
+<p><img src="images/lifetime/image%204.png" alt="image.png" /></p>
+<p>Poi però nel main scriviamo questa cosa qua. Creiamo il vettore <code>v</code>. Bene.</p>
+<p>Poi apriamo un blocco. All'interno di questo blocco creiamo una stringa. Nessun problema. Salviamo nel vettore, tramite <code>v.push</code> o tramite la funzione <code>f</code>, il riferimento alla stringa.</p>
+<p><em>Ah, questo è un problema.</em> Quella stringa che abbiamo creato esiste nella coppia di graffe dentro cui l'abbiamo definita. Di conseguenza il suo riferimento dura quanto la coppia di graffe. Ma il vettore dura di più, perché il vettore è nato prima e lo usiamo dopo.</p>
+<p>Quindi <strong>non è vero</strong> che nel vettore stiamo infilando quello che stiamo dicendo. E quindi il compilatore ci blocca. <code>Borrowed value does not live long enough</code>.</p>
+<p><strong>Questo è il modo con cui Rust ci aiuta.</strong> In C questa cosa voi non la vedete. E' sbagliata, ma il compilatore la compila senza nessun problema. Non ha nessuna consapevolezza che state scrivendo un'idiozia. E di conseguenza quel codice lì passa, va avanti e a un certo punto si spacca. E non sapete quando e come. E il più delle volte non sapete dire perché.</p>
+<p>Il Borrow Checker non verifica solo questi casi banali - questo è solo un piccolo esempio fatto per essere comprensibile e spiegabile in una slide. Il Borrow Checker fa tutte le verifiche anche in situazioni complesse, quando passo un puntatore attraverso una catena di funzioni e lo sposto in diverse parti del programma. Ti intercetta ogni volta con precisione perché <strong>dimostra il teorema della correttezza dei tempi di vita</strong>. È fondamentale che capiate e apprezziate questo concetto.</p>
+<p><strong>Quindi il fatto che ci siano delle funzioni che prendono riferimenti e generano riferimenti</strong> richiede che noi facciamo questo piccolo sforzo di dare indicazioni sulla semantica della nostra funzione, cioè <em>“Quanto dura il riferimento restituito rispetto ai riferimenti passati?”</em></p>
+<h1 id="2-riferimenti-e-funzioni"><a class="header" href="#2-riferimenti-e-funzioni">2. Riferimenti e funzioni</a></h1>
+<p><img src="images/lifetime/image%205.png" alt="image.png" /></p>
+<p><em>Caso 1: Un solo riferimento</em>
+Se una funzione ha un unico riferimento in ingresso assume che l'eventuale riferimento in uscita abbia la stessa durata e quindi ci consente questo processo chiamato <strong>elisione dei tempi di vita</strong>. Quindi noi possiamo banalmente scrivere la funzione <code>f</code> che prende riferimento <code>x</code> e restituisce riferimento <code>y</code>. Visto che ce n'è solo un ingresso e uno in uscita il compilatore tranquillo dice quello in uscita durerà quanto quello in ingresso.</p>
+<p><em>Caso 2: Riferimenti multipli</em>
+Se invece ce ne sono almeno due in ingresso e uno in uscita, il compilatore non è in grado di decidere e non può farlo perché potrebbero esserci degli <code>if</code> o altri costrutti condizionali all'interno del nostro codice che possono essere valutati solo nel momento in cui abbiamo tutti i parametri in ingresso, quindi l'analisi statica non permetterebbe di dire quanto dura. Di conseguenza tocca a noi andare a descrivere questa cosa qua.</p>
+<p>Esempio slide:
+In questo caso qui abbiamo una funzione <code>f</code> che prende due riferimenti con relativi tempi di vita che abbiamo chiamato <code>b</code> e <code>c</code>, e tale funzione ci restituisce un parametro che ha tempo di vita <code>c</code>. Questo permette al compilatore di farci dei ragionamenti sopra. Siccome ci restituisce un riferimento che ha tempo di vita <code>c</code> questo ha due livelli di implicazione:</p>
+<ul>
+<li>Un livello di implicazione sull'accesso al riferimento in quanto tale, cioè io non posso leggere il contenuto di quel riferimento (cioè dereferenziarlo) oltre il periodo in cui lui esiste.</li>
+<li>Ma anche una cosa al contrario: siccome quello è “un pezzo” del parametro <code>y</code> che ho ricevuto, il valore che era stato attribuito al parametro <code>y</code> (in questo caso <code>v2</code>) non può essere cambiato fin tanto che io uso quel riferimento (il riferimento restituito), perché altrimenti non appattano più le cose.</li>
+</ul>
+<p><strong>Esempio concreto:</strong> Lì ho <code>v1</code> che è una tupla [<strong>ndr:</strong> <em>Il prof continua a parlare di tupla, ma io tuple non ne vedo, al massimo S mi sembra una ipotetica struct</em>.] che contiene il numero 1 e <code>v2</code> che è un'altra tupla e contiene il numero 2. I due riferimenti a questa tupla li passo alla funzione <code>f</code> la quale si fa delle cose sue e poi decide di ritornarmi un pezzo della seconda tupla. Che sia un pezzo della seconda tupla lo capisco dal fatto che la signature del tempo di vita del risultato coincide col tempo di vita del secondo parametro.</p>
+<p>Questo il compilatore capisce. Di conseguenza esiste un vincolo:</p>
+<ul>
+<li>Non posso accedere al risultato <em>oltre la durata</em> di <code>v2</code></li>
+<li>Non posso modificare <code>v2</code> fin tanto che faccio accesso al risultato</li>
+</ul>
+<p>In questo caso se io provassi a compilare il codice lasciando la riga barrata in rosso otterrei un errore che mi dice <em>“Attenzione: qui c'è un conflitto perché tu stai cambiando le carte in tavola, stai mutando una struttura, e un pezzo di questa struttura è osservato dalla riga successiva”</em>. Questo non si fa: finché gli ti ho dato il prestito, l'impegno è che non me lo cambi.</p>
+<p>Notate che se non ci fosse questo legame dovuto ai tempi di vita espliciti, un parametro era la struttura di tipo tupla, e il valore restituito è un riferimento a <code>u8</code> — apparentemente sono due cose separate, non c'è un legame di tipo tra i due ma c'è un legame sostanziale: quell'u8 è parte della tupla in qualche misura, o almeno abbiamo dichiarato così.</p>
+<p>Quindi l'aver aggiunto questa notazione consente al compilatore di fare questo ragionamento ed evitare delle schifezze. Questa faccenda qua è la base della solidità di Rust.</p>
+<p><img src="images/lifetime/image%206.png" alt="image.png" /></p>
+<p><strong>Notate che è più complesso.</strong> Allora, dal punto di vista del compilatore l'aggiunta dei tempi di identificatori dei tempi di vita ha <strong>due valenze</strong>.</p>
+<p><em>Prima di tutto</em> nel momento in cui io invoco questa funzione senza sapere cosa c'è scritto dentro (quindi limitandomi a guardare la sua firma) arrivo a capire che mi verrà generato un risultato che dipende da entrambi o da uno solo dei parametri che io sto passando alla funzione. Di conseguenza devo prolungare tutti i vincoli legati al prestito per il tempo in cui non solo esistono i due prestiti specifici ma esiste anche il risultato.</p>
+<p>Perché se io mi limitassi, nell'esempio precedente, a guardare il codice, <code>&amp;v1</code> e <code>&amp;v2</code> esistono esclusivamente per la durata dell'invocazione di <code>f</code>. Quindi potrei dire <em>"ah ma quando</em> <code>f</code> <em>ritorna quei prestiti lì non ci sono più, sono andati"</em>. In realtà, siccome la funzione mi ha restituito un pezzo di <code>v2</code> , il prestito su <code>v1</code> effettivamente non c'è più e quindi io a <code>v1</code> posso far fare quello che voglio (in questo caso non è mutabile ma se lo mettessi mutabile lo potrei tranquillamente cambiare), ma <code>v2</code> invece non lo posso cambiare fintanto che il risultato che qui ho chiamato <code>r</code> è vivo, e siccome uso il risultato ancora nell'ultima linea <code>print byte(r)</code> questo mi tiene in vita.</p>
+<p><strong>Quindi la conoscenza della firma permette al codice</strong> che vede che quella funzione lì è usata, di capire come deve gestirsi i vincoli.</p>
+<p>Quando invece il compilatore invece di concentrarsi su dove chiamo la funzione si sta concentrando sul <em>come genero il codice della funzione</em>, che avviene in un qualche altro momento il compilatore controlla che non faccia schifezze. Se tu mi hai dichiarato che il risultato ha tempo di vita <code>c</code>, che corrisponde a quello del secondo parametro, ma tu cerchi di assegnarmi come risultato un riferimento al primo che ha tempo di vita <code>b</code> , ti blocca. Quindi questa scrittura che noi facciamo in ogni caso è validata dal fatto che effettivamente non combiniamo delle schifezze. Questo in qualche modo ci aiuta.</p>
+<p><strong>Nel momento in cui l'invocazione avviene</strong> quello che il compilatore verifica è che gli identificatori che noi abbiamo passato esistano almeno per il tempo minimo necessario affinchè tutto abbia senso. Quindi non posso leggere il riferimento oltre il suo tempo di vita e non posso modificare la variabile finché il riferimento è in uso.</p>
+<h1 id="3-riferimenti-e-strutture-dati"><a class="header" href="#3-riferimenti-e-strutture-dati">3. Riferimenti e strutture dati</a></h1>
+<p><img src="images/lifetime/image%207.png" alt="image.png" /></p>
+<p><strong>Il problema non c'è solo con le funzioni</strong> che possono smontare o prendere un pezzo di una cosa più grande. Il problema si pone anche con le <strong>strutture dati</strong>.
+Se io salvo un riferimento che necessariamente ha un tempo di vita dentro una struttura dati quella struttura dati lì diventa anche lei <em>a rischio</em>, cioè <em>eredita il tempo di vita <strong>più breve</strong> di tutti i riferimenti che contiene al suo interno</em>. Quindi salvare il riferimento da qualche parte implica che il tempo di vita del riferimento, che è un pezzo, si propaga al tutto.</p>
+<p>Se io costruisco quest'aula ma c'è un mattone che dopo tre mesi si sbriciola l'aula dopo tre mesi è a rischio perché se quel mattone lì viene meno potrebbe crollare tutta quanta. <strong>Quindi il pezzo dentro la struttura <em>implica</em> la durata massima di validità della struttura intera.</strong></p>
+<p><em>Lo stesso vale se fate una torta.</em> Se ci mettete dentro delle cose che sono che hanno una conservazione limitata chiaramente il tempo minimo dell'ingrediente implica la validità di quello che andate a sintetizzare con la vostra cosa. Quindi tenete presente che tutto questo vale altrettanto.</p>
+<p><strong>Ad esempio</strong> qui nella slide viene mostrato una struttura <code>User</code> che contiene un riferimento. Siccome questo è un riferimento, e ha una durata, è necessario che noi andiamo a dire che anche la struttura ha una durata, che è almeno al massimo quella del suo riferimento. E se questa struttura diventa parte di una struttura più grande (non come riferimento, ma semplicemente come parte di una struttura più grande, com’è mostrato poi nella struttura <code>Data</code>), anche la struttura più grande si prende lo stesso vincolo.</p>
+<p>Perché è necessario garantire che solo del codice corretto possa essere scritto. <em>Non deve esistere nessuna situazione in cui io credo di poter accedere a un indirizzo di memoria quando in realtà non posso farlo.</em></p>
+<p>Questa cosa qua a sentirla raccontare fila.
+Poi quando scrivete il codice non sapete da che parte mettere le mani. Quindi bisogna allenarsi. <strong>Però è proprio la base</strong>, il motivo per cui il mondo sta sterzando verso Rust è perché Rust ci dà <strong>questo</strong> livello di garanzia.</p>
+<p>Nè C, nè C++ ce lo possono dare. Gli altri linguaggi, <em>Java, JavaScript, Python,</em> e compagnia bella, ci danno una garanzia sui tempi di vita.
+Come? <strong>Prolungando l'esistenza in vita.</strong> Se io conosco il puntatore di un dato automaticamente quel dato dura fin tanto che io lo conosco. Che è certamente una soluzione corretta. Non posso avere dei memory fault in questa maniera.</p>
+<p><strong>Piccolo problema:</strong> il mio fabbisogno di memoria cresce tantissimo. Perché devo necessariamente prolungare la vita di oggetti e quindi tenerli allocati anche se non mi servirebbero più. Non solo, ma siccome io posso prolungare la vita solo di cose sullo heap e non di cose sullo stack, perché lo stack si deve poter contrarre, questo implica che i linguaggi come Java, JavaScript, Python e compagnia bella non possono usare <strong>tipi valore</strong>, cioè memorizzati nello stack.</p>
+<p>Questo comporta un <em>aggravio delle prestazioni</em>. Perché tutte le volte in cui mi serve un nuovo valore io devo andare a cercare nello heap un posto grande a sufficienza per tenerlo e devo poi gestirmi questo rilascio in qualche maniera.</p>
+<p>Da questo punto di vista C e C++ viceversa non hanno nessun problema a lasciarci costruire tipi valore, cioè oggetti più o meno complessi che esistono all'interno dello stack e che quindi hanno un costo di allocazione e rilascio molto basso. <strong>Il problema è che</strong> non potendo verificare la liceità dei puntatori lasciano spazio agli <strong>undefined behavior</strong>, che sono poi la porta dei vari exploit che vengono usati dagli hacker, che sono la porta anche di tutti i malfunzionamenti che noi poi andiamo a verificare quotidianamente.</p>
+<p>Rust, da questo punto di vista, ci permette senza problema di creare tipi valore, cioè dichiarati sullo stack e quindi molto agili dal punto di vista della loro allocazione e del loro rilascio, garantendo al tempo stesso la correttezza del codice che andiamo a scrivere. Tutto al più non compila. Questo è un po' fonte di frustrazione per il programmatore, ma è una frustrazione sana. <em>Non compila vuol dire che non hai capito abbastanza, ma è meglio che te lo dica lui subito piuttosto che dopo.</em></p>
+<h1 id="4-elisione-dei-tempi-di-vita"><a class="header" href="#4-elisione-dei-tempi-di-vita">4. Elisione dei tempi di vita</a></h1>
+<p><img src="images/lifetime/image%208.png" alt="image.png" /></p>
+<p>Se non mettiamo in modo esplicito un tempo di vita nelle strutture, così come nelle funzioni, per Rust sono tempi di vita indipendenti, quindi l'eventuale struct <code>Point</code> che dichiariamo qua, che contiene due riferimenti, per il compilatore è come se fossero due riferimenti completamente disgiunti. Se noi passiamo questa struct <code>Point</code> a una funzione che prende un'ulteriore variabile di tipo riferimento, quello è ancora un tempo di vita disgiunto.</p>
+<p>Quindi la funzione <code>scale</code>, nella parte bassa sinistra, che prende un riferimento <code>r</code> e il punto <code>p</code>, che implicitamente ha due tempi di vita disgiunti, di fatto per il compilatore è, come vediamo nella parte destra, una funzione che opera su tre riferimenti che possono essere completamente indipendenti tra di loro. Quindi il tempo di vita di <code>r</code> è indipendente dal tempo di vita del campo <code>x</code> della struttura point, che è indipendente dal tempo di vita della struttura <code>y</code>, eccetera. E di conseguenza ci lascerà solo fare operazioni compatibili con questa faccenda.</p>
+<p>Se noi ci trovassimo a dover ritornare come valore un riferimento o fare delle assunzioni che non permettono di essere certi che i tre tempi di vita sono realmente indipendenti, il compilatore ci bloccherebbe e ci chiederebbe di esplicitare quale vincolo sia necessario.</p>
+<p><img src="images/lifetime/image%209.png" alt="image.png" /></p>
+<p>Quindi se una funzione restituisce un riferimento o restituisce un tipo che contiene direttamente o indirettamente un riferimento, bisogna far capire quanto dura questo riferimento.</p>
+<p>Nel caso in cui la funzione avesse in ingresso un solo parametro dotato di tempo di vita, implicito e esplicito, Rust dice <em>"io assumo che il tempo di vita del risultato restituito sia lo stesso dell’unico parametro ricevuto".</em> Se invece ci sono più parametri dotati di tempi di vita <em>diversi</em>, allora tocca al programmatore disambiguare.</p>
+<p><em>Chi è dotato di tempo di vita?</em>
+I riferimenti hanno tutti un tempo di vita. Le strutture dati, qualunque esse siano, struct, enum o tuple, che hanno dentro di sé dei riferimenti <em>acquisiscono</em> il tempo di vita del loro riferimento. Le strutture che contengono strutture che contengono riferimenti acquisiscono il tempo di vita del riferimento, eccetera. Se una struttura contiene più oggetti che hanno un tempo di vita, quei tempi di vita devono coincidere, altrimenti non va bene, cioè devono avere un'intersezione.</p>
+<p>Questo è il motivo per cui nell’esempio del vettore di slice mostrato all’inizio, abbiamo dovuto dire che la durata dello slice, non solo doveva essere almeno coincidente con quella del vettore, ma andavamo anche a dire che comunque dentro quel vettore lì metteremo solo delle cose che durino almeno quanto il vettore stesso.</p>
+<p>Se abbiamo un metodo (invece che una funzione esterna), ovvero all'interno di un blocco <code>impl</code>, che prende <code>&amp;self</code>, o <code>&amp;mut self</code>, il tempo di vita dell'eventuale risultato per il compilatore <strong>coincide</strong> col tempo di vita di <code>self</code>. Se non è così, dobbiamo andarlo a dire in modo esplicito.</p>
+<p><strong>Queste sono le regole di elisione</strong>, cioè il motivo per cui nella maggior parte dei casi noi possiamo <em>non scrivere</em> in modo esplicito il tempo di vita. Ma non è che non ci sia, <em>c'è</em> e il compilatore ci risparmia l'onere di farlo vedere, anche se sarebbe un buon esercizio scriverlo in modo esplicito perché così almeno lo capiamo, ne prendiamo più consapevolezza.</p>
+<p><em>Cos'è il lifetime static?</em>
+Il lifetime static è un'eccezione: noi i lifetime li chiamiamo come ci pare.
+L'unica cosa che non possiamo mettere come vogliamo è <code>‘static</code>, perché quello lo possiamo mettere ma ha un significato particolare. Una cosa ha lifetime static, se è un riferimento, ed è un riferimento che certamente dura quanto l'intero programma. Nel caso delle stringhe, delle slice, quando noi mettiamo una slice costante, <code>“ciao”</code>, quello diventa un pezzo del sorgente del nostro programma. Viene allocato in una zona delle costanti e di conseguenza esiste da quando il nostro programma parte fino a quando il programma terminerà, perché è statico, è messo lì dentro. Quindi, la variabile <code>let s: &amp;str = “ciao”</code>, di fatto ha un tempo di vita <strong>static</strong>.</p>
+<p><strong>Attenzione,</strong> <strong>il tempo di vita static non è solo quello.</strong>
+Se una variabile possiede interamente il suo valore, cioè non ha riferimenti, quella variabile ha tempo di vita static. Quando io dichiaro <code>let i: i32 = 25</code>, <code>i</code> possiede il suo valore, e ha come tempo di vita static, che vuol dire che di per sé lei possiede. Quindi se io faccio dei ragionamenti: fin tanto che <code>i</code> esiste, non è soggetto a dipendenze di altri.</p>
+<p>Nei riferimenti è una cosa che dura per tutta la durata del programma.
+Nei <em>non riferimenti</em> vuol dire che non ha pendenze legate al tempo, quindi è totalmente padrone del suo valore.</p>
+<p>Se invece una struct o una variabile contiene al suo interno qualcosa — tipicamente una struct con campi che hanno un tempo di vita — allora non è più static. Questo perché, anche se quella variabile possiede il suo valore, si tratta di un valore "ipotecato": una parte di esso non dura quanto vuole la variabile, ma dipende dalla durata di qualcos'altro, e quindi non può essere static.</p>
+<p>Quindi static sui riferimenti, sono quei riferimenti che possiamo garantire esistono dall'inizio fino alla fine del programma. Il caso più pratico è sulle slice costanti.
+Viceversa, sulle restanti variabili, tempo di vita static è quello di chi non ha ipoteche sul proprio valore.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="08-polimorfismo.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="10-chiusure.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="08-polimorfismo.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="10-chiusure.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

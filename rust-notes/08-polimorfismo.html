@@ -1,0 +1,782 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Polimorfismo</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="polimorfismo---malnati-11-12"><a class="header" href="#polimorfismo---malnati-11-12">Polimorfismo - Malnati 11-12 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-introduzione-al-polimorfismo">1. Introduzione al Polimorfismo</a>
+<ul>
+<li><a href="#11-concetti-base">1.1 Concetti Base</a></li>
+<li><a href="#12-implementazione-nei-linguaggi">1.2 Implementazione nei Linguaggi</a></li>
+</ul>
+</li>
+<li><a href="#2-ereditariet%C3%A0-e-polimorfismo-in-c">2. Ereditarietà e Polimorfismo in C++</a>
+<ul>
+<li><a href="#21-costi-del-polimorfismo">2.1 Costi del Polimorfismo</a></li>
+<li><a href="#22-metodi-virtuali-puri--funzioni-virtuali-astratte">2.2 Metodi virtuali puri / funzioni virtuali astratte</a></li>
+</ul>
+</li>
+<li><a href="#3-tratti-in-rust">3. Tratti in Rust</a>
+<ul>
+<li><a href="#31-concetto-di-tratto">3.1 Concetto di Tratto</a></li>
+<li><a href="#32-esempio">3.2 Esempio</a></li>
+<li><a href="#33-vtable-in-rust">3.3 VTable in Rust</a></li>
+<li><a href="#34-definire-ed-usare-un-tratto">3.4 Definire ed usare un tratto</a></li>
+<li><a href="#35-tipi-associati-nei-tratti">3.5 Tipi Associati nei Tratti</a></li>
+<li><a href="#36-implementazioni-default-nei-tratti">3.6 Implementazioni Default nei Tratti</a></li>
+<li><a href="#37-gerarchia-dei-tratti">3.7 Gerarchia dei Tratti</a></li>
+<li><a href="#38-come-invochiamo-un-tratto">3.8 Come invochiamo un tratto?</a></li>
+<li><a href="#39-tratti-nella-libreria-standard">3.9 Tratti nella Libreria Standard</a>
+<ul>
+<li><a href="#391-eq-e-partialeq">3.9.1 Eq e PartialEq</a></li>
+<li><a href="#392-ord-e-partialord">3.9.2 Ord e PartialOrd</a></li>
+</ul>
+</li>
+<li><a href="#310-display-e-debug">3.10 Display e Debug</a>
+<ul>
+<li><a href="#3101-esempio">3.10.1 Esempio</a></li>
+</ul>
+</li>
+<li><a href="#311-clone-e-copy">3.11 Clone e Copy</a></li>
+<li><a href="#312-drop">3.12 Drop</a></li>
+<li><a href="#313-index">3.13 Index</a></li>
+<li><a href="#314-deref">3.14 Deref</a>
+<ul>
+<li><a href="#3141-esempio">3.14.1 Esempio</a></li>
+<li><a href="#3142-esempio">3.14.2 Esempio</a></li>
+</ul>
+</li>
+<li><a href="#315-rangebounds">3.15 RangeBounds</a></li>
+<li><a href="#316-from">3.16 From</a>
+<ul>
+<li><a href="#3161-esempio">3.16.1 Esempio</a></li>
+</ul>
+</li>
+<li><a href="#317-tryfrom-e-tryinto">3.17 TryFrom e TryInto</a></li>
+<li><a href="#318-error">3.18 Error</a></li>
+<li><a href="#319-la-macro-derive">3.19 La macro <code>derive</code></a></li>
+</ul>
+</li>
+<li><a href="#4-tipi-generici">4. Tipi generici</a>
+<ul>
+<li><a href="#41-complementarit%C3%A0-dei-due-approcci">4.1 Complementarità dei Due Approcci</a></li>
+<li><a href="#42-esempio">4.2 Esempio</a></li>
+<li><a href="#43-relazione-tra-tratti-e-tipi-generici">4.3 Relazione tra Tratti e Tipi Generici</a></li>
+<li><a href="#44-oggetti-tratto-e-polimorfismo">4.4 Oggetti Tratto e Polimorfismo</a></li>
+<li><a href="#45-compromessi-e-ottimizzazioni">4.5 Compromessi e Ottimizzazioni</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="1-introduzione-al-polimorfismo"><a class="header" href="#1-introduzione-al-polimorfismo">1. Introduzione al Polimorfismo</a></h1>
+<p>Questa lezione spazia su diversi concetti, alcuni dei quali probabilmente vi sono già noti, altri magari vi sono noti ma non li avete messi a fuoco con le parole giuste. Utilizzeremo alcuni termini che suonano strani, ma sono semplici per la verità. Vediamo di mettere insieme i vari problemi.</p>
+<p>Di per sé la lezione tratta del <em><strong>polimorfismo</strong></em>, che si realizza concretamente con tecniche diverse. Nel caso specifico di Rust si realizza con un misto tra l'uso dei <em><strong>tratti</strong></em> e l'uso della <em><strong>programmazione generica</strong></em>. Sono due termini che vi dicono poco, perché negli altri linguaggi di programmazione esiste in parte il concetto di programmazione generica, ma è implementato in un modo totalmente diverso. I tratti si chiamano interfacce e quindi questo mette un po' in difficoltà.</p>
+<p>Tratti e programmazione generica sono due modi diversi di implementare il polimorfismo, non sono due modi alternativi. Spesso e volentieri ci sono tratti generici, oppure nella programmazione generica si usano i tratti come vincoli su cosa può essere reso generico. Quindi sono due cose molto intrecciate e parenti. Adesso cerchiamo di slegarle e di vedere pezzettino per pezzettino che cosa significhino.</p>
+<h2 id="11-concetti-base"><a class="header" href="#11-concetti-base">1.1 Concetti Base</a></h2>
+<p><img src="images/polimorfismo/image.png" alt="image.png" /></p>
+<p>Di base, nel momento in cui noi ci troviamo di fronte a un problema, ad esempio dobbiamo realizzare un programma che copi tutte le mail presenti sul server e le sposti all'interno di tanti file in una qualche cartella, siamo portati a cominciare a entrare nel dominio del problema — in questo caso esempio il problema tratta di mail, mail che stanno su un server, quel server ha bisogno di un'autenticazione e così via...</p>
+<p>Abbiamo una serie di concetti che dobbiamo fare entrare nel nostro programma e tendenzialmente noi utilizziamo tipi diversi per rappresentare questa entità del mondo con cui dobbiamo fare. Per cui ci viene abbastanza naturale creare una struttura dati che rappresenta il singolo <strong>messaggio</strong>, una struttura dati che rappresenta magari una <strong>collezione di messaggi</strong> come la <em>inbox</em>, una struttura dati che rappresenta le <strong>credenziali</strong> con le quali noi possiamo collegarci al server per poterci accedere, una struttura dati che rappresenta il <strong>server</strong> in quanto tale con il suo indirizzo e altre cose etc...</p>
+<p>Quindi la tendenza di base è una tendenza alla moltiplicazione degi enti, dei tipi. Questi tipi possono essere strutture, possono essere numerazioni, in alcuni casi sono funzioni. Nei linguaggi a oggetti spesso e volentieri questi diventano classi.</p>
+<p>Spesso però nel fare questa operazione ci rendiamo conto che i vari tipi che abbiamo introdotto, pur rappresentando qualcosa di completamente diverso, perché un messaggio di posta elettronica non è una credenziale con la quale io accedo. Un messaggio ha i campi <code>from</code>, <code>to</code>, <code>date</code>, <code>body</code>, <code>subject</code>. Le credenziali hanno <code>user</code> e <code>password</code>, a volte qualcosa in più, magari c'è anche il codice one time che ho mandato sul cellulare o altre cose del genere.</p>
+<p>Però magari hanno delle caratteristiche comuni. Entrambi per esempio devono essere trasformabili in un oggetto json per poterlo mandare in giro per il mondo in modo comodo. Entrambi al contrario devono poter essere leggibili da un oggetto json e questo oggetto json, che di fatto è una stringa, dovrà essere usato per riempire i campi del mio oggetto. Quindi anche se ho due entità molto diverse tra di loro, le credenziali e il messaggio, c'è un aspetto comune perché entrambi sono <em>serializzabili</em> e <em>deserializzabili</em> nel formato json.</p>
+<p>Ma potrei trovare altre caratteristiche che a volte hanno in comune cose molto diverse.</p>
+<p>Chiaramente nessuno mi impedisce di dire, <em>“scrivo il codice per trasformare in json il mio messaggio e lo metto nella classe (o struct)</em> <code>EmailMessage</code><em>, poi un codice molto simile, magari in certi aspetti potrebbe anche essere lo stesso, se sono abbastanza bravo nel renderlo parametrico, lo posso mettere anche nella classe o nella struct</em> <code>Credentials</code> <em>che mi rappresenta delle altre cose”</em>.</p>
+<p>Sì, si può fare, ma non è un'idea saggia.</p>
+<p>Perché? Perché c'è un principio molto forte nella programmazione che si chiama <strong>DRY</strong>, che vuol dire "<em>don't repeat yourself</em>", evita di scrivere la stessa cosa in due posti diversi. Perché? Perché la probabilità che quella cosa cambi è alta, e se tu l'hai scritta in più posti devi cambiarla in tutti, e devi ricordarteli tutti — è un casino.</p>
+<p>Per questo motivo spesso si adotta una tecnica che prende il nome di <strong>polimorfismo</strong>, ovvero offrire comportamenti <em>comuni</em> a cose che sono <em>eterogenee</em> tra di loro. Il concetto di polimorfismo l'avrete incontrato nella <em>programmazione a oggetti</em>, dove capita che grazie al meccanismo della <strong>ereditarietà</strong> uno possa dire <em>"sai che c'è? Io definisco questo comportamento comune in una <strong>superclasse</strong> e faccio ereditare le mie classi concrete da questa superclasse comune, cosicché lo scrivo una volta sola e automaticamente le mie due classi derivate ereditano, si trovano questo comportamento".</em></p>
+<p>L'idea che venti/trenta anni fa sembrava sagacissima, e quindi tutti dicevano <em>"bella la programmazione a oggetti, l'ereditarietà, grande idea"</em>, in realtà è un po' un casino, perché l'ereditarietà si porta dietro tutta una serie di altri vincoli, anche solo concettuali.</p>
+<p>Mentre per alcuni versi funziona bene in alcune situazioni, ad esempio, un mondo che viene spesso utilizzato è quello della natura: abbiamo il concetto di <em>essere vivente —</em> gli esseri viventi respirano, mangiano, dormono, emettono suoni.</p>
+<p>Allora io modello la classe <code>EssereVivente</code> che ha questo comportamento base, poi derivo dagli esseri viventi gli animali, i vegetali, dagli animali tiro fuori i pesci rispetto ai mammiferi, rispetto a cosa, etc...</p>
+<p>Lì un po' funziona, perché?
+Perché il vincolo dell'ereditarietà è che una classe derivata <strong>deve essere anche la classe superiore.</strong>
+È abbastanza normale dire che un <em>pinguino</em> è un <em>uccello,</em> che a sua volta è un <em>animale</em>, che a sua volta è un <em>essere vivente</em>. E ci sta ragionevolmente in questa catena di situazioni, quindi dire che le proprietà di animale scendono naturalmente sul <code>Pinguino</code> che è una classe concreta.</p>
+<p>Quando venissimo invece al nostro dominio, qual è la classe generale per cui le credenziali sono imparentate con un messaggio di posta elettronica? È un po' forzata la cosa, non è proprio ovvio dire che le credenziali sono serializzabili perché tutto il mondo è serializzabile. Va bene, però a questo punto di classi comuni ce ne possono essere tante ed è uno dei motivi che ha portato <strong>Bjorn Strostrup</strong>, l'inventore del C++, a immaginare nel C++ l'<strong>ereditarietà multipla</strong>.</p>
+<p>Perché in fondo le credenziali possono essere imparentate con il messaggio di posta elettronica perché sono <strong>serializzabili</strong>, ma al contrario le credenziali possono essere imparentate con un'altra cosa perché sono <strong>crittografate</strong> e il messaggio di posta elettronica è imparentato con qualcos'altro perché, che ne so, ha gli <em>attachments</em>, che invece le credenziali non hanno, etc…</p>
+<p>Quindi diventa un po' complicata sta faccenda qua e trovare delle classi comuni adatte è difficile.</p>
+<h2 id="12-implementazione-nei-linguaggi"><a class="header" href="#12-implementazione-nei-linguaggi">1.2 Implementazione nei Linguaggi</a></h2>
+<p>La soluzione dell'<strong>ereditarietà multipla</strong>, che di nuovo l'idea del C++ nasce alla fine degli anni '80, inizio degli anni '90, dove tutto questo mondo era in fermento, si cercava di dargli un senso, ha fatto sì che ci si scontri facilmente con dei muri. Nel momento in cui ho due o più classi da cui eredito, vado in difficoltà perché posso trovarmi in situazioni in cui eredito da due classi diverse che però hanno una classe in comune e si crea una situazione brutta chiamata "<em>Diamond Death</em>" in cui ho del codice duplicato. Ho due metodi con lo stesso nome che mi arrivano per strade diverse, che potenzialmente sono stati arricchiti in modo diverso. Quale uso? Boh, disastro.</p>
+<p>Per questo motivo, quando <strong>Java</strong> nasce nel '92-'93 sulle orme del C++, la scelta è stata quella dell'ereditarietà, ma specificamente dell'<strong>ereditarietà singola</strong>. Con una piccola ma importante sfumatura: oltre all'ereditarietà singola, c'è la possibilità di implementare più interfacce. In Java potete specificare che la vostra classe <code>extends something</code> e che <code>implements something</code>.</p>
+<p>Può implementare tutte le interfacce che volete, senza alcun problema.
+<em>Perché?</em>
+Perché in fondo implementare un'<strong>interfaccia</strong> indica semplicemente prendersi un impegno. Io non sto ricevendo niente dall'interfaccia se non l'impegno a mettere a disposizione dei metodi che hanno un certo nome, certi parametri di ingresso e certi valori restituiti in uscita. Quindi io sto semplicemente dicendo che sono conforme a una sorta di <em>protocollo</em>, cioè a una convenzione generale per cui gli oggetti, istanza della mia classe, sicuramente mi offriranno il metodo X, Y e Z. Come è fatto il metodo X, Y e Z l'interfaccia non me lo dice. Toccherà a me dargli un senso opportuno.</p>
+<p>Quindi mentre nella ereditarietà mi ritrovo nella situazione in cui prendo cose diverse concretamente, quindi non solo la garanzia che quel particolare metodo lo metto a disposizione, ma ricevo anche il codice che eventualmente posso <strong>sovrascrivere</strong>. E questo apre un altro grosso problema nell'implementazione del linguaggio: cosa vuol dire sovrascrivere un metodo? Come lo sovrascrivo e come gestisco questa sovrascrittura?</p>
+<p>Mentre tutto questo ragionamento avveniva e veniva via via rifinito negli altri linguaggi che nel frattempo venivano anche introdotti, siamo alla fine degli anni '90 in cui nasce anche JavaScript, che segue una storia diversa sull'ereditarietà. Segue un'ereditarietà basata sul <strong>template</strong>, per cui voi instanziate classi a partire da un template e questo template potete arricchirlo etc… e quindi potete fare in modo che due oggetti, istanze della stessa classe, non hanno gli stessi metodi, perché nel frattempo il template è stato arricchito, dando origine ad altri mostri.</p>
+<p>Mentre queste cose avvenivano, lo stesso era il periodo in cui anche in Python si cominciava a ragionare, mettiamo le classi, come le mettiamo, eccetera, Strostrup e Sochi, seguendo il filone del C++, cominciavano a maturare un'idea che era altrettanto interessante, che era quella della programmazione generica, che diceva che ci sono molte situazioni, ad esempio i contenitori, le liste, i vector, le mappe, e queste cose qua in generale, in cui l'algoritmo è abbastanza indipendente dal tipo di dato — una lista di numeri, una lista di stringhe, una lista di messaggi di post elettronica, sempre una lista è.</p>
+<p>Le operazioni di inserisco, cancello, sostituisco, ordino, non è che fa differenza tanto sulla base di <em>che cosa c'è dentro la lista</em>.
+<em>Perché devo scrivere codice diverso?</em>
+Io potrei rappresentare la mia lista, l'algoritmo, l'insieme dei metodi che definiscono la lista, come operanti su un tipo T, che non ho bisogno di specificare fin dall'inizio.</p>
+<p>Tutto al più posso chiedere che questo tipo T abbia delle caratteristiche, magari deve essere copiabile, perché se non lo posso copiare non riesco a metterlo dentro la lista. Magari deve essere confrontabile, perché devo poter sapere, nella lista spesso mi chiedo <em>"questo elemento è presente?"</em>, e allora se devo poter rispondere a una domanda è presente o è assente, devo avere un modo di fare dei confronti. Se ho bisogno di ordinarla la mia lista, quell'elemento lì non solo deve essere confrontabile, deve essere anche confrontabile per ordine, cioè devo poter dire se viene prima o dopo di un altro.</p>
+<p>Queste sono un po' delle caratteristiche che quel tipo deve avere, ma tipi che hanno le caratteristiche di essere copiabili, di essere confrontabili per identità e confrontabili per ordine, ce n’è a valangate.</p>
+<p>E allora posso scrivere l'algoritmo, che agisce su un tipo che è “lista di T”, sapendo che la mia lista funzionerà con tanti tipi diversi e nasce l'idea della <strong>programmazione generica</strong>.</p>
+<p>Quest'idea qua ha preso un po' di tempo ad assumere una forma decente e ha avuto anche lei una biforcazione, così come la storia dell'ereditarietà si è biforcata varie volte (ereditarietà singola o ereditarietà multipla, ereditarietà sintattica con le interfacce o non sintattica, ereditarietà a template o ereditarietà basata su classe etc…), anche la programmazione generica ha avuto delle sue evoluzioni.</p>
+<p>Il C++ la introduce con un concetto di <em><strong>monomorfizzazione</strong></em>, cioè scrivi la tua lista di T, ma quando la usi dovrai specificare un <strong>tipo concreto</strong>. Nel tuo programma avrai la lista di interi, la lista di stringhe, la lista di <code>EmailMessage</code> — non c'è problema! Quando specifichi cosa metti dentro la lista, io genero dalla forma generica dell'algoritmo il codice specifico per quel tipo. Per esempio, una lista di interi avrà record di 4 byte più il puntatore al next, una lista di stringhe avrà record di 24 byte più il puntatore al next, e così via per altre dimensioni. In questo modo posso generare il codice più adatto per ogni tipo concreto specifico.</p>
+<p><strong>E questa è la scelta fatta dal C++ che ritroviamo anche in Rust.</strong></p>
+<p>Per contro altri linguaggi fanno scelte completamente diverse. Java, Kotlin, JavaScript, Python e altri, in realtà partono dall'assunzione che la gerarchia di ereditarietà ha un <em>capostipite</em>, e la presenza di questo capostipite in realtà mi permette di scrivere, in caso di Java, "Object" — tutto deriva da <code>Object</code>. E allora la vera implementazione della classe <code>List</code> è in realtà una lista di <code>Object</code>, e voi in Java questo lo vedete bene perché una lista di <code>int</code> semplici non la fate, perché gli <code>int</code> sono un'eccezione in Java e non sono oggetti, ma sono <em>valori</em>. Potete fare la lista di <code>Integer</code> con la "i" maiuscola, che sono oggetti, ma la lista di int non si può fare.</p>
+<p>E quando in Java scrivete <code>List&lt;T&gt;</code> in realtà state semplicemente dicendo che in quella roba lì potete metterci delle restrizioni che il compilatore userà in fase di compilazione, ma alla fine il tipo verrà cancellato. L'oggetto <code>List</code> non sa che cosa ha dentro. Se voi andate dentro l'oggetto <code>List</code> e usate l’introspezione di Java (cioè il fatto che ogni oggetto Java ha un campo che si chiama <code>.class</code> che permette di accedere alla definizione della classe stessa, eccetera), la lista vi dice che è una <code>java.util.List</code>, ma non sa dirvi "list di che cosa”. Non lo può sapere, perché in Java si adotta una tecnica che si chiama <em><strong>Type Erasure</strong></em> — cancello il tipo: quello a run time è una lista di <code>Object</code>.</p>
+<p>In quanto <code>List&lt;Object&gt;</code>, lo posso fare perché in Java <strong>tutto</strong>, tranne i tipi elementari, deriva da oggetti. E quindi sicuramente qualunque cosa io gli metta, se non è un tipo elementare, è anche un oggetto, e dunque va bene.</p>
+<p>In C++ invece l'ereditarietà è possibile, ma non è obbligatoria. Quindi il Type Erasure non può funzionare.</p>
+<p>In Rust, invece, l'ereditarietà non c'è proprio. Abbiamo risolto il problema.</p>
+<p>Ma il polimorfismo sì, quello c’è. E allora vediamo di capire. Questo per darvi un po' un panorama storico di questa cosa, perché i concetti che noi oggi consideriamo più o meno scontati, non sono scontati. E non sono neanche necessariamente giusti. Cioè, il sapere un minimo dell'evoluzione dei linguaggi ci serve a capire che ad oggi, con l'esperienza che abbiamo fatto, avendo realizzato sistemi più o meno grandi, si è capito che certe cose più o meno possono andare — non è verità rivelata. Via via che si va verso sistemi più complessi, ci si rende conto che le astrazioni che oggi ci sembrano buone, non sono poi così buone. Hanno dei limiti. E questo spingerà la vostra generazione a inventare delle cose migliori.</p>
+<p>Per cui noi le impariamo, cerchiamo di capirle, cerchiamo di capire perché quelle che prima sembravano delle buone idee, poi così buone non erano, non erano proprio cattive. Perché in qualche modo funzionavano. Anche il C funziona. Non è che non funzioni. Però se devo realizzare un sistema molto grosso, devo pensare che mi costerà molto. E non è detto che sia così sostenibile. Per questo motivo cerchiamo delle rappresentazioni ulteriori.</p>
+<p><img src="images/polimorfismo/image%201.png" alt="image.png" /></p>
+<p>Allora, in C sintatticamente non c'è nessun supporto per il polimorfismo. Quindi se io ho due tipi che devono avere dei comportamenti comuni, il linguaggio in quanto linguaggio non mi dà di suo nessuna struttura sintattica che mi aiuti.
+Devo scolpire tutto a mano. Si può fare, sì certo, qui vi ho messo un link, andatevelo a leggere, dove vi raccontano come si può approcciare il polimorfismo in C.
+S<em>poiler</em>: scrivendo un bel po' di cose.</p>
+<p>C++, trent'anni fa, parte con l'idea che l'ereditarietà può essere uno strumento a favore del meccanismo polimorfico. L'ereditarietà nasce con quest'idea: racchiudo nella classe base quel comportamento comune che le classi derivate devono avere. Così se lo trovano, tranquillamente, senza bisogno di fare grossi pasticci. C++, nell'affrontare questa cosa, dice <em>"guarda l'ereditarietà è possibile, addirittura è possibile l'ereditarietà multipla”</em>.</p>
+<p>Quindi io posso derivare dalla classe <code>Alfa</code> e anche dalla classe <code>Beta</code>. Dalla classe <code>Alfa</code> ricevo il metodo <code>m1</code>, <code>m2</code>, <code>m3</code>, dalla classe <code>Beta</code> ricevo il metodo <code>m4</code>, <code>m5</code>, <code>m6</code>. Benissimo.
+La classe <code>Alfa</code> mi rende parente di qualcun altro, che anche lui deriva da <code>Alfa</code>, la classe <code>Beta</code> mi rende parente di qualcun altro che anche lui deriva da <code>Beta</code>. E va bene: si crea un mondo di classi "<em>cugine</em>", più o meno con delle affinità, ma diverse tra di loro.</p>
+<p>Non solo io posso ereditare, quindi mi ritrovo, ad esempio, l'esistenza di un metodo e della sua implementazione, ma è anche possibile, così come in Java e in molti altri linguaggi, <strong>sovrascrivere</strong>. In Java tutti gli <code>Object</code> hanno il metodo <code>toString</code>.</p>
+<p><em>Com'è fatto il metodo</em> <code>toString</code> <em>nella classe</em> <code>Object</code><em>?</em>
+Ti stampa un numerino che sembra a caso, e in realtà è il suo hashcode, e poi <code>@NomeClasse</code>. Per cui se io creo un oggetto di qualche tipo, ad esempio se ho creato una classe <code>Automobile</code>, che deriva da <code>Object</code>, e faccio <code>Automobile a = new Automobile()</code> e poi faccio <code>a.toString()</code>, vedrò <code>7b5f49@Automobile</code>, o nome del package, quindi <code>it.polito.Automobile</code>.</p>
+<p><em>E' utile?</em>
+Meglio che niente, ma certo che se devo farlo vedere a un utente non è che ci capisca molto, per cui non solo io eredito il metodo <code>toString</code>, ma ho la possibilità di fare <strong>l'override</strong>, ovvero nella classe automobile posso dire:</p>
+<pre><code class="language-java">@Override
+public String toString() {
+    return "Car {" +
+            "manifacturer ='" + manifacturer + '\'' +
+            ", model ='" + model + '\'' +
+            ", color =" + color +
+            '}';
+}
+</code></pre>
+<p>Java naturalmente introduce il concetto di polimorfismo e di <strong>metodi virtuali</strong>, perché? Perché se io prendo la mia Automobile <code>a</code>, quindi <code>a</code> è una variabile di classe <code>Automobile</code>, la posso salvare dentro una variabile <code>o</code> di tipo <code>Object</code>? Certo che lo posso fare, è lecito, la <code>Automobile</code> è un <code>Object</code>, e quindi questa operazione la posso fare.</p>
+<p>A quel punto se sull'Object <code>o</code> facessi <code>toString</code>, continuerei a vedere la versione di <code>toString</code> di <code>Automobile</code>. Non ci vedo l'implementazione che deriva dalla classe <code>Object</code>.
+Cioè, i metodi che sono <em><strong>overridden</strong></em>, legati a una certa istanza, si ricordano di preciso a che istanza appartengono, anche se sono memorizzati in una variabile che non conosce i dettagli di quella classe lì.</p>
+<p>Questo è per il fatto che in Java tutti i metodi pubblici sono naturalmente <strong>virtuali</strong>, ovvero, <strong>tengono traccia della classe concreta a cui l'istanza appartiene</strong>. Il modo con cui in Java questo può avvenire è perché tutte le istanze si portano dietro il punto class. Quindi gli oggetti in Java sono naturalmente più grassi, perché devono tenersi traccia della classe vera a cui appartengono. Per cui se voi avete un <code>Object</code> di cui non sapete nient'altro, ma gli fate <code>System.out.println(o.getClass())</code>, lui vi dice che in realtà non è un <code>Object</code>, è <code>Java.util.List</code>. Quindi il fatto che gli oggetti conoscano la classe gli rende facile sapere delle cose.</p>
+<p>In C++ questa cosa non si è voluta assolutamente fare, perché? Perché questo obbliga, nel mondo di Java (che peraltro è un mondo supportato a una virtual machine, quindi che ha un costo associato non trascurabile), a tenere in memoria una rappresentazione delle classi. Nei programmi C e C++ e in generale nella programmazione di sistema, dove si lavora a basso livello, le classi, i tipi dati, eccetera, sono concetti che esistono solo nel codice sorgente, non ci sono nel run time. Non li vedo, ne vedo gli effetti. Se ho definito che la mia struct aveva due numeri e una stringa, guardando la struttura del run time, troverò effettivamente il campo <em>numero1</em>, il campo <em>numero2</em>, il campo <em>stringa</em>. Ma non c'è più scritto che era così, è compilato, cioè il codice sa che all'offset 12 trova una cosa, all'offset 54 ne trova un'altra, punto. Ma ha perso di vista quella che era la struttura. Non potete interrogare un programma in C o in C++ per dire <em>"raccontami come sono fatte le tue classi".</em> Non c'è questa consapevolezza, questa introspezione. Non c'è perché, altrimenti ci porteremo dietro montagne di cose che va un po' contro l'efficienza.</p>
+<p><em>Come posso, in assenza di introspezione, permettere comunque di garantire un comportamento polimorfico?</em>
+La scelta dei signori del C++ è stato quello di dire <em>"attenzione, prima di tutto non è vero che tutti i metodi devono essere virtuali, perché è una caratteristica che costa. Quindi, caro programmatore, dimmelo un po' tu, quelli che vuoi, dove vuoi spendere e dove non vuoi spendere.</em> <em>Dove non vuoi spendere questo comportamento non c'è, e fine. Dove vuoi spendere io te lo do</em>".</p>
+<p><em>Come faccio a dire che voglio spendere?</em>
+Mi indichi che quel metodo lì è <strong>virtual</strong>, quindi il C++ introduce una parola chiave in più, <code>virtual</code>, che permette di far capire che quel particolare metodo potrà essere, nelle sottoclassi, sovrascritto e cambiato. Dopodiché, per gestirsi questa cosa, C++ dice <em>"se una classe ha dei metodi virtual, io devo aggiungere nelle istanze un pezzettino"</em>: ogni istanza di una classe che ha almeno un metodo virtual, ha un puntatore in più. Questo è un costo in termini di memoria.</p>
+<p><em>E cos'è sto puntatore in più?</em>
+È un puntatore a una struttura dati che si chiama <em><strong>Vtable</strong></em>. Adesso la vediamo disegnata così riusciamo a capire. Questa struttura dati non è nient'altro che una tabellina che contiene il puntatore all'implementazione concreta del metodo virtual che io sto chiamando. Questo vuol dire che chiamare un metodo virtual in C++ costa di più che chiamare un metodo semplice. Mi costa di più in termini di spazio, perché per avere un metodo virtual io devo avere il campo Vtable, che è nascosto ma c'è. Mi costa in termini di tempo, perché quella chiamata è indiretta. Quindi io vado dentro un array, prelevo l'iesimo elemento, che è l'effettivo indirizzo a cui dovrò saltare. Solo a runtime saprò effettivamente quale metodo concreto sto chiamando. Questo mi fa perdere qualche ciclo macchina.</p>
+<p>In Java voi perennemente perdete memoria, perché tutti i vostri oggetti contengono metodi virtuali, e perdete perennemente tempo, perché ogni volta che avete l'invocazione di un metodo dovete andare nella struttura class e andare a recuperare il metodo.. cioè, non lo fate voi, lo fa la Java Virtual Machine per voi, ma questo ha un suo costo.</p>
+<h1 id="2-ereditarietà-e-polimorfismo-in-c"><a class="header" href="#2-ereditarietà-e-polimorfismo-in-c">2. Ereditarietà e Polimorfismo in C++</a></h1>
+<p><img src="images/polimorfismo/image%202.png" alt="image.png" /></p>
+<p><strong>Prendiamo questo esempio qua banale.</strong></p>
+<p><strong>Classe Alfa:</strong> qui abbiamo una classe <code>Alfa</code> che contiene dentro di sé un unico campo, <code>bool b</code>, e ha un metodo chiamato <code>getValue</code> che è marcato con la parola chiave <em>virtual</em>, per far capire che questo metodo potrà essere cambiato dalle sottoclassi. La versione di <code>Alfa</code> è che questo metodo ritorna <code>1</code>.
+Se instanzio oggetti di questa classe, questi occuperanno 1 byte (per il boolean <code>b</code>) più 8 byte (per il puntatore alla vtable che tiene traccia dell’implementazione di <code>getValue</code>, essendo questo un metodo virtuale) e dunque 1 + 8 = 9 → Scomodo, e quindi prima potenza di 2 per allineamento = 16.
+Un oggetto di classe <code>Alfa</code> occuperà 16 byte in memoria — notiamo già quanto “spreco” di memoria ci causa avere un metodo virtuale.</p>
+<p><strong>Classe Beta:</strong> poi creo la classe <code>Beta</code>, che è una sottoclasse di <code>Alfa</code>. <code>Class beta : public alfa</code>, quindi beta estende alfa. Estendendo alfa naturalmente eredita quello che c'è dentro alfa. Eredita un campo b, booleano, che però per lei è inaccessibile, perché sopra era privato. Non c'è nessun modificatore davanti, quindi quello è un campo privato. C'è, ce l'ho in pancia, ma non lo posso vedere. E poi un campo <code>i</code> che invece è proprio mio, ci posso fare delle cose. Dopodiché non mi piaceva l'implementazione che ho ricevuto dall'alto di <code>getValue</code>. Quell'altro tornava un <code>1</code>, ma io sono un <code>Beta</code>, quindi lo cambio, e dico che torno <code>2</code>.
+Analogamente per quanto descritto per <code>Alfa</code>, qui avremo 4 byte in più per la variabile <code>i</code>, che ci stanno benissimo in quei 7 byte di padding in più che avevamo in <code>Alfa</code>, quindi anche in questo caso abbiamo un’occupazione in memoria di 16 byte totali, per oggetti di classe <code>Beta</code>.
+Chiaramente, <code>Beta</code> ha un puntatore ad una sua vtable, con la relativa implementazione di <code>getValue</code> per la classe <code>Beta</code>.</p>
+<p><strong>Classe Gamma:</strong> e poi un'altra classe <code>Gamma</code>, che è sorella di beta, perché anche lei deriva da <code>Alfa</code>. Questa invece ha un campo privato suo <code>c</code>, di tipo <code>char</code>, anche lei ha il <code>b</code> booleano che non può vedere, ce l'ha dentro ma non ci può fare niente. E poi ha il suo metodo <code>getValue</code>, in cui invece ritorna <code>3</code>.
+Anche qui, stesso discorso di sopra: in totale anche gli oggetti <code>Gamma</code> occupano 16 byte in memoria.</p>
+<p>Questa è la struttura delle classi, semplice.</p>
+<p>A destra vediamo come le usiamo. Le usiamo con dei puntatori.</p>
+<p>E quindi dichiaro un primo puntatore <code>ptr1</code> di tipo <code>Alfa</code> e posso dire che punta a un oggetto, a un'istanza di <code>Alfa</code>, quindi quel puntatore lì che sono 8 byte punta da qualche parte nello heap a un blocco di 16 byte, e dentro mi crea un oggetto del genere.</p>
+<p>Poi dichiaro un altro puntatore sempre di tipo <code>Alfa</code> (e lo posso fare perché <code>Beta</code> <em>is</em> <code>Alfa</code>) e chiedo di allocare altri 16 byte sullo heap per un oggetto <code>Beta</code>.</p>
+<p>Discorso analogo per <code>ptr3</code>, che punterà ad un blocco di 16 byte per contenere un oggetto <code>Gamma</code>.</p>
+<p>Siccome tutti e 3 sono <code>Alfa</code>, tutti e 3 hanno sicuramente il metodo pubblico <code>getValue</code>. Vediamo che se lo invochiamo, torna i 3 valori diversi.</p>
+<p><em>Come fa il compilatore a fare in modo che mi escano 3 risposte diverse per del codice che mi appare uguale?</em>
+Perché se io mi limito a guardare le 3 righe in cui invoco il metodo <code>getValue</code>, ptr1, ptr2, ptr3 sono dello stesso tipo: sono tutti e 3 degli <code>Alfa*</code>. Eppure se io eseguo questo codice vedo effettivamente che mi ritornano 1, 2, 3. <em>Come è possibile?</em></p>
+<p><img src="images/polimorfismo/image%203.png" alt="image.png" /></p>
+<p>Qui c'è rappresentata la versione di queste classi evidenziando l’ereditarietà, c'è la classe madre <code>Alfa</code> in alto che ha il suo metodo <code>getValue</code> e il suo campo privato <code>b</code>.</p>
+<p>Sotto c'è la classe <code>Beta</code> che ha il campo <code>b</code> ereditato ma inaccessibile (ha anche del padding che qua non è esplicitato, ma c'è) e poi c'è l'intero <code>i</code>, con la sua versione <em>rossa</em> di <code>getValue</code>.</p>
+<p>E poi c'è la classe <code>Gamma</code> che ha sempre il booleano <code>b</code> ereditato, poi il carattere <code>c</code> e anche qui la sua versione <em>blu</em> di <code>getValue</code>.</p>
+<p>Ma nero, rosso, e blu sono messi solo per un motivo didattico — per far vedere che sono 3 cose diverse. Ma per il compilatore quello non si capisce.</p>
+<p><img src="images/polimorfismo/image%204.png" alt="image.png" /></p>
+<p>Allora, quello che realmente succede è la seguente cosa.</p>
+<p>Quando io dico <code>Alfa *ptr = new Alfa()</code> viene allocato il nostro blocco da 16 byte, in cui i primi 8 byte sono un puntatore alla vtable, ed in particolare la vtable di <code>Alfa</code>, che ha un’unica entry perchè abbiamo un solo metodo virtuale. Tale entry è un puntatore all’implementazione di <code>getValue</code> per la classe <code>Alfa</code>.</p>
+<p>Stesso discorso per le classi <code>Beta</code> e <code>Gamma</code>, i cui blocchi però puntano ognuno ad una vtable diversa, la quale a sua volta punta ad una implementazione diversa di <code>getValue</code>!</p>
+<p>Questo è come C++ implementa il polimorfismo.
+Il costo è che tutti questi oggetti, in assenza di metodi virtuali, sarebbero stati molto più piccoli, e invece ora pesano tutti 16 byte (<code>Alfa</code>, ad esempio, sarebbe pesato solo 1 byte: cioè lo spazio necessario per contenere il booleano).</p>
+<p>Un altro costo è che le invocazioni a getValue devono fare un po’ di salti: quando viene eseguita <code>ptr1-&gt;getValue();</code>, bisogna necessariamente passare dalla vtable per capire qual è l’implementazione di <code>getValue</code> — il codice generato dall’istruzione <code>ptr1→getValue();</code> non contiene subito l’indirizzo della funzione da chiamare, perchè non lo può sapere: lo saprà solo a run time.
+Notiamo che gli step sono:</p>
+<ul>
+<li>Segui il puntatore</li>
+<li>Accedi alla vtable</li>
+<li>Recupera la i-esima entry (in questo caso <code>getValue</code> è l’unico metodo che c’è, quindi sarà la prima e unica entry)</li>
+<li>Segui il puntatore contenuto nella entry per effettivamente accedere al codice del metodo desiderato</li>
+</ul>
+<p>Ed in caso di ereditarietà multipla con metodo virtuale da entrambi i genitori, le vtable sono separate!</p>
+<p>Questo nel C++ è fautore di una serie di problemi, perché quando tu scrivi <code>Alfa *ptr2 = new Beta()</code>, di fatto hai creato il <code>Beta</code>, ma stai prendendo la vtable del padre, che contiene in questo caso <code>getValue</code>.</p>
+<p>Nel caso di due genitori separati, dentro <code>Beta</code> troviamo due vtable: quando creiamo un oggetto con <code>new Beta</code>, supponiamo all'indirizzo 1000, viene allocata sia la vtable propria di <code>Beta</code> che quella del primo genitore, contenente i suoi metodi.
+La prima tabella contiene in sequenza i metodi del genitore di <code>Beta</code> seguiti da quelli propri di <code>Beta</code>. I metodi del secondo genitore si trovano invece in una vtable separata, posizionata più avanti in memoria.</p>
+<p>Quando assegniamo <code>Beta</code> a <code>ptr2</code>, se il puntatore è di tipo <code>Beta</code> o del primo genitore, assegniamo l'indirizzo 1000. Ma se <code>ptr2</code> è un puntatore al secondo genitore, gli assegniamo l'indirizzo della seconda vtable!</p>
+<p>Di conseguenza, gli oggetti in C++ con ereditarietà multipla non hanno un unico indirizzo, ma <strong>ne hanno tanti quanti sono i loro genitori</strong>. Questi indirizzi, pur essendo vicini in memoria, sono distinti. Questo crea un problema serio: se salviamo lo stesso oggetto <code>Beta</code> in due puntatori <code>ptr1</code> e <code>ptr2</code> riferiti ai diversi genitori (cioè dichiarando <code>ptr1</code> come puntatore a <code>Beta</code>, o <code>genitore1</code> di <code>Beta</code>, e <code>ptr2</code> invece come puntatore a <code>genitore2</code> di <code>Beta</code>) e poi confrontiamo i puntatori, risulteranno diversi nonostante puntino allo stesso oggetto — una vera tragedia!</p>
+<p>L'ereditarietà multipla in C++ presenta diverse <strong>complessità</strong>, tanto che i progettisti di Java hanno deciso di eliminarla completamente. Nonostante offra molte possibilità, richiede che il programmatore abbia una <em>comprensione approfondita</em> dei meccanismi sottostanti.</p>
+<h2 id="21-costi-del-polimorfismo"><a class="header" href="#21-costi-del-polimorfismo">2.1 Costi del Polimorfismo</a></h2>
+<p>Il punto cruciale, tralasciando l'ereditarietà multipla, è il meccanismo di <strong>late binding</strong> che permette di determinare a runtime quale metodo chiamare. C++ implementa questo attraverso la vtable, ma ciò comporta un <em>overhead</em> nella dimensione degli oggetti: un oggetto che potrebbe occupare un solo byte finisce per occuparne 16 (8 per il puntatore più padding per l'allineamento).</p>
+<p>Questo comporta due costi significativi:</p>
+<ul>
+<li>Un <strong>costo di spazio</strong>: nel caso di Alfa, ad esempio, abbiamo uno spreco di 15/16 dello spazio allocato</li>
+<li>Un <strong>costo di tempo</strong>: quando invochiamo <code>ptr1-&gt;getValue()</code>, non possiamo determinare l'indirizzo in fase di compilazione. Dobbiamo prima consultare la vtable, con possibili penalizzazioni dovute a cache miss</li>
+</ul>
+<p>Se Gamma ridefinisce solo <code>getValue</code>, avremo sempre un solo metodo virtuale. Estendendo Beta, Gamma potrebbe aggiungere i propri metodi: la sua vtable inizierebbe con i metodi della vtable di Beta più i propri. È possibile chiamare esplicitamente i metodi con la sintassi <code>Alfa::getValue</code>.</p>
+<h2 id="22-metodi-virtuali-puri--funzioni-virtuali-astratte"><a class="header" href="#22-metodi-virtuali-puri--funzioni-virtuali-astratte">2.2 Metodi virtuali puri / funzioni virtuali astratte</a></h2>
+<p><img src="images/polimorfismo/image%205.png" alt="image.png" /></p>
+<p>È importante notare che <em>non tutte</em> le chiamate in C++ seguono questo meccanismo - sarebbe inefficiente. Solo i metodi marcati come <code>virtual</code> utilizzano la vtable. Per i metodi non virtuali, quando questi vengono chiamati il compilatore può generare direttamente l'indirizzo della funzione, senza mettere alcuna vtable tra i piedi.</p>
+<p>Il C++ permette, nella classe base (Alfa in questo caso), di dichiarare un metodo virtuale puro usando la sintassi <code>virtual int getValue() = 0</code>. Questo indica che <code>Alfa</code> dichiara il metodo <code>getValue</code> ma non lo implementa — l'implementazione sarà fornita dalle classi figlie.</p>
+<p>Questa cosa in Java voi la scrivete con <code>abstract</code>. Quando in java scrivete <code>abstract int vattelapesca</code>, state dicendo <em>“io introduco il nome di un metodo che non ho, ma che le mie sottoclassi dovranno mettere, sono responsabili di questa cosa”</em>.</p>
+<p>In Java l'effetto di scrivere <code>abstract</code> davanti a un metodo è che siete obbligati a ripetere <code>abstract</code> anche davanti alla classe, se no il compilatore vi picchia.
+Questo per rendere consapevole chi usa la classe che quella classe non è istanziabile. Se voi in Java provate a fare <code>new</code> di una classe <code>abstract</code> il compilatore vi blocca. Però potete fare <code>new</code> di una sua sottoclasse.</p>
+<p><em>Perché serve poter mettere uguale a 0?</em>
+Perché permette di definire quelle che in C++ si chiamano le <em><strong>funzioni virtuali astratte</strong></em>. Cioè sono gli <em>impegni</em> ad avere un metodo senza al momento potercelo avere — è un modo di <em>impegnare le proprie sottoclassi</em> a fornire un'implementazione adatta in base alla loro cosa.</p>
+<p>La classe che ha almeno un metodo virtual uguale a 0, in C++ viene detta classe virtuale astratta, ma viene solo detta così per intendersi: non c'è un'annotazione come in Java (la notazione <code>abstract</code>, appunto) che te la rende evidente. Questo serve ai programmatori per capirsi, ma non compare nella sintassi del linguaggio. Quello che compare nel linguaggio è il fatto che se voi provate a istanziare una classe virtuale astratta il compilatore blocca.</p>
+<p>È molto interessante il caso del C++ in cui voi create una classe che non ha nessun campo, quindi non contiene delle variabili proprie, e ha solo quindi dei metodi, e tutti questi metodi sono <code>virtual = 0</code>.
+Quella classe lì è diventata l'impegno a mettere a disposizione dei metodi — in Java una cosa di questo tipo si chiama <code>interface</code>. Cioè un'interfaccia è semplicemente una classe da cui è possibile ereditare in modo multiplo (perché non ha contenuti e quindi non mi porta niente in termini di uso di memoria), e mi dà l'impegno a fornire un'implementazione per un certo numero di metodi.</p>
+<h1 id="3-tratti-in-rust"><a class="header" href="#3-tratti-in-rust">3. Tratti in Rust</a></h1>
+<p><img src="images/polimorfismo/image%206.png" alt="image.png" /></p>
+<p>Tutte queste cose qua sono nel C++, in parte in Java, ma le trovate modo simili in altri linguaggi che hanno l'ereditarietà.</p>
+<p>Veniamo ora a Rust. I signori che hanno implementato Rust hanno detto <em>"Bello il polimorfismo, assolutamente utile! Brutta l'ereditarietà, fonte di casino a non finire”</em>. Per cui la scelta è stata <em>“le strutture Rust (</em><code>struct</code><em>,</em> <code>enum</code><em>,</em> <code>tuple</code><em>..) non ereditano”</em>.</p>
+<p>L'<em>ereditarietà concreta</em>, cioè quella dove mi porto dei pezzi intesi come variabili aggiuntive e dei metodi implementati è un casino — dà più malefici che benefici, quindi non la facciamo.
+L'<em>ereditarietà delle interfacce</em>, dei metodi virtuali puri eccetera, invece è molto potente perché abilita un processo che si chiama <em><strong>composizione</strong></em>.</p>
+<p><strong>Composizione:</strong> Piuttosto che dire che la vostra automobile <em>è</em> un motore, che non è vero, è molto meglio dire che la vostra automobile <em>ha</em> un motore, che invece è vero. E ne può anche avere due, un elettrico e uno a benzina. La composizione vi permette di fare delle cose e può esserci anche l'automobile a pedali, che il motore non ce l'ha proprio. Ma se voi dite che automobile eredita da motore perché viene tanto comodo, perché motore definisce il metodo accendi e spegni, e viene tanto comodo farselo avere anche all'automobile, è un casino. Quindi la scelta è stata quella di dire: non abilitiamo l'ereditarietà che implica l'<em><strong>essenza</strong></em>, cioè <em>essere</em> (quando io eredito da qualcuno, <strong>sono anche di quel tipo</strong>), molto meglio la <em><strong>composizione</strong></em> (una parte di me è fatta così).</p>
+<p>Il modo con cui questo viene fatto è tramite il concetto di <em><strong>tratto</strong></em>.</p>
+<h2 id="31-concetto-di-tratto"><a class="header" href="#31-concetto-di-tratto">3.1 Concetto di Tratto</a></h2>
+<p><em>Che cos'è un tratto?</em>
+È un <strong>tipo</strong>, che noi possiamo creare all'interno, che esprime l'impegno da parte di chi implementerà quel tratto a mettere a disposizione un gruppo di metodi. E il tratto elenca quali sono i metodi che dovranno essere messi a disposizione. Diciamo che il tratto equivale a quello che in C++ è una classe virtuale astratta pura, cioè una classe che non ha nessun campo proprio, che ha solo dei metodi e tutti i metodi sono virtuali puri, cioè non hanno un'implementazione.</p>
+<p>Rust in realtà fa un passo avanti e dice <em>“guarda, se vuoi nel tratto mi metti un metodo, e a tale metodo se vuoi ci aggiungi, oltre che alla sua firma (cioè l'insieme dei parametri che ricevi in ingresso e il valore che ritorna), anche una implementazione, che però non viene considerata ereditata: è la cosiddetta implementazione di default”</em>.
+Cioè, se chi implementa il tratto non dà una sua versione, può usare quella. Se dà la sua versione, dà la sua versione, punto — quella di defaut è come se non ci fosse.</p>
+<p><em>Perché uso i tratti?</em>
+Uso i tratti per esprimere quei comportamenti comuni che cose molto diverse tra di loro possono avere. Ad esempio il tratto <code>std::io::Write</code> indica che quell’aggeggio lì, chi lo implementa, è capace di scrivere dei byte. Il tratto <code>std::fmt:Debug</code> indica che quella cosa lì è capace di essere stampata quando il modificatore è <code>{:?}</code>.
+Il tratto <code>Display</code> indica che quella cosa lì può essere stampata quando il modificatore è <code>{ }</code>, e così via.
+Il tratto <code>Clone</code> indica che quell'oggetto lì è duplicabile, a costo più o meno alto, ma è duplicabile.
+Il tratto <code>Iterator</code> indica che quell'oggetto lì è capace di tirare fuori uno alla volta dei pezzi.</p>
+<p><strong>A differenza di quello che succede in C++, in Java, in JavaScript, in Python, e in molti altri linguaggi</strong>, nella maggior parte delle situazioni in cui in Rust usiamo dei tratti, non abbiamo nessun costo aggiuntivo, né in termini di spazio, né in termini di tempo.</p>
+<p>Nella maggior parte delle situazioni, ma <em>non sempre</em>, perché ci sono alcune situazioni in cui il compilatore non ha abbastanza informazioni per capire cosa deve fare. In quelle situazioni lì il compilatore aggiunge qualche cosa, e adesso vediamo dove e in che modo, e ci obbliga anche a renderlo evidente.</p>
+<p>Queste situazioni sono quelle in cui, se noi dobbiamo passare una cosa e la vogliamo trattare come tratto e non come cosa concreta, dove il compilatore si rende conto che non avrebbe alternative perché c'è ambiguità, ci obbliga a passarla come <code>&amp;dyn</code>. Noi abbiamo imparato a conoscere il <code>&amp;</code> semplice, il <code>&amp;mut</code>, ma possiamo avere anche il <code>&amp;dyn</code>.</p>
+<p><strong>Che cos'è il <code>&amp;dyn</code>?</strong>
+È un reference <em>fat</em>, perché in quanto reference sicuramente all'oggetto, almeno. Notate che in Rust, al contrario di C++, il polimorfismo funziona tramite i puntatori, non con le istanze concrete, perché se io ho degli oggetti che sono uno piccolo e uno grosso, non posso metterci indifferentemente l'uno o l'altro. Quando lavoro con i puntatori invece va tutto bene, perché i puntatori sono tutti della stessa dimensione.</p>
+<p>Un puntatore <code>&amp;dyn</code> è un particolare puntatore che ha nella prima parte il puntatore vero all'oggetto e nella seconda parte ha la <em>vtable</em>. Cioè, mentre in C++ la vtable <em>sta nell'oggetto</em>, qua la vtable sta <em>nei puntatori</em>, ma non in tutti i puntatori in assoluto, ma solo in quei puntatori che sono <strong>potenzialmente ambigui</strong>, cioè dove il compilatore non riesce a gestirsi la cosa.</p>
+<p>Vediamo un esempio.</p>
+<h2 id="32-esempio"><a class="header" href="#32-esempio">3.2 Esempio</a></h2>
+<p><img src="images/polimorfismo/image%207.png" alt="image.png" /></p>
+<p>Introduciamo un <strong>tratto</strong>. Prendiamo come esempio le figure geometriche: sebbene un triangolo sia molto diverso da un cerchio, entrambi condividono alcune caratteristiche. Sia i triangoli che i cerchi hanno un <em>perimetro</em> e un'<em>area</em>.</p>
+<p>Definiamo quindi il tratto <code>Figura2D</code>.</p>
+<p><em>Come è strutturato?</em>
+Ha due funzioni: <code>perimetro</code> che restituisce un <code>f64</code> e <code>area</code> che restituisce anch'essa un <code>f64</code>. Entrambi i metodi ricevono <code>&amp;self</code>, cioè operano sull’oggetto che li sta invocando, in modalità di sola lettura. Stiamo descrivendo un comportamento comune: per ogni <code>Figura2D</code> possiamo calcolare perimetro e area. Non specifichiamo altro (non stiamo specificando quale è questa figura) - questo è l'unico impegno richiesto.</p>
+<p>Definiamo ora la struttura <code>Cerchio</code>. Avrà tre campi di tipo <code>f64</code>: <code>xc</code> e <code>yc</code> per le coordinate del centro, e <code>r</code> per il raggio. Rappresenta un cerchio posizionato sul piano.</p>
+<p><img src="images/polimorfismo/image%208.png" alt="image.png" /></p>
+<p>La struttura <code>Cerchio</code> può implementare il tratto <code>Figura2D</code> usando <code>impl Figura2D for Cerchio</code>. Quando scriviamo questo, il compilatore ci avvisa: <em>"Non basta dichiarare l'implementazione, devi fornire il codice"</em>. <code>Figura2D</code> richiede l'implementazione di <code>perimetro</code> e <code>area</code>.</p>
+<p><img src="images/polimorfismo/image%209.png" alt="image.png" /></p>
+<p>Usando <code>Implement missing members of Figura2D</code> il compilatore genera automaticamente lo scheletro base necessario.
+Poi ovviamente troviamo dentro un <code>todo!()</code>, se io provassi a eseguire a questo punto i metodi, non andrei da nessuna parte, si impianta e mi muore con un <code>panic</code>.</p>
+<p><img src="images/polimorfismo/image%2010.png" alt="image.png" /></p>
+<p>Forniamo quindi una valida implementazione dei due metodi.</p>
+<p>Questa è l'implementazione del <code>Cerchio</code>.</p>
+<p><img src="images/polimorfismo/image%2011.png" alt="image.png" /></p>
+<p>Poi facciamo la <code>struct Punto</code>. La <code>struct Punto</code> ha un <code>x</code> di tipo <code>f64</code> e una <code>y</code> di tipo <code>f64</code>. Questo rappresenta un singolo punto sullo spazio, sul piano. Anche <code>Punto</code> può implementare il tratto <code>Figura2D</code>. In questo caso, sia il perimetro che l’area di un punto sono uguali a 0.</p>
+<p>Abbiamo ora due figure.</p>
+<p><strong>Ho definito questo comportamento. Che me ne faccio?</strong> Nel main, possiamo cominciare a crearci degli oggetti.</p>
+<p><img src="images/polimorfismo/image%2012.png" alt="image.png" /></p>
+<p>Facciamo <code>let c = Cerchio { xc: 0, yc: 1, r: 10 }</code>. Poi posso dire <code>let p = Punto { x: 2.3, y: 2.4 }</code>.</p>
+<p>Io qua vedo direttamente le caratteristiche di <code>c</code>, posso fare <code>c.area()</code>, <code>c.perimetro()</code>. <em>Perché?</em> Perché il compilatore sa che il cerchio implementa il comportamento di <code>Figura2D</code>. Quando qui scrivo <code>c.perimetro()</code>, e il compilatore non ha bisogno di informazioni particolari. Sa esattamente che <code>c</code> è un tipo concreto, sa che quel tipo concreto implementa <code>Figura2D</code>, e quindi ha una sua versione del metodo <code>perimetro</code>, e quindi qua se io vado a vedere l'assembler che viene generato, vedo che ci mette direttamente la chiamata alla funzione specifica del perimetro, non ha dubbi.</p>
+<p><strong>Quindi qua non c'è bisogno di nessun gioco della VTABLE</strong>, questo costa 0, cioè costa come qualunque altra chiamata.</p>
+<p><img src="images/polimorfismo/image%2013.png" alt="image.png" /></p>
+<p>Se io invece mi metto qua sopra, e aggiungo una funzione <code>fn f1</code>, che accetta un oggetto di tipo <code>Figura2D</code>, allora devo scrivere che questo prende <code>&amp;dyn Figura2D</code>. E qui posso scrivere <code>println!("L'area vale {}", f.area())</code>, e poi <code>println!("Il perimetro vale {}", f.perimetro())</code>.</p>
+<p>E quando devo chiamare <code>f1()</code>, <em>non posso passargli direttamente</em> <code>c</code> o <code>p</code>, perché sono grossi diversi. <code>c</code>, che è <code>Cerchio</code>, ha tre campi: centro <code>x</code>, centro <code>y</code> e raggio <code>r</code>, e invece <code>p</code> ha solo <code>x</code> e <code>y</code>.</p>
+<p><img src="images/polimorfismo/image%2014.png" alt="image.png" /></p>
+<p>Però posso passargli il puntatore, posso passare <code>&amp;c</code> e posso passare <code>&amp;p</code>.</p>
+<p>Notate che nell’invocazione passiamo semplicemente <code>&amp;</code>, mentre nella firma della funzione l'ho chiamato <code>&amp;dyn</code>, <em>perché?</em> Perché l'altro deve capire che <code>Figura2D</code> potrebbe essere l'uno o l'altro, e nel costruire il codice di <code>f1</code>, chi gli arriva come parametro non lo sa più, e non lo può sapere! Il codice di <code>f1</code> viene compilato per i fatti suoi, così com’è. È ignorante, potrebbe essere chiamato dal main, ma potrebbe essere chiamato anche da un'altra parte, con oggetti di tipi diversi.</p>
+<p>Quindi il compilatore non può sapere nel momento in cui viene creato il codice di <code>f1</code>, che parametro specifico gli verrà dato. E quindi devo dire <em>“guarda, cautelati: se ti arriva un parametro, quel parametro lì deve essere un <strong>puntatore fat</strong>. Deve avere certamente il puntatore al dato, ma deve avere anche la vtable associata, in modo tale che tu te la possa risolvere.”</em></p>
+<p><img src="images/polimorfismo/image%2015.png" alt="image.png" /></p>
+<p>Se io adesso lo eseguo, mi dice che per il cerchio l'area vale <strong>314</strong> e ci sta perché ha dato raggio 10, e 10 per 10 fa 100, poi 100 per pi greco fa 314, e il perimetro vale <strong>6,28</strong> per 10, che ci siamo. Quindi 628.</p>
+<p><strong>L'aspetto che ci interessa è che il comportamento è stato effettivamente polimorfico.</strong> Cioè, abbiamo definito la funzione <code>f1</code> che accetta una cosa che è una <code>Figura2D</code>, e questa <code>Figura2D</code> viene ricevuta come puntatore. Perché altrimenti non potrei passargli cose a volte piccole, a volte grosse. Quindi io devo necessariamente darglielo come puntatore.</p>
+<p>Ma siccome le implementazioni possono essere molto diverse tra di loro (e in effetti lo sono, in un caso qua ci ritorna <code>0</code>, nell'altro ci ritorna il risultato di una formula), allora è necessario che io aggreghi al puntatore, nella struttura dati, anche la vtable.</p>
+<p><img src="images/polimorfismo/image%2016.png" alt="image.png" /></p>
+<p>Questo è reso evidente dal fatto che qua mi segno <code>&amp;dyn</code>. Se io cancellassi questo <code>dyn</code>, lui si arrabbia e mi dice <em>"attenzione, questo è un tratto, non è un oggetto. Se tu mi avessi passato &amp;Cerchio, a me andrà bene, io so quanto è grande un cerchio. Ma se mi passi &amp;Figura2D, io che ne so quanto è grande Figura2D. E allora devi includere la dyn keyword."</em></p>
+<p>Questo ci rende consapevoli che quella cosa lì sarà grande <strong>16 byte</strong>. Quindi le chiamate a <code>f1</code> si porteranno dietro due cose. Ma non è un problema, perché tanto nel main, quando io faccio <code>f1(&amp;c)</code>, io sto prendendo il puntatore di <code>c</code>, ma <code>c</code> so che è un cerchio, quindi il compilatore lì mi mette sia il puntatore effettivo a <code>c</code>, che in questo momento è borrowed finché questa funzione non torna, e mi mette anche il puntatore alla vtable, che lui non ha problemi a sapere, perché sa che <code>c</code> è un cerchio e quindi quali sono i suoi metodi virtuali ce li ha. E lo stesso sotto <code>f1(&amp;p)</code>, di nuovo, mi mette i due pezzi che mi interessano.</p>
+<h2 id="33-vtable-in-rust"><a class="header" href="#33-vtable-in-rust">3.3 VTable in Rust</a></h2>
+<p><img src="images/polimorfismo/image%2017.png" alt="image.png" /></p>
+<p><em>Come è fatta la vtable?</em>
+Quando ho un oggetto tratto, cioè <code>&amp;dyn Something</code>, quello che succede è che viene passato un puntatore doppio. La prima parte punta all'oggetto vero e proprio, quello che sia, nel caso della slide era un intero semplice, ma lui non sa che cosa sia, sa che inizia lì e però fine. La seconda parte è più interessante, perché la vtable di Rust ci porta sempre almeno 4 entries. La vtable può esistere solo se hai almeno un metodo virtual, cioè un metodo preso dal tratto, altrimenti non avresti nessun tratto.</p>
+<p>Un tratto senza metodi esiste ed è chiamato tratto <em><strong>marker</strong></em>, ma ha un impatto limitato poiché può essere gestito interamente dal compilatore. D'altra parte, un tratto con metodi — quelli che utilizziamo più frequentemente — contiene sempre 3 entries iniziali.</p>
+<p>Il primo è il metodo <code>drop()</code> — se quell'oggetto lì non è droppable, non è un problema: il metodo <code>drop()</code> sarà nullo, ma lo gestisce il compilatore. Quindi il primo elemento della vtable è il distruttore associato al dato, questo perché nel caso in cui il ricevitore dell'oggetto tratto dovesse distruggerlo per qualche motivo, deve sapere come poterlo fare.</p>
+<p>La seconda informazione è <em>quanto è grande il dato</em>, io so che nella prima parte al mio puntatore ho l'inizio, ma non so quanto è grande quella struttura lì. Nel caso del cerchio era grande 24 byte, nel caso del punto era grande solo 16. E quindi mi ritroverò nella seconda entry della vtable la dimensione.</p>
+<p>Nella terza entry della vtable mi trovo <em>l'allineamento</em>. Dice: <em>“guarda, se per caso lo devi spostare, farci cose, sappi che quest'oggetto qua comunque deve stare allineato a multipli di 2, 4, 8, o quel che sia”</em>. In questo caso qui l'oggetto era un <code>i32</code> e quindi aveva dimensione 4 e allineamento 4.</p>
+<p>Quello che viene successivamente sono i <em>metodi specifici</em>. Siccome questo qui era il tratto <code>Print</code>, che qui era definito come un singolo metodo <code>print()</code>, lì aveva il puntatore effettivo al metodo <code>print()</code>. Nel nostro esempio di prima, il nostro <code>Cerchio</code> avrà due metodi specifici, <code>area()</code> e <code>perimetro()</code>.</p>
+<h2 id="34-definire-ed-usare-un-tratto"><a class="header" href="#34-definire-ed-usare-un-tratto">3.4 Definire ed usare un tratto</a></h2>
+<p><img src="images/polimorfismo/image%2018.png" alt="image.png" /></p>
+<p><strong>Regole fondamentali per i tratti:</strong></p>
+<p>Si definisce un tratto con la sintassi <code>trait SomeTrait {fn fun1(...) -&gt; SomeResult; ... }</code>.
+Quindi quella è la definizione del tratto.</p>
+<p>La struttura dati concreta, come le <code>struct</code> o le <code>enum</code>, possono aggiungere l'implementazione di un tratto con la sintassi <code>impl SomeTrait for NomeStruttura</code>. Questo può essere fatto con un vincolo. Si può fare nel file in cui è definita la struttura dati, e si può fare nel file in cui è definito il tratto.</p>
+<p><strong>Importante:</strong> Non si può fare in un file terzo, dove non è definita né la struttura dati né il tratto, cioè esiste la <code>struct String</code> che è definita dal sistema. Io non ho accesso a quel file lì, ce l'ho nelle librerie standard. Posso, in un file mio, inventarmi il tratto <code>t</code> e dire che la <code>String</code> implementa il tratto <code>t</code>. Non posso definire il tratto <code>t</code> in un posto e poi in un file terzo dire che <code>String</code>, che non è definito in questo momento, implementa il tratto <code>t</code>. Quindi l'implementazione del tratto si fa o <strong>dove si definisce il tratto</strong> o <strong>dove si definisce la struttura dati</strong>. Non in un posto terzo.</p>
+<p><strong>Nota sull'autocompletamento:</strong> i tratti vi mettono in difficoltà con l'autocompletamento. Se voi volete usare un metodo che è definito in un certo tratto e quel tratto non è nel vostro file corrente, lo dovete importare, se no l'IDE non ve lo fa comparire come metodo possibile. Ad esempio noi avevamo fatto il tratto <code>Figura2d</code>, che era nello stesso file in cui abbiamo messo il cerchio, per cui lavorando col cerchio facevamo <code>c.</code> qualcosa e immediatamente comparivano i metodi <code>area</code> e <code>perimetro</code>. Se avessimo definito il tratto <code>Figura2d</code> da un'altra parte, se non lo vado a importare tramite <code>use</code>, con il suo nome completo, i metodi <code>area</code> e <code>perimetro</code> non li avremmo visti.</p>
+<p><strong>Preludio:</strong> Ci sono alcuni tratti (ad esempio <code>Clone</code>, <code>Iter</code>), che non è necessario importare in modo esplicito. Il motivo è che di fatto sono importati per noi dal compilatore, il quale fa riferimento a un blocco fondamentale che si chiama <em><strong>preludio</strong></em>, <code>std::prelud</code>, che contiene i tratti più comuni per cui non abbiamo bisogno di fare l'import; è lo stesso motivo per cui non dobbiamo importare <code>Vec</code>, è lo stesso motivo per cui non dobbiamo importare <code>String</code>, eccetera, che fanno parte di questa definizione di cose frequenti e comuni. Solo alcuni tratti stanno nel preludio, quelli che sono di uso comune, quegli altri che sono un po' più strani bisogna importarli in modo esplicito.</p>
+<p><img src="images/polimorfismo/image%2019.png" alt="image.png" /></p>
+<p><strong>Il riferimento self:</strong> Le singole funzioni dei tratti hanno bisogno normalmente di un riferimento a <code>Self</code>. Quel <code>Self</code> lì, nel tratto, non è risolto. Mentre il compilatore esamina il codice del tratto, <code>Self</code> non sa che cos'è, sarà il tipo concreto che implementa. Tanto che noi abbiamo detto che avremmo il tratto <code>Figura2d</code> che aveva <code>perimetro</code> che prendeva <code>&amp;self</code>, ma in quel momento lui non sapeva che cosa fosse <code>self</code>. Quando abbiamo detto che implementavamo <code>Figura2d for Cerchio</code>, <code>Self</code> è diventato <code>Cerchio</code>. Quando abbiamo detto che implementavamo <code>Figura2d for Punto</code>, <code>Self</code> è diventato <code>Punto</code>. Quindi mentre esponiamo il tratto, lo definiamo semplicemente, <code>Self</code> è un placeholder che prenderà valore per chi lo implementa. Il tipo <code>Self</code> può essere ritornato dalle funzioni del tratto o può essere consumato dalle funzioni del tratto.</p>
+<p><img src="images/polimorfismo/image%2020.png" alt="image.png" /></p>
+<p><img src="images/polimorfismo/image%2021.png" alt="image.png" /></p>
+<p><strong>Parametri self nei tratti:</strong> Se le funzioni del mio tratto hanno bisogno di riferirsi all'istanza specifica su cui operano, ecco che possono prendere come parametro un <code>self</code> puro (in questo caso lo prendono per movimento), oppure un <code>&amp;self</code> (e quindi lo prendono a prestito in sola lettura), o un <code>&amp;mut self</code> (lo prendono a prestito in lettura e scrittura in modalità esclusiva). Vale la stessa cosa dei metodi delle struct: <code>self</code>, <code>&amp;self</code>, <code>&amp;mut self</code> sono degli shortcut sintattici per la notazione più completa che è <code>self: Self</code>, <code>self: &amp;Self</code>, <code>self: &amp;mut Self</code>.</p>
+<h2 id="35-tipi-associati-nei-tratti"><a class="header" href="#35-tipi-associati-nei-tratti">3.5 Tipi Associati nei Tratti</a></h2>
+<p><img src="images/polimorfismo/image%2022.png" alt="image.png" /></p>
+<p>Quando definiamo un tratto abbiamo la possibilità di associargli dei tipi, è una cosa che nelle librerie standard è fatta tantissimo. Ad esempio il tratto <code>T3</code> che è introdotto qua ha un tipo associato chiamato <code>AssociatedType</code>, serve perché la funzione che definisce, <code>f</code>, accetta come argomento che cosa? Un parametro <code>arg</code> di tipo <code>Self::AssociatedType</code>. Ok, se già <code>self</code> è ignoto, <code>Self::AssociatedType</code> è doppiamente ignoto.</p>
+<p>Le classi che implementano <code>T3</code> hanno il compito di dire ovviamente che cos'è <code>Self</code> — sono loro stesse — ma anche che cos'è l'<em>associated type</em>. In questo caso <code>SomeType</code>, scritto qui a fianco ha come associated type un <code>i32</code> e quindi la funzione <code>f</code> di fatto è una funzione che prende un intero 32 bit.</p>
+<p>Nell’esempio sotto, invece, <code>OtherType</code> implementa anche essa <code>T3</code> ma sceglie come tipo associato di avere un <code>&amp;str</code> e quindi la funzione <code>f</code> prenderà come parametro un <code>&amp;str</code>.</p>
+<p>Questo ci fa già intravedere che dietro i tratti c'è un modo di fare delle cose molto più articolate. A differenza di quello che succede con le interfacce di Java dove i metodi hanno una signature ben definita, qua la signature ha delle parti che sono definibili, parametrizzabili dal tipo effettivo, quindi io scelgo con chi vado. È interessante, quindi nel main chiamerò <code>SomeType::f(1234)</code> e <code>OtherType::f("Hello, Rust!")</code>, e tutto funziona. Sempre la funzione <code>f</code>, ma a seconda di a che cosa è legata prenderà l'uno o l'altro valore.</p>
+<h2 id="36-implementazioni-default-nei-tratti"><a class="header" href="#36-implementazioni-default-nei-tratti">3.6 Implementazioni Default nei Tratti</a></h2>
+<p><img src="images/polimorfismo/image%2023.png" alt="image.png" /></p>
+<p>Quando viene definito un tratto è lecito associare al nome di una funzione anche un'implementazione di default. Le strutture dati, tipi concreti che implementano il dato tratto potranno scegliere se adottare per quella particolare funzione l'implementazione di default, semplicemente omettendola, oppure se fornire la loro implementazione specifica, e in quel caso ci mettono quel che vogliono.</p>
+<p>Quindi qui <code>T4</code> introduce la funzione <code>f</code> che ha un'implementazione di default, <code>SomeType</code> implementa <code>T4</code> e non mette niente, si fa andare bene la funzione di default.</p>
+<p><code>OtherType</code> viceversa implementa <code>T4</code> e lo fa rinunciando alla funzione di default e scegliendo la sua versione.</p>
+<p>Di nuovo dentro main possiamo chiamare <code>SomeType.f()</code> e quindi avrò l’implementazione di <code>f</code> di default che stampa “default”, oppure posso chiamare <code>OtherType.f()</code> e in questo caso vedrò stampato “Other”.</p>
+<h2 id="37-gerarchia-dei-tratti"><a class="header" href="#37-gerarchia-dei-tratti">3.7 Gerarchia dei Tratti</a></h2>
+<p><img src="images/polimorfismo/image%2024.png" alt="image.png" /></p>
+<p>I tratti possono essere legati in una struttura di <em><strong>implicazione</strong></em>. Quando scrivo <code>trait Subtrait: Supertrait</code>, sto definendo <code>Subtrait</code> e sto vincolandolo al fatto che i tipi che implementano <code>Subtrait</code> devono anche implementare <code>Supertrait</code>.</p>
+<p>Non sto creando una gerarchia di ereditarietà, <strong>sto creando una gerarchia di implicazioni</strong>. — <em>“Per poter implementare</em> <code>Subtrait</code> <em>devi anche implementare</em> <code>Supertrait</code><em>"</em>.</p>
+<p><strong>Esempio pratico:</strong> Questo noi l'abbiamo già incontrato, abbiamo visto che c'è un tratto particolare che si chiama <code>Copy</code>. Il tratto <code>Copy</code> non ha nessun metodo, è un tratto marker, perché l'unico metodo è quello che conosce il compilatore che permette di duplicare un'area di memoria chiamando la <code>memcpy</code>. Ma il tratto <code>Copy</code> ha come implicazione il tratto <code>Clone</code>: per poter implementare il tratto <code>Copy</code> occorre implementare il tratto <code>Clone</code>. E ha anche un'implicazione negativa: il tratto <code>Copy</code> implica il tratto <code>Clone</code> e implica il <strong>non tratto</strong> <code>Drop</code>. Cioè non è possibile essere <code>Copy</code> e <code>Drop</code> allo stesso momento. Viceversa, il tratto <code>Drop</code> implica il non tratto <code>Copy</code>. Per lo stesso motivo.</p>
+<h2 id="38-come-invochiamo-un-tratto"><a class="header" href="#38-come-invochiamo-un-tratto">3.8 Come invochiamo un tratto?</a></h2>
+<p><img src="images/polimorfismo/image%2025.png" alt="image.png" /></p>
+<p>L'abbiamo in parte già visto, qui lo riassumiamo in modo da avere delle regole. Ci sono le invocazioni cosiddette <strong>statiche</strong>: ovvero in tutte quelle situazioni in cui il compilatore conosce il tipo concreto di cui stiamo invocando il metodo, l’invocazione è un'invocazione normalissima. Per cui banalmente il compilatore chiama la funzione associata.</p>
+<p>Quando invece ci mettiamo in una situazione dove c'è <strong>ambiguità</strong>, ovvero dove il compilatore sa solo che ha tra le mani una cosa che implementa il tratto, ma non sa che cosa sia, questa cosa gli deve arrivare sotto forma di puntatore e questo puntatore deve essere etichettato come <code>&amp;dyn</code>. Potrebbe anche essere <code>&amp;mut dyn</code>. <code>&amp;mut dyn</code> vuol dire che è un puntatore il cui contenuto può essere modificato, è chiaramente in mutua esclusione, quindi mentre esiste questo non ne possono esistere altri, e non è possibile l'accesso normale, come tutti i <code>&amp;mut</code> d’altronde, ma in questo caso è anche <code>dyn</code>, cioè assieme al puntatore che ha le caratteristiche del caso, viene anche il puntatore alla <strong>vtable</strong> per potermi risolvere i vari metodi.</p>
+<p>Notate che il puntatore può essere un <code>&amp;dyn</code>, <code>&amp;mut dyn</code>, può essere un <code>Box&lt;dyn Trait&gt;</code>, può essere un <code>Arc&lt;dyn Trait&gt;</code>, può essere un <code>Rc&lt;dyn Trait&gt;</code>, cioè tutti i puntatori di vario tipo se contengono qualcosa che è noto solo di tipo tratto, devono avere il <code>dyn</code> associato.</p>
+<p><img src="images/polimorfismo/image%2026.png" alt="image.png" /></p>
+<p>Gli oggetti tratti li abbiamo già visti, sostanzialmente quando lo dichiariamo come <code>&amp;dyn</code>, <code>&amp;mut dyn</code>, <code>Box&lt;dyn Trait&gt;</code>, eccetera, stiamo passando 16 byte, i primi 8 puntano all'implementazione concreta, cioè al dato effettivo, i secondi 8 puntano alla vtable, che ha questa struttura qua.</p>
+<h2 id="39-tratti-nella-libreria-standard"><a class="header" href="#39-tratti-nella-libreria-standard">3.9 Tratti nella Libreria Standard</a></h2>
+<p><img src="images/polimorfismo/image%2027.png" alt="image.png" /></p>
+<p>La libreria standard è piena di tratti e utilizza i tratti per permetterci di estendere la semantica del linguaggio ai tipi che stiamo introducendo. Noi abbiamo introdotto il tipo <code>Cerchio</code>, abbiamo voluto anche dirgli che il cerchio era una <code>Figura2D</code> e quindi aveva l'area e il perimetro, ma indipendentemente dal fatto che il cerchio ha l'area e il perimetro, in qualche momento ci potrebbe venire da chiedere <em>“Io ho due cerchi,</em> <code>c1</code> <em>e</em> <code>c2</code> <em>— sono uguali? Come faccio a sapere se i due cerchi sono uguali?”</em></p>
+<p>Se invece che cerchi fossero dei numeri, <code>i1</code> e <code>i2</code>, scriverei semplicemente <code>if i1 == i2</code>, esprimerei l'uguaglianza come si esprime normalmente.</p>
+<p>Se io provassi a scrivere <code>if c1 == c2</code>, il compilatore mi bloccherebbe, perché mi dice <em>"scusa, che ne so io se i due cerchi sono uguali"</em>.
+Affinchè il compilatore possa capire se i due cerchi sono uguali o meno, ovvero affinchè il compilatore possa usare l'operatore <code>==</code> per confrontare i due cerchi, occorre che la nostra struct <code>Cerchio</code> implementi il tratto <strong><code>Eq</code></strong>, ovvero nella libreria standard sono presenti un certo numero di tratti il cui scopo è far capire come il compilatore deve agire quando trova certe espressioni scritte.</p>
+<p>Il tratto <strong><code>Eq</code></strong> è il tratto che viene utilizzato nel momento in cui io scrivo <code>if qualcosa == qualcosaltro</code>.
+Il compilatore va a vedere <em>"questo qualcosa dispone del tratto</em> <strong><code>Eq</code></strong><em>?",</em> e se dispone del tratto <code>Eq</code> ne invoca il metodo associato. Lo stesso succede se io scrivessi <code>if qualcosa != qualcosaltro</code>, userei sempre il tratto <code>Eq</code>.</p>
+<p>Viceversa, quando io scrivo <code>if c1 &lt; c2</code>, se introducessi questa cosa qua il compilatore andrebbe a vedere se <code>Cerchio</code> implementa il tratto <strong><code>Ord</code></strong>.</p>
+<p><strong><code>Ord</code></strong> è ordine, dà il concetto di <em>“prima-dopo”</em>. Quindi se implementa il tratto <strong><code>Ord</code></strong> ha un metodo che si chiamerà <code>le()</code> (<em>less or equal</em>) o <code>lt()</code> (<em>less than</em>) che mi permette di sapere se <code>c1</code> è più piccolo di <code>c2</code>, ad esempio.</p>
+<p><strong>Uguaglianza</strong> e <strong>relazione d'ordine</strong> (<code>&lt;</code> e <code>&gt;</code>), prima di tutto sono imparentati, perché io posso avere <code>&lt;=</code> e <code>&gt;=</code>.
+Allora è chiaro che se ho minore-uguale bisogna che la definizione di uguale sia parente di minore-uguale. Se A è uguale a B, deve anche essere che A è minore-uguale a B. E deve anche essere che A è maggiore-uguale a B. Quindi sono tratti diversi, ma io devo poi implementarli garantendo questa faccenda qua.</p>
+<p>Quindi lì è una responsabilità, poi come facciamo a dire se due cerchi sono uguali? Due cerchi sono uguali se hanno lo stesso centro e lo stesso raggio, per esempio. Oppure potremmo dire che due cerchi sono uguali se hanno lo stesso raggio, fregandocene del centro.
+Dipende da che significato vogliamo dare noi all'uguaglianza, ma dobbiamo sceglierne uno che abbia un senso e se implementiamo sia l'uguaglianza sia l'ordine, bisogna che l'ordine sia <strong>coerente</strong> con l'uguaglianza, se no rischiamo di fare dei pasticci inenarrabili.</p>
+<p>C'è un problema aggiuntivo: l'uguaglianza presuppone, dalla matematica e dalla logica, l'esistenza di <strong>tre proprietà</strong>: riflessiva, simmetrica e transitiva.</p>
+<p>Innanzitutto deve essere che <code>A = A</code> (riflessiva), quindi se confronto una cosa con se stessa, questa deve essere uguale. Questo dipende da come scrivo l'implementazione - può darsi di sì, può darsi di no.
+Se <code>A = B</code>, deve essere altrettanto vero che <code>B = A</code> (simmetrica).
+E deve essere transitiva: se <code>A = B</code> e <code>B = C</code>, deve anche venire fuori che <code>A = C</code>.</p>
+<p>Sembrerebbe banale, ma non lo è. Nei numeri — il posto più facile dove l'uguaglianza dovrebbe esistere — tra i numeri in virgola mobile c'è un valore impiccevole: si chiama <code>NaN</code> (<em>not a number</em>). È il risultato, ad esempio, di:</p>
+<ul>
+<li><code>√(-1)</code></li>
+<li><code>0 ÷ 0</code></li>
+<li><code>0⁰</code></li>
+</ul>
+<p>e altre situazioni di questo genere…</p>
+<p>Secondo lo standard <strong>IEEE 754</strong>, che definisce la rappresentazione dei numeri in virgola mobile e la loro semantica (standard adottato da tutti i linguaggi di programmazione per garantire operazioni coerenti), <strong><code>NaN</code> non è uguale a <code>NaN</code></strong>.</p>
+<p>Quindi se nella variabile <code>v1</code> avete <code>NaN</code> e nella variabile <code>v2</code> avete <code>NaN</code> e le confrontate, la risposta è: “<em>sono diversi”</em>.
+Può sembrare controintuitivo, ma è così per motivi fondamentali — il primo può essere il risultato di 0⁰, e l'altro magari il risultato di √(-1).</p>
+<p>0⁰ non è un numero perché può essere qualsiasi numero. 0⁰ implica sostanzialmente la divisione di 0 con se stesso, perché un esponente 0 lo potete vedere come risultato di una divisione: <code>x^n ÷ x^n = x^(n-n) = x⁰</code></p>
+<p>Se la base è 0, quindi 0⁰, la divisione è di 0 con se stesso. La divisione di 0 con se stesso quanto fa? Qualunque numero moltiplicato per 0 dà 0, quindi 0⁰ come 0/0 non è un numero definito. Mentre √(-1) non è nessun numero reale ma vale <em>i</em> o <em>-i</em> — sono almeno due e non sono numeri reali, bensì complessi.</p>
+<p>Per questo motivo due <code>NaN</code> non sono confrontabili. Di conseguenza, non vale la proprietà riflessiva: quando confronto <code>NaN</code> con se stesso ottengo <code>false</code>.</p>
+<h3 id="391-eq-e-partialeq"><a class="header" href="#391-eq-e-partialeq">3.9.1 Eq e PartialEq</a></h3>
+<p>Per questo Rust distingue <strong>due tratti dell'uguaglianza</strong>:</p>
+<ul>
+<li><strong><code>Eq</code></strong></li>
+<li><strong><code>PartialEq</code></strong></li>
+</ul>
+<p><code>Eq</code> implica <code>PartialEq</code>.</p>
+<p><code>PartialEq</code> è per tutte quelle classi di valori che sono <strong>simmetrici</strong> e <strong>transitivi</strong> ma <strong>non riflessivi</strong> (come i numeri in virgola mobile con il problema del <code>NaN</code>).</p>
+<p><code>Eq</code>, l'uguaglianza piena, implica quella parziale e aggiunge la proprietà <strong>riflessiva</strong>.</p>
+<p>La maggior parte delle strutture dati che vogliamo avere sono complete - hanno l'<code>Eq</code> completa.</p>
+<p>Lo stesso problema si pone nell'ordine: poiché la proprietà riflessiva non è garantita, non è vero che <code>NaN</code> sia minore o uguale di <code>NaN</code>. Di conseguenza anche qui abbiamo due tratti: <strong><code>Ord</code></strong> e <strong><code>PartialOrd</code></strong>. Questi ci servono tutte le volte che vogliamo confrontare due strutture dati.</p>
+<p>Lo stesso ragionamento vale per molte altre situazioni. Ad esempio, cosa succede se abbiamo due variabili <code>c1</code> e <code>c2</code> che sono entrambi <code>Cerchio</code> e scriviamo <code>c1 - c2</code>? Cosa significa fare la differenza di due cerchi? In un'ipotetica geometria costruttiva sottrarre potrebbe significare fare un "buco", ammesso che uno sia dentro l'altro. O forse rimuoverne una fetta. O forse nulla se sono disgiunti.
+Ma al di là del significato, per poter scrivere <code>c1 - c2</code> devo implementare il tratto <strong><code>Sub</code></strong>. Questo estende il comportamento dei nostri tipi custom a tutta la sintassi lecita - se posso scrivere <code>3 × 2</code> con i numeri, deve essere possibile farlo anche con i cerchi (ammesso che abbia senso), e questo può essere fatto implementando il tratto <strong><code>Mul</code></strong>.</p>
+<p>Quasi tutti questi tratti vengono con un tipo associato che per default è <code>Self</code>. Se implemento <code>Eq</code>, di default confronto con un mio simile - <code>Cerchio</code> implementa <code>Eq</code> quindi confronto <code>Cerchio</code> con <code>Cerchio</code>.</p>
+<p>Ma posso anche dire che <code>Cerchio</code> si confronta con <code>Rettangolo</code> implementando <code>Eq</code> due volte: una volta per <code>Self</code> (confronto tra cerchi) e una per <code>Rettangolo</code>. Cosa significa che un cerchio è uguale a un rettangolo? Magari hanno la stessa area o lo stesso perimetro.</p>
+<p>Possiamo quindi definire confronti sia omogenei (stesso tipo) che eterogenei (tipi diversi), proprio grazie al meccanismo del <em>tipo associato</em>.</p>
+<p><img src="images/polimorfismo/image%2028.png" alt="image.png" /></p>
+<p>Di base sia il tratto <code>Eq</code> che <code>PartialEq</code> richiedono un solo metodo obbligatorio, perchè il secondo ha un'implementazione default: il metodo <code>eq</code> che confronta <code>&amp;self</code> con <code>&amp;RHS</code>, dove <code>RHS</code> (<em>right hand side</em>) è un tipo associato, che per default è <code>Self</code>, ma può essere specificato diversamente.</p>
+<p>Quindi posso scrivere:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>impl Eq for Cerchio {
+    type RHS = Rettangolo;
+    // ...
+}
+
+<span class="boring">}</span></code></pre></pre>
+<p>E questo mi permette di confrontare un cerchio con un rettangolo.</p>
+<p><strong>PartialEq</strong>, come dicevamo, richiede solo simmetrica e transitiva, mentre <strong>Eq</strong> invece impone anche la proprietà riflessiva, cosa che non vale sui numeri con la virgola. E per default <code>RHS</code> è Self.</p>
+<p>Il metodo <code>ne</code>, che fa parte della definizione del tratto, ha un'implementazione default che è <code>not eq</code>, che di solito basta e avanza.</p>
+<p>Se noi implementiamo “<code>Cerchio</code> == <code>Rettangolo</code>", dobbiamo implementare anche “<code>Rettangolo</code> == <code>Cerchio</code>".</p>
+<h3 id="392-ord-e-partialord"><a class="header" href="#392-ord-e-partialord">3.9.2 Ord e PartialOrd</a></h3>
+<p><img src="images/polimorfismo/image%2029.png" alt="image.png" /></p>
+<p>Anche qua abbiamo i due tratti, il tratto <code>Ord</code> implica doppiamente il tratto <code>Eq</code> e il tratto <code>PartialOrd</code>, viceversa il <code>PartialOrd</code> implica soltanto il <code>PartialEq</code>, cioè per poter fare una relazione d'ordine io devo avere anche la relazione di uguaglianza, perché l'ordine ammette il <strong>minore uguale</strong>, e quindi se non esiste un modo di decidere l'uguaglianza non riuscirò mai a definire il minore uguale.</p>
+<p>Notate che la relazione d'ordine mi richiede di implementare il metodo <code>cmp</code> o il metodo <code>partial_cmp</code>.</p>
+<p><code>cmp</code>, la <strong>relazione d'ordine totale</strong>, vuole sostanzialmente un <code>enum Ordering</code> come risultato, quindi confronta due oggetti, in questo caso <code>other</code> e <code>self</code>, perché io posso mettere in ordine solo cose omogenee, altrimenti diventa una cosa complicata, mentre <code>PartialEq</code> mi ammette per default la possibilità di avere anche delle cose eterogenee, in quanto proprio perché <em>partial</em> posso anche arrivare a dire che se ho due cose diverse, non so dire chi viene prima: viene prima il <code>Punto</code> o il <code>Rettangolo</code>? Boh: sono incommensurabili, motivo per cui <code>partial_cmp</code> ritorna un <code>Option</code>, cioè qualcosa che potrebbe anche essere <code>None</code>, oppure <code>Some</code> di <code>Ordering</code>, dove <code>Ordering</code> è un'enumerazione che vale <code>Less</code> (vengo prima), <code>Equal</code> (siamo uguali) o <code>Greater</code> (vengo dopo).</p>
+<p>Il tratto <code>PartialOrd</code> ha dentro di sé una serie di metodi ulteriori che si chiamano <code>lt</code>, <code>le</code>, <code>gt</code>, <code>ge</code> (<em>less than</em>, <em>less equal</em>, <em>greater than</em>, <em>greater equal</em>), che di fatto hanno un'implementazione di default che è derivata da <code>partial_cmp</code>, motivo per cui <code>partial_cmp</code> è messo in rosso nella slide, perché è l'unico che è necessario implementare, tutti gli altri si derivano normalmente.</p>
+<p>Lo stesso vale per il tratto <code>Ord</code>, che ha il metodo <code>cmp</code>, questo ha anche una serie di metodi ulteriori come <code>max</code>, <code>min</code>, <code>clamp</code> che ulteriormente possiamo prendere per buoni come sono.</p>
+<p>Notate che in quanto <code>Ord</code> implica sia <code>Eq</code> che <code>PartialOrd</code>, automaticamente se un tratto implementa <code>Ord</code> deve anche implementare <code>partial_cmp</code> e quindi ha sicuramente <code>lt</code>, <code>le</code> e compagnia bella che sono usati dal compilatore tutte le volte in cui scrivete <code>qualcosa &lt;= qualcosaltro</code> e cose del genere.</p>
+<p>Come accennato, in <code>Ord</code> troviamo altri metodi:</p>
+<ul>
+<li><code>max</code> dà il massimo tra due</li>
+<li><code>min</code> dà il minimo tra due</li>
+<li><code>clamp</code> permette di far sì che un certo valore stia dentro un intervallo, quindi se è già compreso in un intervallo restituisce il valore così come gliel’abbiamo dato, se va oltre la fine dell'intervallo lo limita al massimo dell'intervallo, se è più piccolo del valore minimo lo porta in alto in modo da stare all'interno, in certe situazioni è molto comodo.</li>
+</ul>
+<p>Quindi, per poter confrontare due tipi custom dobbiamo implementare dei tratti, <code>Ord</code> o <code>Eq</code>, <code>PartialOrd</code> o <code>PartialEq</code>.</p>
+<h2 id="310-display-e-debug"><a class="header" href="#310-display-e-debug">3.10 Display e Debug</a></h2>
+<p><img src="images/polimorfismo/image%2030.png" alt="image.png" /></p>
+<p>Per poter stampare dei tipi custom dobbiamo implementare i tratti <strong><code>Display</code></strong> o <strong><code>Debug</code></strong>, qual è la differenza? <code>Display</code> ha un unico metodo che fondamentalmente è <code>fmt</code> (format), il cui compito è produrre una rappresentazione utile all'utente finale della nostra applicazione, che quindi racconti qualcosa che ha un senso per una persona che non è un programmatore.</p>
+<p><code>Debug</code> permette di rappresentare una struttura dati in un modo che è sensato per il programmatore. Anche <code>Debug</code> ha la stessa firma, quindi ha bisogno del metodo <code>fmt</code> che prende il riferimento a se stesso e poi prende un riferimento mutabile a un <code>Formatter</code>.</p>
+<p>Mentre <code>Display</code> lo dobbiamo necessariamente implementare a mano, e possiamo venire aiutati dalla macro <code>write!</code>, il <code>Debug</code>, così come <code>Eq</code> e <code>PartialEq</code>, possiamo chiedere al compilatore che li generi per noi, come? Aggiungendo prima della struct l'annotazione <code>#[derive]</code> e poi elencando le varie cose.</p>
+<p>Per implementare il tratto <code>Debug</code>, usiamo <code>#[derive(Debug)]</code>. Per abilitare i confronti tra le nostre strutture dati (come i cerchi), possiamo usare <code>#[derive(Debug, Eq, Cmp)]</code>.</p>
+<p>Vediamo un esempio pratico.</p>
+<h3 id="3101-esempio"><a class="header" href="#3101-esempio">3.10.1 Esempio</a></h3>
+<p><img src="images/polimorfismo/image%2031.png" alt="image.png" /></p>
+<p>Nella definizione del <code>Cerchio</code>, aggiungiamo <code>#[derive(Debug)]</code>. Per quanto riguarda <code>Eq</code>, non possiamo usarlo direttamente perché la struct contiene un <code>f64</code> che potrebbe contenere <code>NaN</code> - dobbiamo quindi usare <code>PartialEq</code>. Possiamo anche aggiungere <code>PartialOrd</code>.</p>
+<p><img src="images/polimorfismo/image%2032.png" alt="image.png" /></p>
+<p>A questo punto possiamo usare <code>println!</code> con il nostro <code>Cerchio c</code>: <code>println!("Il cerchio {:?} ha perimetro {}", c, c.perimetro)</code>.</p>
+<p><img src="images/polimorfismo/image%2033.png" alt="image.png" /></p>
+<p>Il risultato mostrerà la rappresentazione interna generata automaticamente: <code>Cerchio { x: 0, y: 1, r: 10 }</code> con perimetro 62.</p>
+<p><img src="images/polimorfismo/image%2034.png" alt="image.png" /></p>
+<p>Possiamo anche confrontare i cerchi. L'implementazione automatica di <code>PartialOrd</code> non è molto sofisticata - confronta semplicemente i campi in ordine. Se il primo campo è minore del primo campo dell’altro, considera l'intero oggetto minore, dunque per ora è preferibile limitarsi all'uguaglianza rimuovendo <code>PartialOrd</code>, oppure implementarlo manualmente confrontando i raggi, in questo caso.</p>
+<p><img src="images/polimorfismo/image%2035.png" alt="image.png" /></p>
+<p>Possiamo creare un secondo cerchio <code>c2</code>: <code>Cerchio { x: 0, y: 2.1, r: 10.0 }</code> e confrontarli con <code>println!("{:?} == {:?} ? {}", c, c2, c == c2)</code>.</p>
+<p><img src="images/polimorfismo/image%2036.png" alt="image.png" /></p>
+<p>Se eseguiamo il codice, vedremo il cerchio con centro (0,1) e raggio 10 confrontato con un cerchio con centro (0,1) e raggio 10, risultando in <code>true</code>.</p>
+<p><img src="images/polimorfismo/image%2037.png" alt="image.png" /></p>
+<p>Cambiando il raggio di uno dei due a 9, otterremo <code>false</code>.</p>
+<p><img src="images/polimorfismo/image%2038.png" alt="image.png" /></p>
+<p>L'implementazione dell'uguaglianza può essere automatica tramite <code>derive</code>. In questo caso, confronterà tutti i campi: il primo con il primo, il secondo con il secondo, il terzo con il terzo.</p>
+<p>Per un'implementazione personalizzata, dobbiamo rimuovere <code>PartialEq</code> dalla macro <code>#[derive(Debug, PartialEq)]</code>, e scriverla manualmente. Ad esempio, per confrontare solo i raggi possiamo fare come mostrato.</p>
+<p><img src="images/polimorfismo/image%2039.png" alt="image.png" /></p>
+<p>Se modifichiamo il nostro cerchio con coordinate (1,2) e raggio 9, otterremo <code>false</code>.</p>
+<p><img src="images/polimorfismo/image%2040.png" alt="image.png" /></p>
+<p>Con raggio 10 ma coordinate diverse, otterremo <code>true</code> perché confrontiamo solo i raggi.</p>
+<p><img src="images/polimorfismo/image%2041.png" alt="image.png" /></p>
+<p>Un caso particolare: se usiamo <code>f64::NAN</code> come raggio per entrambi i cerchi, il confronto tra due cerchi con <code>NaN</code> risulterà <code>false</code>, perché come dicevamo, in floating-point <code>NaN != NaN</code>. E questo vale in tutti i linguaggi.</p>
+<aside>
+💡 **La macro Derive**
+<p><strong>Derive</strong> è in grado di implementare <code>Debug</code>, <code>Eq</code>, <code>PartialEq</code>, <code>Ord</code>, <code>PartialOrd</code> e alcuni altri tratti, ma non tutti, poiché ogni tratto ha una semantica particolare - questi sono solo i tratti più semplici.</p>
+<p>Esistono anche librerie aggiuntive, come <code>derive_more</code>, che forniscono ulteriori tratti da derivare, ma richiedono l'importazione della libreria nel proprio <code>Cargo</code>. È possibile creare i propri tratti derivabili, e ci sono altre librerie utili come <code>Serde</code> (<em>abbreviazione di serialization/deserialization</em>), che permette di derivare macro per serializzare - ovvero tratti per convertire i propri oggetti in JSON e leggerli da JSON.</p>
+<p><code>Serde</code> offre anche la possibilità di leggere e generare XML, ma richiede l'importazione specifica del modulo <code>Serde XML</code>.</p>
+</aside>
+<p>Esistono numerosi <strong>tratti</strong> che arricchiscono il comportamento degli oggetti. Esaminiamoli brevemente:</p>
+<h2 id="311-clone-e-copy"><a class="header" href="#311-clone-e-copy">3.11 Clone e Copy</a></h2>
+<p><img src="images/polimorfismo/image%2042.png" alt="image.png" /></p>
+<p>Il tratto <code>Clone</code> indica che un oggetto può essere <strong>duplicato</strong>, creando una struttura completamente nuova, indipendente dall'originale (in termini di dipendenze) ma con lo stesso contenuto semantico.</p>
+<p>Il tratto <code>Copy</code>, già visto in precedenza, è un'estensione di <code>Clone</code> (perchè lo implica) che permette la copia tramite <code>memcpy</code>. Con <code>Copy</code>, le operazioni di movimento diventano operazioni di copia, mantenendo l'originale che quindi non perde il possesso.</p>
+<h2 id="312-drop"><a class="header" href="#312-drop">3.12 Drop</a></h2>
+<p><img src="images/polimorfismo/image%2043.png" alt="image.png" /></p>
+<p>Il tratto <code>Drop</code> indica che l'oggetto ha azioni da eseguire al momento del rilascio, similmente al distruttore in C++. È mutuamente esclusivo con <code>Copy</code>, prevenendo così doppi rilasci in Rust (eccetto in blocchi unsafe).</p>
+<p>Il tratto <code>Drop</code> è parente di una funzione globale <code>drop</code> che permette di terminare immediatamente il ciclo di vita di un oggetto. Questa funzione prende possesso dell'argomento e, non facendone nulla, ne causa la distruzione non appena arriva alla chiusa graffa della funzione.</p>
+<h2 id="313-index"><a class="header" href="#313-index">3.13 Index</a></h2>
+<p><img src="images/polimorfismo/image%2044.png" alt="image.png" /></p>
+<p>Il tratto <code>Index</code> permette di trattare qualsiasi oggetto come un array, usando la sintassi <code>[...]</code>. Ovviamente sta a noi dare un senso a questa cosa qua, laddove la usiamo.</p>
+<p><img src="images/polimorfismo/image%2045.png" alt="image.png" /></p>
+<p>Supporta:</p>
+<ul>
+<li>Accesso in lettura e scrittura</li>
+<li>Parametri di tipo <code>usize</code> o <code>range</code></li>
+<li>Restituzione di elementi singoli o <code>slice</code></li>
+</ul>
+<h2 id="314-deref"><a class="header" href="#314-deref">3.14 Deref</a></h2>
+<p><img src="images/polimorfismo/image%2046.png" alt="image.png" /></p>
+<p>Il tratto <code>Deref</code> è particolarmente importante perché permette di trasformare una cosa qualunque in un puntatore. O meglio, di poter usare qualsiasi cosa (che non sia un puntatore) sintatticamente come se fosse un puntatore. È alla base del comportamento degli smart pointer.</p>
+<h3 id="3141-esempio"><a class="header" href="#3141-esempio">3.14.1 Esempio</a></h3>
+<p><img src="images/polimorfismo/image%2047.png" alt="image.png" /></p>
+<p>Per esempio, implementando <code>Deref</code> per il nostro <code>Cerchio</code>, dobbiamo specificare a quale tipo punta (<code>type Target = f64</code>) e cosa restituire (<code>&amp;self.r</code>).</p>
+<p><img src="images/polimorfismo/image%2048.png" alt="image.png" /></p>
+<p>Questo ci permette di utilizzare la sintassi dei puntatori (<code>*c</code>) su oggetti che tecnicamente non lo sono, ampliando notevolmente le possibilità di utilizzo.</p>
+<p><img src="images/polimorfismo/image%2049.png" alt="image.png" /></p>
+<p><code>c.deref()</code> dice <em>“prendi il puntatore associato a</em> <code>c</code><em>”,</em> e anteponendo l’asterisco, quindi <code>*c.deref()</code>, vediamo cosa c’è dentro.</p>
+<h3 id="3142-esempio"><a class="header" href="#3142-esempio">3.14.2 Esempio</a></h3>
+<p><img src="images/polimorfismo/image%2050.png" alt="image.png" /></p>
+<p>Questa funzionalità viene utilizzata in diverse situazioni per creare oggetti che, pur non essendo nativamente puntatori, possono essere usati sintatticamente in tutti i contesti dove si utilizzano i puntatori.</p>
+<p>È importante notare che <code>Deref</code> opera su un prestito di <code>self</code>, e le regole di privacy di Rust continuano ad applicarsi normalmente.</p>
+<h2 id="315-rangebounds"><a class="header" href="#315-rangebounds">3.15 RangeBounds</a></h2>
+<p><img src="images/polimorfismo/image%2051.png" alt="image.png" /></p>
+<p>Il tratto <code>RangeBounds</code> mi dà la possibilità di scrivere degli intervalli <code>..</code>, <code>a..</code>, <code>..b</code>, etc...</p>
+<h2 id="316-from"><a class="header" href="#316-from">3.16 From</a></h2>
+<p><img src="images/polimorfismo/image%2052.png" alt="image.png" /></p>
+<p>Il tratto <code>From</code> mi permette di trasformare una cosa in un'altra.</p>
+<h3 id="3161-esempio"><a class="header" href="#3161-esempio">3.16.1 Esempio</a></h3>
+<p><img src="images/polimorfismo/image%2053.png" alt="image.png" /></p>
+<p>Ad esempio io se ho una stringa, posso scrivere <code>String::from("Mario")</code>. <code>"Mario"</code> è un <code>&amp;str</code>. Come faccio a farlo diventare una <code>String</code>? In questo caso uso il tratto <code>From</code>, <code>String::from("")</code>. Questo fa sì che lui parta da <code>"Mario"</code> e ne ricavi una stringa. Come fa? Banalmente invocherà il metodo <code>to_string</code> su Mario e ottiene quella cosa lì.</p>
+<p><img src="images/polimorfismo/image%2054.png" alt="image.png" /></p>
+<p>Ma potrei anche provare a vedere con un <code>i32</code>, e vedere se il suo tratto <code>From</code> è in grado di convertire un float in i32, ma il compilatore ci dà errore: il tratto <code>From&lt;{float}&gt;</code> non è implementato da <code>i32</code>, però ci dà la lista dei tipi che supporta, per <code>i32</code>.</p>
+<p>In questo caso <code>i32</code> sa solo trasformare altri interi con e senza segno in se stesso.
+Volendo potremmo cercare di aggiungere noi delle definizioni.</p>
+<p><img src="images/polimorfismo/image%2055.png" alt="image.png" /></p>
+<p>E qua ci sono altri esempi.</p>
+<h2 id="317-tryfrom-e-tryinto"><a class="header" href="#317-tryfrom-e-tryinto">3.17 TryFrom e TryInto</a></h2>
+<p><img src="images/polimorfismo/image%2056.png" alt="image.png" /></p>
+<p>I tratti <code>From</code> e <code>Into</code> sono complementari: con <code>From</code> posso dire <em>"creo una stringa a partire da qualcos'altro"</em>, mentre con <code>Into</code> <em>”trasformo qualcosa in una stringa”</em>. Sono due tratti uno all'opposto dell'altro.</p>
+<p>C'è anche la versione <code>TryFrom</code> e <code>TryInto</code>, la differenza è che ritornano un <code>Result</code>.</p>
+<h2 id="318-error"><a class="header" href="#318-error">3.18 Error</a></h2>
+<p><img src="images/polimorfismo/image%2057.png" alt="image.png" /></p>
+<p><code>Error</code> serve in quelle situazioni in cui si ha l'esigenza di descrivere qualcosa che si è rotto. Implementare il tratto <code>Error</code> richiede che si implementino sia il tratto <code>Debug</code> che il <code>Display</code>.
+Tutti gli altri metodi sono opzionali e hanno una versione default per cui possiamo non implementarli.</p>
+<p>Invece occorre garantire che il dato che incastriamo all'interno, che dichiariamo implementare <code>Error</code>, abbia <code>Debug</code> e <code>Display</code>.</p>
+<h2 id="319-la-macro-derive"><a class="header" href="#319-la-macro-derive">3.19 La macro <code>derive</code></a></h2>
+<p><img src="images/polimorfismo/image%2058.png" alt="image.png" /></p>
+<p>La macro <code>derive</code> ci permette di ricavare automaticamente le implementazioni per alcuni di questi tratti, a condizione che siano derivabili. Quindi a condizione che i tipi dei dati contenuti nel tipo per cui eseguiamo la derivazione soddisfino certi vincoli.</p>
+<h1 id="4-tipi-generici"><a class="header" href="#4-tipi-generici">4. Tipi generici</a></h1>
+<p><img src="images/polimorfismo/image%2059.png" alt="image.png" /></p>
+<p>Questo fondamentalmente riassume un po' un insieme di informazioni sui tratti e sull'uso che Rust fa degli stessi. Spendiamo invece ora due parole su un altro modo di implementare il polimorfismo.</p>
+<p>Un altro modo che è sempre nato a casa del C++, ma ha seguito una strada totalmente diversa rispetto alla strada delle Vtable. E l'idea è passata attraverso l'introduzione del concetto di <strong>programmazione generica</strong>.</p>
+<p><em>Che cos'è la programmazione generica?</em>
+La programmazione generica è l'idea che si possono esprimere degli algoritmi lasciando dei <em>placeholder</em>, diciamo quindi delle indicazioni, su alcuni dei parametri dell'algoritmo stesso. I parametri dell'algoritmo stesso possono essere delle costanti, che qualcuno dovrà poi fornirmi a un certo punto, e altre sono dei tipi. L'idea è quindi che io posso, ad esempio, introdurre una funzione <code>f</code>, che è capace di fare un qualche mestiere indipendentemente, per esempio, dal tipo di parametro che mi viene passato. Perché trovo una maniera di combinarlo, oppure a condizione che il tipo di parametro che mi viene passato sia uno di alcuni.</p>
+<p>Quest'idea qua richiede che il compilatore lavori in due fasi. Nella prima fase esamina il codice cosiddetto <strong>generico</strong> e verifica che sostanzialmente quel codice lì sia coerente al suo interno, ovvero tutte le parentesi aperte siano chiuse, i punti virgola siano al loro posto, e dove si fa riferimento a qualcosa di generico, dove cioè c'è un <em>placeholder</em>, quel <em>placeholder</em> sia usato in modo congruente, quindi se in un punto lo uso come tipo, quando lo ritrovo più avanti deve essere ancora un tipo e mantenere le stesse caratteristiche. Questa è la fase iniziale, dove verifico semplicemente che il codice sia logicamente coerente.</p>
+<p>Quando poi qualcuno userà la mia funzione, il mio tipo generico, lo userà in un <strong>modo concreto</strong>, cioè passandomi e indicandomi che cosa ci vuol fare esattamente. E a questo punto, a quella analisi iniziale che avevo fatto, faccio corrispondere la generazione di codice specifico. Da qualche parte avevo introdotto il tipo <code>Vec</code>, che poteva lavorare sul tipo <code>T</code>, e dice <em>"guarda, io so gestire, so fare <code>Vec</code> di qualunque cosa, non c'è problema".</em> Detto così, il compilatore ha preso atto, ma non ha generato ancora nessun codice utile.</p>
+<p>Quando poi dico <em>"guarda, qui ho un vettore di <code>i32</code>"</em>, il compilatore capisce e genera una versione specifica di <code>Vec</code> per <code>i32</code>, dove il puntatore interno punta a un blocco di <code>i32</code> sullo heap. Se più avanti creo un <code>Vec</code> di stringhe, il compilatore genera una versione diversa: il blocco sullo heap non contiene più singoli <code>i32</code> da 4 byte, ma stringhe da 24 byte ciascuna, ognuna con un proprio puntatore a un'altra area dello heap dove sono memorizzati i caratteri.</p>
+<p>Questa seconda parte, in cui in base a come lo uso genero la versione specifica, prende il nome di <em><strong>monomorfizzazione</strong></em>.
+Cioè il tipo generico <code>Vec&lt;T&gt;</code>, che era polimorfico, quindi andava bene in tanti modi distinti, nel momento in cui io lo istanzio, diventa monomorfico: cioè ha una forma sola. Quello lì è un <code>Vec&lt;i32&gt;</code>, che non ha niente a che fare col <code>Vec</code> di stringhe. Sono due cose distinte.</p>
+<p><img src="images/polimorfismo/image%2060.png" alt="image.png" /></p>
+<p>Io posso utilizzare il concetto di programmazione generica con le funzioni, con le strutture dati, e con i tratti. Vediamo come.</p>
+<p>Lo faccio aggiungendo alla definizione della funzione o del tipo l'annotazione scritta tra parentesi angolari, del mio <em>placeholder</em> <code>&lt;typename T&gt;</code>. Così da annunciare al compilatore che quella cosa lì non la deve cercare tra quelle che già conosce, ma deve accettare che sia un parametro.</p>
+<p>La sintassi è un po' diversa tra C++ e Rust, ma sostanzialmente si assomigliano. In C++ la cosa è introdotta dalla parola chiave <code>typename</code>, dentro cui vado a dire <em>"guarda, userò una cosa <code>T</code> che è un nome di un tipo, <code>typename T</code>"</em>.
+A questo punto il compilatore dice <em>"ok, da qui in avanti mi aspetto che T rappresenti il nome di un tipo. Non so ancora che tipo sarà, me lo dirai tu più avanti”</em>. Però va bene, allora lo posso usare per introdurre in questo caso la funzione <code>max</code>, che ritorna il tipo <code>T</code> e accetta due parametri, <code>T1</code> e <code>T2</code>, entrambi di tipo <code>T</code>.</p>
+<p>E cosa fa la funzione <code>max</code>?
+Beh, in questo caso confronta se <code>T1</code> è più piccolo di <code>T2</code> mi ritorna <code>T2</code>, se no mi ritorna <code>T1</code>. Lo stesso lo posso fare in Rust: scrivo <code>fn max&lt;T&gt;</code>. Non uso la parola chiave <code>typename</code>, Rust capisce già che quando vede una funzione <code>&lt;T&gt;</code>, quel qualcosa è il nome di un tipo che potrà essere usato più avanti.</p>
+<p>E infatti qui scriviamo che <code>max</code> prende <code>T1</code> che è di tipo <code>T</code>, prende <code>T2</code> che è anche lui di tipo <code>T</code> e restituisce a sua volta un <code>T</code>. E mi aggiunge anche una condizione più specifica, <code>where T: Ord</code> — cosa vuol dire questa faccenda qua? Beh, che rispetto al C++, che mi diceva <em>“io prendo un</em> <code>T</code> <em>qualunque”</em>, qui mi sta dicendo una cosa un po' più stringente: <em>"guarda io prendo un T qualunque <em><em>a condizione che implementi il tratto</em> <code>Ord</code></em></em><em>, perché devo poterli confrontare. Devo confrontarli per ordine col minore."</em></p>
+<p>In C++ se io gli passassi, provassi a chiamare <code>max</code> passando due cose che non sono confrontabili, otterrei un errore di compilazione, che non è purtroppo così chiaro. Io mi aspetterei che il C++ mi dicesse <em>"non posso applicare la funzione max a queste due cose qua che tu mi hai scritto, perché non so come confrontarle per minore."</em></p>
+<p>Invece in queste situazioni i compilatori C++ il più delle volte ti dicono una cosa che non c'entra assolutamente niente. Quattro pagine di errore dove non si capisce assolutamente nulla del perché si sta lamentando. Recentemente sono un po' migliorati, ma nella maggior parte di cose viene così.</p>
+<p>Perché?
+Perché C++ mette in queste situazioni tutta una serie di meccanismi che si chiamano <code>SFINAE</code> (<em>Substitution Failure Is Not An Error</em>), per cui lui dice <em>"beh se non ci provo così provo a tradurre il tuo tipo T in un'altra cosa, se poi neanche viene lo traduco in una terza cosa"</em>, fa degli obrobri fino a che ha esplorato tutte le strade possibili.</p>
+<p>Quando non ha più strade possibili ti dice che l'ultima è sbagliata. Peccato che l'ultima era più cervellotica e non vi sarebbe mai venuto in mente. E di conseguenza vi trovate spesso in difficoltà nello spiegare perché il codice non compila.</p>
+<p>Rust a questo punto è molto meglio perché ci permette di esprimere in modo esplicito i vincoli che vogliamo. In questo caso ci permette di dire che io posso usare questa funzione <code>max</code> con qualunque tipo <code>T</code> che sia ordinabile, cioè che permetta il confronto con la relazione d'ordine.</p>
+<p><img src="images/polimorfismo/image%2061.png" alt="image.png" /></p>
+<p>Lasciamo per ora da parte i dettagli sul funzionamento del C++ e concentriamoci sulla parte Rust. Come abbiamo visto, possiamo usare la programmazione generica con le funzioni dichiarando una funzione che termina con <code>&lt;T&gt;</code>. Al posto di <code>T</code> possiamo usare anche <code>K</code> o <code>W</code> - la scelta del nome è libera. Se necessitiamo di due parametri, possiamo scrivere <code>&lt;T,U&gt;</code> o qualsiasi altra combinazione: sono semplicemente dei nomi generici che, per convenzione, si scrivono in maiuscolo per facilitare la lettura.</p>
+<p>Possiamo costruire anche strutture dati generiche.</p>
+<p>Quando scriviamo delle strutture dati generiche, usiamo la sintassi <code>struct MyStruct&lt;T&gt;</code>. Come per le funzioni, dopo il nome della struttura mettiamo il parametro <code>T</code>. Possiamo anche aggiungere dei vincoli usando <code>where T: *qualche_caratteristica*</code>. In questo caso, stiamo definendo una struct che dipende da un tipo <code>T</code> a condizione che implementi <code>SomeTrait</code> - questa è la nostra restrizione. Naturalmente, quando creiamo <code>MyStruct</code> in questo modo, avremo probabilmente dei campi di tipo <code>T</code> che useranno questo tratto.</p>
+<p>Dopodiché quando devo implementare dei metodi, scrivo per com’è mostrato a destra: quindi se devo creare dei metodi per le mie struct scrivo <code>impl&lt;T&gt; for MyStruct&lt;T&gt;</code>, notate che quel <code>T</code> è scritto due volte nell'implementazione: <strong>implemento per il tipo <code>T</code> la struct <code>MyStruct&lt;T&gt;</code> con il vincolo  <code>T: SomeTrait</code></strong>.</p>
+<p>Questa faccenda qua la devo scrivere così perché in certe situazioni (non in questo caso, in cui la stiamo scrivendo in modo assolutamente generico) posso avere delle <em>specializzazioni</em>: posso implementarla solo per gli interi, solo per le stringhe, etc… cioè posso aggiungere delle ulteriori varianti.</p>
+<p><img src="images/polimorfismo/image%2062.png" alt="image.png" /></p>
+<p>Nel momento in cui il compilatore incontra la definizione di tipi generici o di funzioni generiche, fa la prima fase della compilazione: legge quel costrutto che abbiamo messo e verifica che sia intrinsecamente coerente, quindi controlla le parentesi, punti e virgola, e le cose che può capire alla luce dei vincoli che gli abbiamo dato. Se non va bene già questo ci blocca. Se viceversa quella struttura lì di per sé è coerente, non emette niente in termini di codici.</p>
+<p>Quando più avanti, in altre parti del programma, noi facciamo riferimento (invochiamo la funzione o utilizziamo il tipo), noi saremo obbligati a utilizzare la funzione passandogli dei dati concreti o useremo il tipo passandogli dei dati concreti. In quel punto lui dice <em>"Adesso ho capito, tu non vuoi un Vec<T>, vuoi un Vec<String>, benissimo. L'ho già generata la versione di Vec per le stringhe? No? Allora la genero"</em>. In quel momento viene emesso del codice specifico, cioè viene costruita <strong>la versione monomorfizzata del nostro tipo</strong>.</p>
+<p>Se in un pezzo successivo si riusa il tipo generico con lo stesso dettaglio, uso l'implementazione già generata, quindi non aggiungo niente, se viceversa faccio un <code>Vec</code> di un'altra cosa, genererò una nuova versione di <code>Vec</code> adatta. Quindi alla fine, se io nel mio programma uso cinque tipi di vettori, avrò cinque implementazioni del vettore. Una per ciascun tipo di dato intrinseco.</p>
+<p>Questo, nonostante tutto, facilita tantissimo la vita del programmatore, perché se io ho capito come funziona un vettore, so che indipendentemente dal fatto che quello lì contenga dei numeri, dei booleani o delle stringhe, posso sempre chiedergli <code>len()</code> per sapere quante cose ci sono, posso sempre chiedergli <code>first()</code> per prendere il primo elemento, posso sempre chiedergli <code>last()</code> per prendere l'ultimo, o cose del genere. Posso fare <code>push()</code> per inserire il fondo, <code>pop()</code> per estrarre dal fondo, e così via. Quindi questo mi dà un vocabolario generale indipendentemente dal tipo di dato presente dentro. Chiaramente <code>push()</code> per un vettore di interi vuole un parametro intero, per un vettore di stringhe vuole un parametro di tipo stringa.</p>
+<p>E quindi si crea questa forma di polimorfismo attraverso la <strong>programmazione generica</strong>. I due metodi, il polimorfismo creato coi tratti e il polimorfismo creato con la programmazione generica, hanno tanto in comune da un punto di vista logico, perché entrambe mi rispondono al bisogno di avere un modo comune di fare delle cose. Da un punto di vista pragmatico, sono due mondi completamente distinti, perché usano tutte tecniche differenti.</p>
+<h3 id="41-complementarità-dei-due-approcci"><a class="header" href="#41-complementarità-dei-due-approcci">4.1 Complementarità dei Due Approcci</a></h3>
+<p>Non è che ce n'è uno che va meglio dell'altro, ci sono situazioni che si prestano più facilmente alla programmazione generica, ce ne sono altre che si prestano maggiormente all'uso dei tratti, e spesso e volentieri noi facciamo con la programmazione generica riferimento a tratti o coi tratti facciamo uso della programmazione generica. Quindi le due tecniche si <em>ibridizzano</em>, diventano usate in modo congiunto per poter esprimere delle generalizzazioni ancora maggiori.</p>
+<h3 id="42-esempio"><a class="header" href="#42-esempio">4.2 Esempio</a></h3>
+<p><img src="images/polimorfismo/image%2063.png" alt="image.png" /></p>
+<p>A volte io devo porre molte restrizioni sul tipo di dato su cui voglio operare. Ad esempio, io avrei bisogno qua di implementare una funzione chiamata <code>run_query</code> che probabilmente esegue una qualche richiesta su un database, che prende due parametri. Il primo parametro, lo chiamo <code>M</code>, è una funzione che fa un mapping: trasforma un insieme di dati in qualche cos'altro. Il secondo, <code>Reducer</code>, è un qualcosa che opera su sequenze di dati per produrmi un valore singolo.</p>
+<p>Cosa sono? Quali tipi concreti sono? Non lo so, e allora posso crearmi questa funzione <code>run_query</code> che è doppiamente generica: dipende dal tipo <code>M</code> e dal tipo <code>R</code>, dove il tipo <code>M</code> deve soddisfarmi in questo caso due vincoli, <code>Mapper</code> e <code>Serialize</code>, ovvero deve essere un tipo che implementa il tratto <code>Mapper</code>, che probabilmente mi definirà una funzione <code>map</code> che mi consente di trasformare una cosa in un'altra, e il tipo <code>Serialize</code> che mi permette, ad esempio, di spedirlo attraverso la rete perché devo mandarlo al database che ci farà delle cose. E il tipo <code>R</code> che deve implementare il tratto <code>Reducer</code> e anche il tratto <code>Serialize</code>.</p>
+<p>Quindi qui sto esprimendo un vincolo doppio, lo faccio con il simbolo <code>+</code>.
+La notazione <code>M: Mapper + Serialize</code> vuol dire <em>“va bene qualunque tipo purché abbia entrambi i tratti”</em>. Notate che <code>Mapper</code> e <code>Serialize</code> non sono tratto e sottotratto, si ignorano reciprocamente, io qui sto dicendo che devo metterci una cosa che le ha tutte e due.</p>
+<p>Questo lo posso scrivere in due modi, lo posso scrivere direttamente nella notazione tra minore e maggiore, come fatto nel pezzo di sopra, o lo posso scrivere come fatto nel pezzo sotto.</p>
+<p>Questa seconda notazione mi dà la possibilità di esprimere anche delle relazioni molto più complesse, in questo caso sia <code>M</code> che <code>R</code> hanno dei vincoli, ma non sono reciprocamente legati. In certi casi con la condizione <code>where</code> ho la possibilità di aggiungere anche il fatto che <code>M</code> dipende da <code>R</code> o viceversa.</p>
+<p>Quindi la sintassi che mi viene offerta è una sintassi profonda, quindi con la versione compatta quando introduco il tipo generico posso subito dargli dei vincoli, se sono dei vincoli solo per lui. Oppure con la versione stesa, dove introduco il tipo generico solo col nome, definisco tutto quello che devo, e al fondo aggiungo <code>where</code> e lì posso mettere delle espressioni più sofisticate.</p>
+<h3 id="43-relazione-tra-tratti-e-tipi-generici"><a class="header" href="#43-relazione-tra-tratti-e-tipi-generici">4.3 Relazione tra Tratti e Tipi Generici</a></h3>
+<p><img src="images/polimorfismo/image%2064.png" alt="image.png" /></p>
+<p>Come dicevamo, tratti e tipi generici sono due modi apparentemente alternativi per implementare il polimorfismo, ma solo apparentemente, perché in realtà esiste un legame profondo tra le varie parti.</p>
+<p>Spesso e volentieri si usano i tratti per <em>limitare l'uso dei tipi generici</em>, ma allo stesso modo si possono definire dei <em><strong>tratti generici</strong></em>, ovvero dei tratti che operano su tipi <code>T</code> da definirsi, e quindi ci sono delle parentele complesse.</p>
+<h3 id="44-oggetti-tratto-e-polimorfismo"><a class="header" href="#44-oggetti-tratto-e-polimorfismo">4.4 Oggetti Tratto e Polimorfismo</a></h3>
+<p>Con i tratti il polimorfismo più completo lo si ottiene attraverso gli <strong>oggetti tratto</strong>, quando devo scrivere <code>dyn</code>, <code>&amp;dyn</code> o <code>&amp;mut dyn</code>, che vuol dire sto passando un "fat pointer" composto dal puntatore al dato e dalla vtable relativa. Il vincolo con gli oggetti tratti è che io posso soltanto implementare un tratto. Prima avevo creato la funzione che accettava un <code>&amp;dyn Summarizable</code>, potevo solo dire che era <code>Summarizable</code> quella cosa lì.</p>
+<p>Se si utilizzasse l'implementazione generica, si potrebbe scrivere la funzione <code>display_summary</code> come <code>display_summary&lt;T&gt;</code> seguito da <code>where T: Summarizable</code>. In questo modo sarebbe possibile aggiungere ulteriori vincoli come <code>where T: Summarizable + Debug + Display</code>. La programmazione generica offre quindi la possibilità di esprimere vincoli più sofisticati.</p>
+<h3 id="45-compromessi-e-ottimizzazioni"><a class="header" href="#45-compromessi-e-ottimizzazioni">4.5 Compromessi e Ottimizzazioni</a></h3>
+<p>In compenso, con la programmazione usando gli oggetti tratto, io sono sicuro che quella funzione lì esiste in un'unica copia che viene implementata così com'è. Che prende sempre 16 byte di puntatore dell'oggetto tratto. Quando creo una funzione generica, nel caso della slide <code>generic_process&lt;T&gt;</code>, dove <code>T</code> deve implementare il tratto <code>Write</code>, io qui di funzioni <code>generic_process</code> ne avrei tante quante sono le diverse tipologie di dato <code>T</code> che vado a utilizzare.</p>
+<p>Quindi la versione generica potrebbe generarmi molto più codice della versione con l'oggetto tratto dinamico. È più flessibile (perchè appunto consente di esprimere vincoli più complessi), ma mi genera più codice, perché ho copie disgiunte, una per ciascuna versione.</p>
+<p><img src="images/polimorfismo/image%2065.png" alt="image.png" /></p>
+<p>Quindi le <strong>struct generiche</strong>, in generale, portano però a codice più efficiente, perché può essere ottimizzato, possibilmente permettendo di togliere quelle parti che sono compilabili a priori, perché sono in grado, attraverso l'analisi statica del codice, di vedere cosa capita. Mi permette di usare l'inlining e così via.</p>
+<p>In più, gli oggetti tratto li posso creare solo nella condizione in cui mi ritrovo a non avere metodi statici all'interno del tratto stesso. Quindi non posso definire un oggetto tratto legato a più tratti disgiunti, mentre lo posso fare dall'altra parte.</p>
+<aside>
+💡
+<p><strong>Monomorphism vs Trait Objects</strong></p>
+<p><img src="images/polimorfismo/image%2066.png" alt="image.png" /></p>
+</aside>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="07-tipi_composti.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="09-lifetime.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="07-tipi_composti.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="09-lifetime.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
