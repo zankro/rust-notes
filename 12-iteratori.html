@@ -1,0 +1,471 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Iteratori</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="iteratori---malnati-17"><a class="header" href="#iteratori---malnati-17">Iteratori - Malnati 17 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-introduzione">1. Introduzione</a>
+<ul>
+<li><a href="#11-iteratori-in-c20">1.1 Iteratori in C++20</a></li>
+</ul>
+</li>
+<li><a href="#2-iteratori-in-rust">2. Iteratori in Rust</a>
+<ul>
+<li><a href="#21-esempio">2.1 Esempio</a></li>
+<li><a href="#22-adattatori">2.2 Adattatori</a></li>
+<li><a href="#23-consumatori">2.3 Consumatori</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="1-introduzione"><a class="header" href="#1-introduzione">1. Introduzione</a></h1>
+<p><img src="images/iteratori/image.png" alt="image.png" /></p>
+<p>Un iteratore è una struttura dati che è specializzata nell'offrirci un metodo <code>next</code> che ci permette di sapere se c'è qualcosa ancora da leggere oppure no.</p>
+<p>Quindi una struttura dati che ci aiuta a visitare una collezione tirando fuori gli elementi uno alla volta.</p>
+<p>Quella collezione lì, di solito, l'iteratore <strong>non la possiede</strong> — la guarda e quindi ci ritorna un reference ai suoi contenuti.
+In alcuni casi l'iteratore <strong>può prendere possesso</strong> della collezione smontandola, e ce la smonta non tutta di colpo ma ce la smonta un pezzettino alla volta finchè non l'abbiamo visitata tutta.</p>
+<p>Quindi l'iteratore è una <strong>struttura dotata di stato.</strong></p>
+<p>Tipicamente un iteratore prende questi valori che tira fuori uno alla volta da un contenitore, in alcuni casi potrebbe prenderli in realtà da una funzione che li genera di volta in volta.</p>
+<p>Normalmente da un punto di vista concettuale l'iteratore deve permettermi di sapere <em>se ce ne sono ancora</em>, cioè prima di chiederti qual è il prossimo ti chiedo <em>“ma ce l'hai un prossimo?”</em> e questa è una domanda che ha risposta sì o no. Nel caso in cui tu mi dica no è inutile che ti chieda altro, nel caso in cui tu invece mi dica sì allora ti chiedo anche qual è, e a quel punto ho un secondo metodo, <code>next</code>, che mi permette di estrarlo.</p>
+<p>A secondo di che cos'era la collezione da cui sto partendo <code>next</code> mi può ritornare un numero, una stringa, etc…</p>
+<p>Diversi linguaggi implementano questa cosa in modo vario. In <strong>Java</strong>, esiste l'interfaccia del package <code>java.util.Iterator</code> che contiene tre metodi:</p>
+<ul>
+<li><code>hasNext()</code> che ritorna un booleano</li>
+<li><code>next()</code> che ritorna il tipo dell'iteratore</li>
+<li>un metodo per cancellare l'elemento corrente</li>
+</ul>
+<p>In <strong>Rust</strong>, i due metodi sono combinati: c'è un unico metodo <code>next()</code> che ritorna una <code>Option</code>. Se l' <code>Option</code> contiene <code>Some</code>, vuol dire che un altro elemento c'era (e dentro <code>Some</code> c'è anche scritto qual è). Se l' <code>Option</code> è <code>None</code>, vuol dire che non ce ne sono più. Puoi chiamare <code>next()</code> infinite volte, ma dopo <code>None</code> riceverai sempre <code>None</code>.</p>
+<p>A partire da un iteratore possiamo creare altri iteratori. Possiamo:</p>
+<ul>
+<li>Concatenare iteratori in sequenza</li>
+<li>Filtrare elementi con certe caratteristiche</li>
+<li>Trasformare gli elementi in qualcos'altro</li>
+</ul>
+<p>Questo concetto è presente in tutti i linguaggi moderni.</p>
+<p>Un esempio pratico: quando scriviamo un ciclo <code>for</code> in Rust stiamo usando un iteratore (il compilatore trasforma il ciclo for in uso di iteratore). Ad esempio:</p>
+<ul>
+<li>Abbiamo un vettore <code>v1</code> con numeri da 1 a 6</li>
+<li>Un vettore <code>v2</code> destinato a contenere stringhe</li>
+<li>Un ciclo for che itera su <code>v1.len()</code>, controlla se ogni elemento è multiplo di 2, e se lo è inserisce una stringa derivata in <code>v2</code></li>
+</ul>
+<p>Il risultato: <code>v2</code> contiene tre stringhe: "a2", "a4", "a6".</p>
+<p><strong>Questa stessa cosa</strong> è scritta in modo imperativo, con una serie di comandi che accedono al vettore tramite le parentesi quadre con l'indice <code>i</code>. Questo approccio funziona, ma presenta dei rischi: se per errore assegnassimo a <code>i</code> un valore fuori range, il programma potrebbe andare in panic. Anche se questo codice è semplice e intuitivo, possiamo scriverlo in un modo alternativo ed equivalente.</p>
+<p>Vediamo cosa potremmo inserire in <code>v2</code>. Dentro <code>v2</code> ci metto <code>v1.iter</code>, ovvero vado da <code>v1</code> e dico “<em>senti me li dai i tuoi numeri uno alla volta?”</em>. <code>v1.iter</code> si prepara a dare i numeri uno alla volta ma non fa niente a parte prepararsi.</p>
+<p>Poi gli dico “<em>guarda una volta che avremo questi numeri uno alla volta, guardaci dentro e passami avanti solo quelli pari”</em> — <code>.filter</code> — e qui ti passo una lambda per fare questa cosa.</p>
+<p><code>.filter</code> accetta una lambda che ritorna un booleano: se quel booleano è <strong>true</strong> lo tengo, se il booleano è <strong>false</strong> lo butto.</p>
+<p>E quindi se <code>v1.iter</code> voleva dire "dammeli tutti", <code>v1.iter.filter</code> vuol dire <em>"dammi solo alcuni, quelli che mi piacciono".</em> Va bene, ma ancora non ha fatto assolutamente niente, si è solo preparato.</p>
+<p>Successivamente consideriamo: se qualcosa esce dal filter (anche se non è garantito), cosa ne facciamo? Abbiamo un numero, ma ci serve una stringa! La soluzione è <em>mappare</em> ogni elemento che esce usando una lambda che trasforma il numero in stringa. Come? La lambda prende il numero e usa <code>format</code> per creare una stringa che combina "a" con il numero stesso.</p>
+<p>E poi c'è quello che veramente fa partire la macchina, la mette in moto: <strong>collect</strong>!
+<code>collect</code> dice <em>"ok parti e raccogli il tutto, raccoglilo e mettilo nel risultato, cioè</em> <code>v2</code><em>"</em>.</p>
+<p><code>collect</code> si comporta diversamente in base a dove deve mettere le cose: se devi metterlo dentro un <code>Vec</code> farà certe operazioni, se deve metterlo dentro una <code>VecDeque</code> (che non sappiamo ancora cos'è ma lo scopriamo tra breve) ne farà degli altri, se deve metterlo dentro una linked list ne fa delle altre ancora — quindi sulla base di dove deve inserire i suoi risultati, agisce.</p>
+<p><code>collect</code> inizia a chiamare chi sta a monte: si rivolge a <code>map</code> e chiede "Hai qualcosa?". <code>map</code> risponde "Aspetta, devo chiedere" e va da <code>filter</code>. <code>filter</code> a sua volta chiede a <code>iter</code>: "Hai qualcosa?". <code>iter</code> risponde "Sì, dovrei avere 6 elementi in <code>v1</code>".</p>
+<p>Quindi <code>iter</code> comincia a restituire 1. <code>filter</code> lo esamina e dice <em>"No, è dispari, non mi piace".</em> <code>iter</code> passa al successivo, 2. "Bello, questo 2 mi piace!" e lo passa a <code>map</code>. <code>map</code> dice "Ok, devo trasformarlo in stringa: 'a2'" e lo passa a <code>collect</code>. <code>collect</code> lo salva nel risultato, dentro <code>v2</code>.</p>
+<p>Si torna da <code>map</code>: <em>"Altri elementi?".</em>
+Arriva 3: <em>"No, è dispari".</em>
+Poi 4: <em>"Sì, è pari, mi piace!".</em> "a4" viene salvato.
+Avanti col prossimo... 5, 6...
+<em>"Altri elementi?". "No, non ce ne sono più"</em>
+Fine. Questa è la storia dell'iteratore.</p>
+<p>L'iteratore <strong>non fa niente</strong> se al fondo non ci attacco qualcosa che <strong>consuma</strong>. Questo è molto diverso da quello che succede in JavaScript: se voi in JavaScript avete un array <code>[1,2,3,4,5,6]</code> e fate <code>[1,2,3,4,5,6].filter().map()</code>, <strong>immediatamente parte il filter</strong> che da quell'array lungo 6 ne crea subito uno lungo 3. Immediatamente dopo che filter ha creato il suo array lungo 3, parte map, che fa le stringhe "a2", "a4", "a6", e poi quello viene salvato come risultato.</p>
+<p>Quindi abbiamo tre concetti fondamentali:</p>
+<ul>
+<li>Gli iteratori sono un modo per <strong>navigare una collezione</strong> facendoci dare quello che c'è dentro un pezzo alla volta</li>
+<li>Gli iteratori sono <strong>pigri</strong> — da soli non fanno niente, aspettano che qualcuno gli chieda <em>"ce l'hai il prossimo?"</em> — se nessuno glielo chiede, non succede nulla</li>
+<li>Un iteratore può essere attaccato in cascata a un altro iteratore (modificatore) per arricchire la selezione</li>
+</ul>
+<p>Lo possiamo fare con una serie di operatori — qui ne abbiamo visti due fondamentali:</p>
+<ul>
+<li><code>filter</code>: quando non tutti gli elementi mi interessano</li>
+<li><code>map</code>: quando ho bisogno di una derivazione del valore, lo mappo/trasformo in qualcos'altro</li>
+</ul>
+<p><img src="images/iteratori/image%201.png" alt="image.png" /></p>
+<p>Quindi di base noi usiamo gli iteratori perché sono <strong>versatili</strong>: siamo partiti da un vettore che conteneva <code>[1,3,4,5,6]</code>, ma fossimo partiti da una lista il codice era lo stesso, se fossimo partiti da un range <code>1..=6</code> il codice restava uguale (a parte il pezzo iniziale da dove prendiamo le cose). Indipendentemente dalla sorgente, noi usiamo l'iteratore per farci dare uno alla volta che cosa c'è lì dentro. Da questo punto di vista ci aiuta a scrivere del codice più semplice: non abbiamo bisogno di sapere troppi dettagli di <em>come</em> è fatta quella sorgente — l'iteratore ce li prende uno alla volta.</p>
+<p>Gli operatori sono <strong>pigri</strong> — gli iteratori sono pigri solo se noi gli chiediamo. Se non glielo chiediamo non fanno assolutamente niente.</p>
+<p>Potenzialmente gli iteratori possono operare in <strong>parallelo</strong> — notate che bisogna chiederlo in modo esplicito. Noi adesso qui stiamo operando in modo strettamente sequenziale: <em>"dammi il prossimo, dammi il prossimo, dammi il prossimo".</em> In alcune situazioni noi possiamo dirgli <em>"dammi tutti i prossimi che riesci in contemporanea".</em> Poiché possiamo derivare da un iteratore un altro iteratore applicandogli le funzioni (come <code>filter</code>, <code>map</code>, <code>reduce</code>, <code>fold</code>, <code>first</code>, <code>last</code>, <code>reverse</code> eccetera), il nostro codice diventa molto più flessibile perché possiamo aggiustare un mucchio di cose facilmente.</p>
+<p><img src="images/iteratori/image%202.png" alt="image.png" /></p>
+<p>Gli iteratori esistono in tutti i linguaggi, anche in C++, solo che in C++ sono stati modellati con un'idea un po' così — piuttosto che un approccio funzionale come abbiamo visto in Rust basato sulla <em>monade</em> <code>Option</code> che contiene <code>Some</code> con un valore, o <code>None</code>, e quindi mi permette con un singolo metodo <code>next</code> di governare tutto, in C++ sono stati modellati pensando ai puntatori e all'aritmetica dei puntatori, che è un disastro.</p>
+<p>Per cui di fatto quello che succede è che in C++ gli iteratori viaggiano sempre in coppia <code>begin</code>/<code>end</code> e vanno confrontati l'uno con l'altro. Non abbiamo troppo tempo da dedicarci, sappiate però che questo è un grosso problema del C++ che è stato un po' aggiustato solo nel 2020 con l'introduzione dei <code>range</code>. Un range in realtà in C++ è un oggetto che dentro di sé contiene i due iteratori ma ti dà un'interfaccia pulita simile a quella di Rust o degli altri linguaggi, altrimenti era un grosso casino.</p>
+<h2 id="11-iteratori-in-c20"><a class="header" href="#11-iteratori-in-c20">1.1 Iteratori in C++20</a></h2>
+<p><img src="images/iteratori/image%203.png" alt="image.png" /></p>
+<p>C'è un altro problema degli iteratori in C++. È legato al fatto che alcuni iteratori hanno <strong>capacità più grandi di altre</strong> che dipendono sostanzialmente dal posto dove sono stati acquisiti. Di conseguenza c'è tutta una gerarchia concettuale:</p>
+<ul>
+<li>Iteratori di <strong>ingresso</strong>: capaci di leggere un valore</li>
+<li>Iteratori di <strong>uscita</strong>: capaci di scrivere un valore</li>
+<li>Iteratori <strong>forward</strong>: leggono solo in avanti, dall'inizio alla fine</li>
+<li>Iteratori <strong>bidirectional</strong>: permettono di andare anche all'indietro, dal fondo all'inizio</li>
+<li>Iteratori <strong>ra ndom access</strong>: consentono di saltellare avanti e indietro di n posizioni</li>
+<li>Iteratori <strong>contiguous</strong>: assumono che i dati siano adiacenti in memoria, trattandoli come array</li>
+</ul>
+<p>Tutto questo però rende l'uso degli iteratori complicato. È vero che la standard library del C++ è tutta basata sull'uso degli iteratori e offre metodi che ti consentono, data una coppia di iteratori, di farci operazioni sopra.</p>
+<p>Ad esempio, la funzione <code>sort</code> permette di ordinare un contenitore sotto certe condizioni. Il problema è che alcune funzioni della standard library presuppongono che l'iteratore sia di una particolare categoria — se ne passate uno più generico, si spacca dando errori di compilazione illegibili.</p>
+<p>Il grande sforzo fatto nel C++20 con l'introduzione dei <code>concept</code> è stato quello di fare in modo che questa cosa (nonostante si spacchi sempre), dia un errore leggibile: <em>"Non posso ordinare questa cosa perché non è ordinabile, in quanto l'iteratore non è quello buono"</em>. Ad esempio, una linked list non è sortabile perché ha i suoi pezzi sparpagliati in memoria.</p>
+<h1 id="2-iteratori-in-rust"><a class="header" href="#2-iteratori-in-rust">2. Iteratori in Rust</a></h1>
+<p><img src="images/iteratori/image%204.png" alt="image.png" /></p>
+<p>Vediamo invece cosa succede in Rust, che è quello che ci interessa.</p>
+<p>Gli iteratori in Rust sono <strong>molto semplici</strong>: sono oggetti qualunque (struct, enum o tuple) che implementano il trait <code>Iterator</code>. Il trait <code>Iterator</code> ha:</p>
+<ul>
+<li>Due componenti <strong>essenziali</strong>:
+<ul>
+<li>Il tipo di dato (<code>Item</code>) che l'iteratore produce</li>
+<li>Il metodo <code>next</code> che restituisce una <code>Option&lt;Self::Item&gt;</code></li>
+</ul>
+</li>
+</ul>
+<p>Oltre al metodo obbligatorio <code>next</code>, l'iteratore ha una trentina di metodi ulteriori con implementazione di default.
+Questi metodi ci consentono di derivare <code>filter</code>, <code>map</code>, <code>reduce</code>, <code>fold</code>, <code>reverse</code> e così via.</p>
+<p>Se un tipo permette di essere esplorato elemento per elemento, implementa il trait <code>Iterator</code>. Se il contenitore di partenza aveva delle stringhe, l'iterator ci dà dei riferimenti alle stringhe — cioè permette di guardare dentro senza modificare, ritornando normalmente il reference non mutabile al dato contenuto.</p>
+<p>Un tipo però potrebbe anche dire <em>"guarda io ho dei dati miei e sono pronto a sbriciolarmi per dare uno alla volta i miei dati a chi gli interessa”</em>. In questo caso non implementerà il tratto <code>Iterator</code> o non implementerà solo il tratto <code>Iterator</code>, ma implementerà il tratto <code>IntoIterator</code>.</p>
+<p>Il tratto <code>IntoIterator</code> fondamentalmente prende possesso della sua sorgente, e quindi non dà il reference ai singoli dati che la sorgente contiene, ma dà i dati che la sorgente contiene, perché quando l'iteratore sarà stato eseguito (anche solo parzialmente) l'intera struttura originale verrà sbriciolata.
+Il tratto <code>IntoIterator</code> sostanzialmente ha un'unica funzione che è <code>into_iter</code> che trasforma quella cosa lì.</p>
+<p>Gli iteratori non hanno niente di magico dentro di sé, si limitano a contenere qualcosa — sono degli oggetti che hanno quello che gli serve per ricordarsi a che punto sono arrivati. Se io dovessi iterare su un vettore, com’è fatto l'iteratore che è capace di iterare su un vettore? Ricorda un indice! Ricorda il riferimento al vettore a cui può chiedere delle cose, un indice, e dice <em>"fintanto che il mio indice è minore del size del vettore, alla richiesta di un nuovo elemento gli rispondo sì e dò l'elemento i-esimo, e poi incremento l'indice.”</em></p>
+<p><img src="images/iteratori/image%205.png" alt="image.png" /></p>
+<p>Qui c'è l'esempio di un iteratore che permette di iterare su un range in modo bidirezionale, ovvero una struttura <code>MyRange</code> con due limiti. Il range può andare, ad esempio, da 7 a 25, oppure da 25 a 7. Nel caso di un range da 7 a 25, l'iteratore restituisce in sequenza 7, 8, 9,…, 24 (l'ultimo numero è escluso). Nel caso inverso, da 25 a 7, l'iteratore restituisce in sequenza 25, 24, 23,…,8.</p>
+<p><em>Come funziona questa cosa?</em>
+Banalmente dichiaro la struttura <code>MyRange</code> che prenderebbe come parametro del template direttamente gli estremi, quindi di per sé non ha bisogno, in quanto range, di contenere niente altro perché sigillo nel tipo i suoi estremi che sono costanti. Dopodiché posso dire che questa struttura implementa il tratto <code>IntoIterator</code> per esempio, <em>e cosa fa?</em> Banalmente tiene traccia di sé, di un contatore.</p>
+<p><img src="images/iteratori/image%206.png" alt="image.png" /></p>
+<p>Restituisco un <code>MyRangeIterator</code> da <code>FROM</code> a <code>TO</code>, e questo <code>MyRangeIterator</code> contiene un solo valore numerico. Quando viene richiesto il prossimo elemento, restituisco il valore di <code>self.val</code>. Se sto procedendo in ordine crescente, poi incremento <code>self.val</code> di 1; se in ordine decrescente, lo decremento di 1. Questo meccanismo mi permette di esplorare l'intero range. Quando raggiungo la fine, restituisco <code>None</code> e l'iterazione termina. Questo è il funzionamento essenziale dell'iteratore.</p>
+<p>Se questo invece di essere un oggetto che parte da due estremi costanti fosse legato a un vettore, avrebbe avuto dentro di sé banalmente il riferimento al vettore, aveva lo stesso indice e si ricordava banalmente se a che punto era arrivato. La risposta a <em>"c'è il prossimo?"</em> è sì, fin tanto che il mio indice è più piccolo del vettore.</p>
+<p><img src="images/iteratori/image%207.png" alt="image.png" /></p>
+<p>Notate che quando noi scriviamo un ciclo <code>for</code>, il compilatore ci espande il nostro ciclo for con gli iteratori.</p>
+<p>Cosa succede se noi andiamo a vedere questa cosa qua in una delle tante versioni del compilatore? Può darsi che quella che usiamo oggi sia diventata un po' diversa, perché ogni volta che viene rilasciato un nuovo compilatore questi migliorano e affinano il codice generato perché sia più robusto, più efficiente. etc… Comunque in una delle <em>n</em> versioni che ha avuto questa cosa qui, questo è quello che veniva generato: quindi si prendeva in questo caso <code>values</code> che era trasformato in un <code>IntoIter</code> e quindi io lo sbriciolo il mio vettore perché <code>for x in values</code> vuol dire che io li tiro fuori direttamente tutti.</p>
+<p><em>E che cosa faccio?</em>
+Ciclo finché ce n'è un prossimo, e questo prossimo contiene <code>Some</code> di qualcosa, assegno a <code>next</code> il valore e poi uso questo valore per legarlo a <code>x</code>. Dopodiché, dopo averlo legato a <code>x</code>, eseguo l'azione che era contenuta dentro il <code>for</code> e proseguo in questo modo finché ce n'è. Quando arrivo a vedere che dall'iteratore non mi esce più niente, <code>break</code>: esco da questo ciclo infinito e me ne vado.</p>
+<p>Ok, è un po' illegibile scritto così il codice ma è come una delle tante versioni del compilatore ha deciso di farlo. Quello che ci interessa è che noi scriviamo <code>for x in values</code> e lì abbiamo chiaro cosa vuol dire. Poi il fatto che lui generi questo o meno è utile da sapere semplicemente perché alla base di tutto il funzionamento di Rust ci sono gli iteratori: sono degli elementi fondanti.</p>
+<p><img src="images/iteratori/image%208.png" alt="image.png" /></p>
+<p>Tutti i contenitori presenti nella libreria standard ci mettono a disposizione una serie di metodi.</p>
+<p>Ce ne sono tre fondamentali che hanno a che fare con gli iteratori:</p>
+<ul>
+<li>**<code>iter**</code>
+Ci dà un iteratore che guarda e ci restituisce un riferimento a ciò che è contenuto, quindi un riferimento <strong>non mutabile</strong>.
+Noi possiamo sapere che dentro quella cosa lì c'è un certo dato: uno alla volta ne abbiamo un riferimento, lo possiamo leggere, non lo possiamo modificare. <code>iter</code> <strong>prende a prestito la struttura</strong>, quindi fin tanto che iteriamo sulla struttura la struttura non è modificabile.</li>
+<li><strong><code>iter_mut</code></strong>
+È simile a <code>iter</code>, ma prende a prestito il dato mutabile, quindi mi lascia non solo esplorare cosa c'è dentro ma quello che mi dà è un riferimento mutabile quindi io posso cambiarlo.
+Potrei fare <code>for x in v.iter_mut</code>, a questo punto potrei dire <code>x += 1</code>: il mio vettore che conteneva inizialmente <code>[1,2,3,4,5]</code> dopo un ciclo del genere contiene <code>[2,3,4,5,6]</code>. Cioè mentre esploravo ho avuto la possibilità di cambiare i singoli pezzi uno per volta. I pezzi sono rimasti di proprietà del vettore originale, ma siccome lui me li ha dati in modalità mutabile io ho avuto la possibilità di cambiarli.</li>
+<li><strong><code>into_iter</code></strong>
+È la versione dell'iteratore che prende possesso della struttura, la sbriciola. Quindi al termine dell'esecuzione di <code>into_iter</code> la struttura non c'è più. In compenso io ho preso possesso delle singole parti. Questo mi ha dato la possibilità ad esempio di salvarle altrove, senza doverne fare una copia.</li>
+</ul>
+<p>Tipicamente questi tre metodi sono coadiuvati da un dall'implementazione del tratto <code>IntoIterator</code>. Noi possiamo scrivere <code>for x in v</code> perché in realtà <code>v</code> — che non è un iteratore è un contenitore — implementa il tratto <code>IntoIterator</code>.</p>
+<p><code>for x in v</code> vuol dire: <em>"prendi</em> <code>v</code><em>, derivami un iteratore e per tutti gli elementi che questo iteratore restituisce assegnali a</em> <code>x</code><em>, fai delle cose".</em></p>
+<p>Tipicamente ci sono <strong>tre implementazioni del tratto</strong> <code>IntoIterator</code>.
+Se io lo faccio su <code>v</code>, <code>for x in v</code> sto chiamando <code>v.into_iter()</code>, che sbriciola <code>v</code>.
+Se faccio <code>for x in &amp;v</code> sto dicendo <em>"fammi leggere il contenuto di</em> <code>v</code> <em>e dammi dei riferimenti non mutabili al suo contenuto”</em>.
+Se io faccio <code>for x in &amp;mut v</code> gli chiedo <em>"dammi accesso alle parti con possibilità di modificare".</em></p>
+<h2 id="21-esempio"><a class="header" href="#21-esempio">2.1 Esempio</a></h2>
+<p><img src="images/iteratori/image%209.png" alt="image.png" /></p>
+<p><img src="images/iteratori/image%2010.png" alt="image.png" /></p>
+<p>Provando ad eseguire, il compilatore ci segnala un errore. <strong>Perché?</strong> Perché avviene un "move" del vettore di <code>i32</code>, che non implementa il tratto <code>Copy</code>. Quando scriviamo "<code>for x in v</code>", <code>v</code> viene consumato da <code>IntoIterator</code> e di conseguenza viene sbriciolato. Al termine dell'iterazione <code>v</code> non esiste più, quindi le istruzioni successive che tentano di accedere a <code>v</code> non possono funzionare.</p>
+<p><em>Come possiamo correggerlo?</em>
+Non scrivendo <code>for x in v</code>, ma <code>for x in &amp;v</code>!</p>
+<p>In questo modo quello che riceviamo sono dei riferimenti. Infatti vedete che qui <code>x</code> è <code>&amp;i32</code> - ottengo riferimenti alle parti che <code>v</code> contiene. Se scrivessi <code>for x in &amp;v</code>, <code>x</code> diventa un riferimento a <code>i32</code>.</p>
+<p><img src="images/iteratori/image%2011.png" alt="image.png" /></p>
+<p>Se scrivo <code>for x in &amp;mut v</code>, <code>x</code> diventa <code>&amp;mut i32</code>. Chiaramente per poter usare <code>mut</code> devo dichiarare che <code>v</code> è mutabile, altrimenti non funziona. A questo punto, invece che stampare <code>x</code>, potrei fare <code>*x = 2</code>.</p>
+<p>Se eseguo questo codice mi stamperà <code>[2,4,6,8,10,12]</code>.</p>
+<p>Questo dimostra che posso non solo iterare e leggere il contenuto, ma se ottengo una versione mutabile (un riferimento mutabile) ho la possibilità di modificare la struttura di <code>v</code>.
+<strong>Non posso però rimuovere elementi da <code>v</code>.</strong></p>
+<p><img src="images/iteratori/image%2012.png" alt="image.png" /></p>
+<p><strong>Notate</strong> ancora una cosa: se <code>x &gt; 4</code>, allora <code>break</code> — questo significa che ottengo l'1 che diventa 2, ottengo il 2 che diventa 4, ottengo il 3 che diventa 6 e poi mi fermo.
+Ho parzialmente svuotato <code>v</code> — ho consumato solo i primi 3 elementi perché poi mi sono fermato.</p>
+<p><img src="images/iteratori/image%2013.png" alt="image.png" /></p>
+<p>Cosa contiene <code>v</code>? Niente: lo stesso problema persiste anche se non ho estratto tutti gli elementi da <code>v</code> — siccome ho iniziato a prenderli (è come se avessi tolto 2-3 mattoni da un muro), il compilatore ci dice <em>"No no,</em> <code>v</code> <em>non è più valido, va eliminato".</em></p>
+<p>Per capire meglio, creiamo una struttura <code>P</code> che implementa il tratto <code>Drop</code>.</p>
+<p><img src="images/iteratori/image%2014.png" alt="image.png" /></p>
+<p><img src="images/iteratori/image%2015.png" alt="image.png" /></p>
+<p>Vediamo cosa succede.</p>
+<p><img src="images/iteratori/image%2016.png" alt="image.png" /></p>
+<p>Eseguendo, vedremo "Consuming P(1)" — ho iniziato il <code>for</code>, ho estratto il primo elemento e stampo correttamente. Controllo l'<code>if</code> — non è soddisfatto, devo ottenere il prossimo. Questa <code>x</code> non serve più, va eliminata, quindi "Dropping P(1)". L'ho rimosso dal vettore, l'ho usato e lo elimino. Ottengo il prossimo: "Consuming P(2)", lo controllo, non serve, lo elimino. "Consuming P(3)", lo controllo — è troppo grande, <code>break</code>!</p>
+<p>A questo punto sembrerebbe che ho finito. Certo, ho ancora questo <code>x</code> che non serve e che elimino (quindi "Dropping P(3)"). Nel vettore dovrebbero esserci ancora 4, 5, 6. Cosa succede però? Prima che il <code>break</code> mi porti alla prossima istruzione, il compilatore vede che ho iniziato a smontare il vettore e dice <em>"non puoi andartene lasciandomelo mezzo fatto, quindi anche se non ti interessa, smonto tutto perché hai iniziato a smontarlo.”</em></p>
+<p>Quando esco, <code>v</code> non esiste più.</p>
+<p><img src="images/iteratori/image%2017.png" alt="image.png" /></p>
+<p><img src="images/iteratori/image%2018.png" alt="image.png" /></p>
+<p>Se invece avessi iterato <code>for p in &amp;v</code>, non succederebbe nulla di tutto ciò.
+Estraggo il riferimento al primo, lo controllo — ok, "Consuming P(1)".
+Estraggo il secondo, lo controllo, "Consuming P(2)".
+Estraggo il terzo, lo controllo, mi fermo. Perfetto, non ho eliminato nulla.</p>
+<p><code>v</code> continua ad esistere. Dopo aver fatto tutto, arrivo alla fine del <code>main</code> — a questo punto devo eliminare il vettore, quindi lo svuoto completamente.</p>
+<p>Quindi gli iteratori ci permettono di muoverci all'interno dei contenitori in diversi modi:</p>
+<ul>
+<li><code>for x in contenitore</code>: smonto il contenitore</li>
+<li><code>for x in &amp;contenitore</code>: leggo il contenuto senza modificarlo, e mentre lo leggo nessuno può modificarlo (ho un prestito sul contenitore)</li>
+<li><code>for x in &amp;mut contenitore</code>: prendo in prestito temporaneamente ogni elemento come mutabile, quindi posso modificarlo. Mentre ci lavoro, nessuno può accedere al contenitore in alcun modo. Quando ho finito, il contenitore contiene ancora gli stessi elementi, possibilmente modificati.</li>
+</ul>
+<p><img src="images/iteratori/image%2019.png" alt="image.png" /></p>
+<p>Notate che non solo posso scrivere <code>for x in v</code> (dove <code>v</code> è un vettore, un <code>Vec</code> che ha <code>Iterator</code>), ma potrei anche scrivere <code>for x in v.iter()</code>. Posso utilizzare un <code>for</code> direttamente su un iteratore perché tra i metodi di default che tutti gli iteratori già implementano, c'è anche il metodo <code>into_iter</code>.</p>
+<p>Questo dice che se hai già un iteratore e vuoi usarlo in un <code>for</code>, non devi fare nulla — hai già l'iteratore pronto. Questo mi permette di scrivere in modo più esplicito: al posto di usare <code>for x in v</code>, posso scrivere <code>for x in v.iter()</code>, <code>for x in v.iter_mut()</code>, o <code>for x in v.into_iter()</code>. Questo è un modo più esplicito per capire cosa sta succedendo.</p>
+<h2 id="22-adattatori"><a class="header" href="#22-adattatori">2.2 Adattatori</a></h2>
+<p><img src="images/iteratori/image%2020.png" alt="image.png" /></p>
+<p>E poi c'è una <strong>carrellata di adattatori</strong>.</p>
+<p><em>Cosa sono gli adattatori?</em>
+Sono queste funzioni ulteriori che noi possiamo applicare in cascata a un iteratore per derivarci delle cose: <code>filter</code>, <code>map</code>, <code>sum</code>.</p>
+<p>Gli adattatori sono fatti di un certo numero di cose intermedie fino ad arrivare a dei <strong>terminali</strong> — solo il terminale fa scattare le cose.</p>
+<p>In generale tutti gli adattatori sono <em>pigri</em> e non fanno nient'altro che rivolgersi a <em>chi hanno alla propria sinistra</em>, a monte, per dire <em>"mi dai il prossimo?"</em> e ci fanno eventualmente qualcosa se questo prossimo esiste. Se il prossimo non c'è più dicono a loro volta <em>"non c'è più niente".</em></p>
+<p><img src="images/iteratori/image%2021.png" alt="image.png" /></p>
+<p><img src="images/iteratori/image%2022.png" alt="image.png" /></p>
+<p><img src="images/iteratori/image%2023.png" alt="image.png" /></p>
+<p>Sono tantissimi ma li citiamo soltanto perché poi li si imparano usandoli:</p>
+<ul>
+<li><strong><code>map</code></strong>: trasforma una cosa in un'altra</li>
+<li><strong><code>filter</code></strong>: permette di capire se questa cosa che ho ricevuto tra le mani mi piace oppure meno
+<ul>
+<li>Vuole una lambda che ritorna <code>true</code> se voglio far passare l'elemento, <code>false</code> se non voglio farlo passare</li>
+</ul>
+</li>
+<li><strong><code>filter_map</code></strong>: mette insieme le due cose — prima di tutto guarda se gli piace e poi, nel caso gli piaccia, mappa anche. Questo permette di ridurre un po' le chiamate.</li>
+<li><strong><code>flatten</code></strong> permette di "spiaccicare" delle cose: io prendo in ingresso qualcosa che è iterabile e do in uscita i singoli pezzi. Per esempio, se ho un vettore che contiene due vettori di numeri e faccio <code>iter.flatten()</code>, (di fatto il vettore esterno avrebbe due soli pezzi: vettore 1 e vettore 2) facendo flatten, lui fa passare vettore 1, che viene <em>flattened</em> (quindi lo spezzo nei suoi elementi costituenti) e quindi alla fine mi viene una sequenza appiattita.</li>
+<li><strong><code>flat_map</code></strong> fa contemporaneamente <code>flatten</code> e <code>map</code>, prima applica map, e se map ritorna una lista o qualcosa di iterabile, viene appiattita.</li>
+<li><strong><code>take</code></strong>: mi permette di dire <em>"anche se potenzialmente la sorgente contiene tot cose, tu dopo che ne hai fatte passare n dici che non ce n'è più"</em></li>
+<li><strong><code>take_while</code></strong>: fa passare le cose fin tanto che la lambda che gli do ritorna true</li>
+<li><strong><code>skip</code></strong>: il contrario di <code>take</code> — <em>“i primi n li salti”</em></li>
+<li><strong><code>skip_while</code></strong>: duale di take_while</li>
+<li><strong><code>peekable</code></strong> consente sostanzialmente di guardare l'elemento senza consumarlo</li>
+<li><strong><code>fuse</code></strong> permette di dire <em>"guarda cominci a chiedere a priori"</em></li>
+<li><strong><code>rev</code></strong> è un operatore che dice <em>"dammi gli elementi al contrario"</em></li>
+</ul>
+<p><em>Nota importante</em>: tutti questi adattatori non fanno nulla, o meglio fanno solo delle cose se qualcuno a valle gliele chiede. Ne possiamo mettere quanti ne vogliamo, sapendo che non succederà nulla finché a valle dell'ultimo adattatore non attacchiamo un <em><strong>consumatore</strong></em>.</p>
+<h2 id="23-consumatori"><a class="header" href="#23-consumatori">2.3 Consumatori</a></h2>
+<p><img src="images/iteratori/image%2024.png" alt="image.png" /></p>
+<p>Ce ne sono una serie:</p>
+<ul>
+<li><strong><code>for_each</code></strong>: per ciascuno di quelli che ti passa chiama questa funzione</li>
+<li><strong><code>try_for_each</code></strong>: prova a chiamare questa funzione, non appena questa funzione, che ritorna <code>Result</code>, ti dà un <code>Error</code>, fermati</li>
+<li><strong><code>collect</code></strong>: chiedigli tutti quelli che ha e inseriscili nella destinazione — è quello che abbiamo usato prima
+<ul>
+<li>cosa fa collect esattamente dipende da destinazione:
+<ul>
+<li>se la destinazione un <code>Vec</code> fa dei push dentro quel <code>Vec</code></li>
+<li>se la destinazione è una mappa cerca di inserire dentro la mappa</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><code>nth</code></strong>: sono interessato solo al <em>n-esimo</em> valore, tutti gli altri non li voglio</li>
+<li><strong><code>all</code></strong> è una funzione terminale che prova ad applicare una lambda a tutti gli elementi, e se a tutti quanti la lambda ritorna true, anche <code>all</code> ritorna true. Quindi verifica che tutti gli elementi su cui itera soddisfino quel predicato, e non appena ne incontra uno che non lo soddisfa si ferma e dice false</li>
+<li><strong><code>any</code></strong> prova ad applicare la lambda, e se almeno uno gli dà true si ferma e ritorna true</li>
+<li><strong><code>find</code></strong> applica la lambda e ritorna il primo elemento per cui la lambda ritorna true, permettendoci di cercare un elemento specifico nella sequenza.</li>
+<li><strong><code>count</code></strong> conta tutti gli elementi nell'iteratore e ritorna il totale.</li>
+<li><strong><code>sum</code></strong> calcola la somma di tutti gli elementi numerici nell'iteratore.</li>
+<li><strong><code>product</code></strong> calcola il prodotto di tutti gli elementi numerici nell'iteratore.</li>
+<li><strong><code>max</code></strong> ritorna il valore massimo come <code>Option</code> (<code>None</code> se l'iteratore è vuoto).</li>
+<li><strong><code>max_by</code></strong> accetta una funzione di confronto personalizzata invece dell'operatore di comparazione standard, permettendo di specificare una chiave di confronto.</li>
+<li><strong><code>min</code></strong>, <strong><code>min_by</code></strong> funzionano analogamente a <code>max</code> e <code>max_by</code>, ma cercano il valore minimo.</li>
+<li><strong><code>position</code></strong> ritorna l'indice del primo elemento che soddisfa il predicato dato.</li>
+<li><strong><code>reverse_position</code></strong> ritorna la posizione a partire dalla fine dell'iteratore.</li>
+<li><strong><code>fold</code></strong> (noto anche come reduce) combina gli elementi usando un valore di accumulazione: parte da un valore iniziale, lo combina col primo elemento, poi combina il risultato col secondo elemento e così via, riducendo la sequenza a un unico valore finale.</li>
+</ul>
+<p>Altri metodi: <strong><code>last</code></strong>, <strong><code>find_map</code></strong>, <strong><code>partition</code></strong>, <strong><code>reduce</code></strong>, <strong><code>compare</code></strong> eccetera…
+Unico modo di conoscerli: provare ad usarli!</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="11-gestione_degli_errori.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="13-collezioni_di_dati.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="11-gestione_degli_errori.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="13-collezioni_di_dati.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

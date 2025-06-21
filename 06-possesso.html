@@ -1,0 +1,681 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Possesso</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="possesso---malnati-8-9"><a class="header" href="#possesso---malnati-8-9">Possesso - Malnati 8-9 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-introduzione">1. Introduzione</a>
+<ul>
+<li><a href="#11-esempio">1.1 Esempio</a></li>
+</ul>
+</li>
+<li><a href="#2-movimento">2. Movimento</a>
+<ul>
+<li><a href="#21-esempi">2.1 Esempi</a></li>
+</ul>
+</li>
+<li><a href="#31-copy">3.1 Copy</a>
+<ul>
+<li><a href="#31-esempio">3.1 Esempio</a></li>
+</ul>
+</li>
+<li><a href="#4-clone">4. Clone</a>
+<ul>
+<li><a href="#41-esempio">4.1 Esempio</a></li>
+<li><a href="#42-confronto-con-c-e-c">4.2 Confronto con C e C++</a></li>
+</ul>
+</li>
+<li><a href="#5-riferimenti-simple-pointer-e-fat-pointer">5. Riferimenti: simple pointer e fat pointer</a></li>
+<li><a href="#6-tempo-di-vita-dei-riferimenti">6. Tempo di vita dei riferimenti</a>
+<ul>
+<li><a href="#61-esempi">6.1 Esempi</a></li>
+</ul>
+</li>
+<li><a href="#7-possesso---riassunto-regole">7. Possesso - Riassunto regole</a></li>
+<li><a href="#8-slice">8. Slice</a></li>
+<li><a href="#9-vantaggi-introdotti-dal-possesso">9. Vantaggi introdotti dal Possesso</a></li>
+<li><a href="#10-riferimenti">10. Riferimenti</a></li>
+</ul>
+<h1 id="1-introduzione"><a class="header" href="#1-introduzione">1. Introduzione</a></h1>
+<p><img src="images/possesso/image.png" alt="image.png" /></p>
+<p>Ogni volta che in Rust noi creiamo un valore questo valore è <strong>posseduto</strong> da una e una sola variabile.
+Ciò che è posseduto è il valore: <em>la variabile può possederlo.</em></p>
+<p>C'è una parte del compilatore molto importante che si chiama <em><strong>borrow checker</strong></em> che verifica formalmente che nel programma che noi abbiamo scritto effettivamente ogni valore sia posseduto da una sola variabile, e nel momento in cui risulta che un valore non è posseduto provvede a rilasciarlo e nel momento in cui verifica che invece c'è un tentativo di far possedere lo stesso valore a due variabili si ribella e impedisce la compilazione.</p>
+<p>Questo rende la compilazione di un programma Rust più difficile ma ci obbliga a scriverlo giusto ed è la garanzia del fatto che i programmi scritti in Rust funzionano e non riservano problemi dopo.</p>
+<p><em>Cosa significa possedere un valore?</em>
+Significa sostanzialmente essere responsabili del suo rilascio, ovvero di garantire che quando quel valore lì non servirà più non solo la memoria in cui il valore è contenuto viene correttamente restituita al sistema operativo, comunque si sia originata (se sullo stack contraendo lo stack, se sullo heap liberando l’heap con l'opportuna funzione di rilascio) ma anche che i dati contenuti all'interno di quella struttura, se hanno delle dipendenze (se sono cioè oggetto di qualche tipo), vengano correttamente rilasciati.</p>
+<p>Questo significa, ad esempio, che se io all'interno del mio valore contengo la handle di un file che è stato aperto, ecco: devo notificare al sistema operativo che quel file lì in ogni caso lo voglio chiudere e non mi serve più.</p>
+<p><em>Quando avviene il rilascio?</em>
+Normalmente il rilascio avviene nel momento in cui la variabile che lo possiede <strong>esce dal proprio scope sintattico</strong> — noi sappiamo che una variabile comincia a esistere nella riga in cui la dichiariamo, <code>let var = *qualcosa*;</code>, e cessa di esistere quando arriviamo al chiusa graffa corrispondente, quindi l'ho dichiarata all'interno di un blocco che quindi era stata aperta una qualche graffa poco prima, e quella variabile è accessibile fino a raggiungere il chiusa graffa.</p>
+<p>Questa è la vita normale di una variabile, quindi che inizia il possesso nel momento in cui viene dichiarata e termina il proprio possesso nel momento in cui raggiunge il fine vita, ma possono succedere cose, perché il valore che è memorizzato nella mia variabile <strong>può essere ceduto</strong> a qualcun altro.</p>
+<p>Se io ho dichiarato la variabile <code>v1</code>, che conteneva qualcosa, da qualche parte potrei scrivere <code>let v2 = v1</code>, mentre <code>v1</code> è ancora in vita.</p>
+<p>Negli altri linguaggi <code>v2 = v1</code> significa “<em>copia il valore di v1 dentro v2</em>” e poi finisce lì.
+In Rust invece significa “<em>copia il valore di v1 in v2, e da questo momento cessa di considerare v1 come responsabile del valore</em>”, quindi chi si dovrà occupare del suo rilascio non è più v1 ma è v2!</p>
+<aside>
+💡
+<p><strong>Copy</strong></p>
+<p>Abbiamo visto che ci sono alcune eccezioni a questa regola: per alcuni tipi semplici, come ad esempio i numeri, <code>let v2 = v1;</code> originerebbe una variabile <strong>indipendente</strong> da <code>v1</code>, che continuerebbe a possedere il suo valore.</p>
+</aside>
+<p>Le assegnazioni di fatto in Rust corrispondono a <strong>movimento</strong>, ovvero c'è una cessione non solo del dato così com'è — <code>v1</code> esiste in un qualche punto della mia memoria ad un certo indirizzo, la variabile <code>v2</code> esiste in un altro punto della memoria al proprio indirizzo, e i dati dall'indirizzo 1 vengono copiati nell'indirizzo 2 per la dimensione necessaria (quindi se quello lì era un valore che occupava 10 byte vengono copiati 10 byte), dopodiché responsabile del rilascio diventa il destinatario, il mittente l'ha perso.</p>
+<p>Perso vuol dire che non è più lecito neanche andare a leggere che cosa c'è scritto dentro.
+Per il compilatore è come se la variabile <code>v1</code>, dopo che è stato eseguito <code>v2 = v1</code> è come se <code>v1</code> non fosse più inizializzata, non ha più un valore lecito.
+Se <code>v1</code> era mutabile sarà possibile assegnargli un nuovo valore, e va bene: questo nuovo <code>v1</code> possederà questo nuovo valore e avrà un altro pezzo di storia, ma il valore originale l'ha ceduto a <code>v2</code>.</p>
+<p>Questa cessione si attua certamente nei momenti espliciti in cui io faccio <code>v2 = v1</code>, ma si attua parimenti quando io uso <code>v1</code> come argomento di una funzione.
+Quindi se io chiamo la funzione <code>f</code> passandogli <code>v1</code>, succede che la variabile <code>v1</code> viene trasferita nel primo parametro della funzione <code>f</code> (o nell'ennesimo parametro la funzione <code>f</code>, a secondo di come è stata dichiarata), e quel parametro lì diventa possessore del valore.
+La variabile <code>v1</code> a questo punto non ce l'ha più: ha perduto diritti e doveri — ha perduto il diritto di accesso e ha perduto il dovere del rilascio.</p>
+<p><em>A chi sono stati stati a chi sono stati trasferiti diritti e doveri?</em>
+Al destinatario, nel caso dell'invocazione a funzione dunque il parametro della funzione.</p>
+<p>Vediamo un esempio.</p>
+<h2 id="11-esempio"><a class="header" href="#11-esempio">1.1 Esempio</a></h2>
+<p><img src="images/possesso/image%201.png" alt="image.png" /></p>
+<p>Creo un vettore <code>v</code> sullo stack.</p>
+<p>Un vettore può essere creato in tanti modi — un modo per crearlo è usare la funzione costruttrice <code>Vec::new()</code>, che mi prepara un vettore completamente vuoto, o in alternativa posso usare <code>Vec::with_capacity()</code>, che mi crea un vettore che è sempre vuoto ma ha già preallocato un buffer sullo heap di una certa dimensione.</p>
+<p>In questo caso io gli chiedo preparare un vettore che abbia già fin dall'inizio uno spazio per contenere quattro cose, e quindi sullo stack mi compare la variabile <code>v</code> che dentro di sé contiene 24 byte: i primi 8 puntano ad un blocco sullo heap (grande 4 unità), il secondo pezzo di 8 byte contiene la dimensione del blocco puntato sullo heap (4), e il terzo elemento mi dice quanti di questi slot sono occupati.</p>
+<aside>
+💡
+<p><strong><code>Vec::with_capacity(n)</code></strong></p>
+<p>Quando scriviamo <code>let mut vec = Vec::with_capacity(n);</code>, dobbiamo sapere il tipo dei dati che verranno inseriti nel Vec. Il tipo viene esplicitamente scritto (scrivendo <code>let mut vec: Vec&lt;i32&gt; = Vec::with_capacity(n);</code>), oppure dedotto dal compilatore.
+Nell’esempio sopra il tipo viene immediatamente dedotto quando scriviamo <code>v.push(i)</code>, ed essendo <code>i</code> un i32 (tendenzialmente), a run time verrà fatto spazio per 4 i32 sullo heap.</p>
+<p>Se avessimo creato il Vec tramite <code>Vec::new()</code>, una volta arrivati alla prima istruzione <code>v.push(i)</code>, sarebbe stato allocato solo lo spazio per un i32 sullo heap, per poi far crescere questo spazio durante il for.</p>
+</aside>
+<p><img src="images/possesso/image%202.png" alt="image.png" /></p>
+<p>Dopo aver creato questo inizia un ciclo che faccio durare 5, a ogni iterazione del ciclo inserisco un numero nel mio vettore.</p>
+<p><img src="images/possesso/image%203.png" alt="image.png" /></p>
+<p>A un certo punto cercherò di inserire 5, ma il 5 in quel vettore non ci starebbe più, quindi il vettore alloca un nuovo spazio nello heap grande il doppio di quello che aveva prima (quindi se prima aveva 4 adesso si prende uno spazio da 8), e nei primi 4 slot ci copia i 4 slot che aveva prima e nel quinto ci piazza il valore che gli sto mettendo.</p>
+<p><img src="images/possesso/image%204.png" alt="image.png" /></p>
+<p>Dopodiché raggiungo la fine del for e stampo il contenuto del vettore, questa stampa mi fa vedere normalmente 12345 perché nel vettore in questo momento questo è presente.
+Quindi finché la variabile <code>v</code> è in scope, siccome io non l'ho trasferita e non ho fatto niente di stravagante, lei è responsabile del rilascio.</p>
+<p><img src="images/possesso/image%205.png" alt="image.png" /></p>
+<p><em>Quando arrivo al chiusa graffa cosa succede?</em>
+La variabile <code>v</code> deve essere eliminata, ma siccome la variabile <code>v</code> al suo interno conteneva delle risorse (ovvero puntava al blocco presente sullo heap), questa eliminazione passa attraverso dapprima il rilascio delle sue risorse, quindi viene invocato il metodo <code>drop()</code> sulla variabile v, che provvede a restituire al sistema operativo il blocco che possedeva; dopodiché lo stack si contrae e mi ritrovo in questa situazione in slide dove la memoria è pulita — ho raggiunto la fine della mia funzione e ho rilasciato tutto quello che aveva — <code>v</code> possedeva un blocco sullo heap, e giunto alla fine della sua vita l’ha rilasciato.</p>
+<h1 id="2-movimento"><a class="header" href="#2-movimento">2. Movimento</a></h1>
+<p><img src="images/possesso/image%206.png" alt="image.png" /></p>
+<p>Il possesso da parte di una variabile del relativo valore inizia all'atto della sua inizializzazione, quindi nel momento in cui ho scritto <code>let v = Vec::with_capacity(4)</code>, in quel momento <code>v</code> comincia a possedere il suo valore.</p>
+<p>Nel momento in cui io dovessi copiare il mio <code>v</code> dentro un <code>v1</code>, il possesso si trasferisce.
+Se ad una variabile mutabile è assegnato un nuovo valore, e quindi se <code>v</code> fosse mutabile e io facessi il contrario, cioè dicessi <code>v = v1</code>, il valore che possedevo prima di prendermi quello nuovo di <code>v1</code> viene rilasciato.</p>
+<aside>
+💡
+<p>Alcuni tipi di dato hanno un obbligo particolare: sono quelli che implementano il tratto <code>Drop</code>.
+Altri sono più semplici, e queste cose avvengono lo stesso ma il compilatore si accorge che sono semplificabili e quindi le salta, ma di per sé avviene per tutto — anche con gli interi avverrebbe così, ma semplicemente l'intero dice <em>“ah benissimo, tu avevi la variabile <code>i</code> che conteneva 5, adesso ci sto mettendo 7. Dovrei rilasciare quel 5, ma siccome il 5 come tipo non implementa il tratto</em> <code>Drop</code> <em>posso non fare niente”</em> perché il fatto che il tipo i32 (o quello che sia) non implementa il tratto <code>Drop</code> vuol dire che dietro quel valore lì non c'è un significato particolare, se quello invece fosse sempre 5 ma inteso come <strong>file descriptor</strong> (cioè un numero che mi ha concesso il sistema operativo per indicare una risorsa che sta nel kernel che è un file che ho aperto da qualche parte) allora pur essendo concettualmente sempre solo un numero quello è un numero che però ha una valenza per il sistema operativo, quindi non posso semplicemente dire che è perduto, devo prima dire al sistema operativo “<em>tu mi avevi dato sto 5 che rappresentava un file, ora non mi serve più, quindi sappi che quel file lì te lo puoi gestire per qualche altra cosa</em>”, quindi quello che conta è <strong>che cosa significano quei valori</strong>. ****</p>
+<p>Di conseguenza noi metteremo il file descriptor tendenzialmente dentro un oggetto che pur avendo le dimensioni di un intero sia qualificato non come <code>Int</code> ma come qualcosa di diverso che permette al sistema operativo di riconoscere che quello lì è un intero un po’ particolare.</p>
+</aside>
+<p>Quindi nel momento in cui una variabile venga assegnata ad un'altra variabile, oppure venga passata come argomento una funzione, il suo contenuto viene mosso nella sua nuova destinazione. Mosso significa che i suoi bit vengono copiati.</p>
+<p>Ma al di là del fatto che i suoi bit vengono copiati il compilatore si segna che la variabile <code>v1</code> ha perso i diritti e i doveri e li ha trasferiti su <code>v2</code>, quindi quando <code>v1</code> uscirà di scope non dovrà essere fatto nulla perché in questo momento è come se fosse non inizializzata — è come se dentro di lei non ci fosse nulla.
+Invece quando <code>v2</code> uscirà di scope bisognerà fare quelle azioni necessarie per rilasciare le cose e quindi pulire il pulibile.</p>
+<p><strong>Di fatto non è che lo stack si contragga in quel momento lì</strong>: la mia variabile <code>v1</code>, che conteneva qualcosa, dal punto di vista dell'occupazione di memoria, dopo che ho fatto <code>v2 = v1</code>, esiste ancora — è lì al suo posto e starà al suo posto fin quando non arrivo al chiusa graffa, perché solo il chiusa graffa corrispondente lo stack si contrae.
+Però è inaccessibile! Se io cercassi di andarla a leggere il compilatore mi blocca dicendo <em>“guarda da questa linea in avanti non è più inizializzata”,</em> quindi eventuali accessi in lettura a quella variabile lì dopo che il movimento è avvenuto portano un errore di compilazione.</p>
+<p>Eventuali viceversa accessi in scrittura, ammesso che la variabile fosse mutabile, andranno bene perché nel momento in cui io deposito nella mia variabile qualcosa di diverso la variabile diventa di nuovo possessore di un nuovo valore e quindi quest'altro valore lo gestirà fino a che ne ha bisogno (finché non lo cede o non arriva al fondo).</p>
+<p><img src="images/possesso/image%207.png" alt="image.png" /></p>
+<p><strong>Il movimento da un punto di vista pratico è semplicemente la copia bit a bit dell'originale</strong>, quindi quando scrivo <code>v1 = v2</code>, prendo <code>v1</code> che ha una sua dimensione (nel caso del Vec sono 24 byte), e solo la parte dello stack viene copiata da una parte all'altra.</p>
+<p>Quello che c'è sullo heap non viene toccato: il mio vettore originale qui dentro possedeva un puntatore, un usize che vale 8 e un usize che vale 5.
+Nel momento in cui io scrivessi <code>v2 = v</code> in questo caso da qualche parte quello che succederebbe è che nel nuovo <code>v2</code> metterei nel primo campo lo stesso puntatore che c'è dentro <code>v</code>, nel secondo campo 8 e nel terzo campo metterei 5, cioè copia esattamente così com'è, e la parte sullo heap viene completamente ignorata, perché io ho solo spostato i pezzi sullo stack.</p>
+<h2 id="21-esempi"><a class="header" href="#21-esempi">2.1 Esempi</a></h2>
+<p><img src="images/possesso/image%208.png" alt="image.png" /></p>
+<p>Lo vediamo meglio qua con una stringa (le stringhe sono fatte come i vettori, quello che cambia è l'interpretazione delle sequenze).
+In questo caso crea una stringa <code>s1</code> — quello che succede è che <code>s1</code> viene creato come stringa e quindi contiene dentro di sé un puntatore sullo heap, che punta un blocco grande quanto il numero di byte contenuti nella <code>String</code> “hello”, la quale è fatta solo di caratteri ASCII e quindi stanno ciascuno in un byte, quindi quella cosa lì è fatta di un blocco di 5 byte i cui valori sono quelli corrispondenti a “hello” quindi <code>68656c6c6f</code> esadecimali.</p>
+<p>Quella è la stringa “hello”, quindi <code>s1</code> contiene un puntatore ad un blocco di 5 byte seguito da una sua <strong>capacity</strong> (5), seguito da una sua <strong>size</strong> (5).</p>
+<p><img src="images/possesso/image%209.png" alt="image.png" /></p>
+<p>Poi scrivo <code>let s2 = s1</code>, quindi a questo punto introduco sullo stack una nuova variabile <code>s2</code>. Quant’è grande s2? È una <code>String</code> e quindi anche lei è grande 24 byte: 8 di puntatore, 8 di capacity e 8 di size.</p>
+<p>Nel puntatore ci metto lo stesso puntatore che c'era su <code>s1</code>, nella capacity ci metto la stessa capacity che c'era in <code>s1</code>, e nella size ci metto la stesso size di <code>s1</code>.
+Se in questo momento congelassi il mio processo e vado a fare l'inspect della memoria vedo che <code>s1</code> esiste benissimo sullo stack e punta alla stringa hello, vedo che <code>s2</code> esiste sullo stack e punta allo stesso blocco, quindi quel blocco lì in questo momento lo conoscono in due.
+Il compilatore lo sa benissimo e dice “<em>per me non è un problema, perché tanto io s1 non te lo faccio più toccare, è come se non ci fosse. Non mi dà fastidio e non c'è il rischio di doppio rilascio perché s1 è stata taggata come <strong>mossa</strong>, e di conseguenza ha perso l'obbligo del rilascio. Viceversa quell'obbligo se l'è guadagnato s2</em>”.</p>
+<p>Posso stampare <code>s2</code> e vedrò di nuovo stampato “hello” esattamente come prima.
+Nel momento in cui raggiungessi il fondo delle cose <code>s2</code> verrebbe rilasciato.</p>
+<p><img src="images/possesso/image%2010.png" alt="image.png" /></p>
+<p>Se invece dopo aver stampato <code>s2</code> provassi ad accedere ancora ad <code>s1</code> aggiungendo questa riga che qui è segnata in rosso barrata, il compilatore mi bloccherebbe perché dice “<em>guarda che tu alla riga 4 hai scritto s2 = s1, e quindi s1 adesso è come se fosse vuota quindi non la vai a leggere</em>”.</p>
+<p>Se invece io decommentassi la riga <code>s1 = "world".to_string();</code>, la riga che adesso è marcata in rosso diventerebbe perfettamente lecita perché dentro <code>s1</code>  (che in questo esempio è stata dichiarata mutabile) posso riassegnargli delle cose, e prenderebbe possesso di nuovo di qualcosa.</p>
+<p>Questo è il principio del possesso: <em><strong>un valore è posseduto da una sola variabile</strong></em>.</p>
+<p>Non è il contrario: non è che una variabile possiede un solo valore, questo succede in tutti i linguaggi — è chiaro che se la variabile è una, dentro c'è scritta una cosa sola, ma è il contrario che invece è significativo.
+<strong>Il valore ha una sola variabile che la possiede</strong> — non è così in quasi nessun altro linguaggio.</p>
+<p><img src="images/possesso/image%2011.png" alt="image.png" /></p>
+<p>Quello che succederebbe se io cercassi di compilare il pezzo di prima senza decommentare la riga <code>s1 = "world".to_string();</code> sarebbe un errore di questo genere dice “<em>attenzione: tu avevi inizializzato s1 con “hello”, però quando vai a cercare di stamparmi s1.to_uppercase(), questa cosa non funziona più perché nel frattempo s1 ha perso quello che possedeva</em>”.</p>
+<p><code>s1</code> alla riga 20 è stato trasferito dentro <code>s2</code>, quindi alla riga 23 <code>s1</code> non ha più niente dentro, e siccome <code>s1</code> è una stringa che non gode del tratto <code>Copy</code> quel movimento lì effettivamente la depaupera delle sue cose.</p>
+<p><em>Cosa vuol dire che non gode del tratto</em> <code>Copy</code><em>?</em>
+Spieghiamoci meglio.</p>
+<h1 id="31-copy"><a class="header" href="#31-copy">3.1 Copy</a></h1>
+<p><img src="images/possesso/image%2012.png" alt="image.png" /></p>
+<p>Alcuni tipi, specialmente quelli numerici (quando quei numeri non hanno altro significato che un numero), hanno una particolare caratteristica: godono di un tratto che si chiama <code>Copy</code>.</p>
+<p>Quel tratto lì ha una caratteristica: quando avviene un'assegnazione o avviene un passaggio di parametro viene effettuata sempre la copia bit-a-bit esattamente come prima, ma non c'è una perdita di diritto — <strong>non ho perso il diritto di andarci a guardare dentro</strong>.</p>
+<p>Non ho perso il diritto di andarci a guardare dentro perché in realtà il tratto <code>Copy</code>, che è mutuamente esclusivo col tratto <code>Drop</code>, <strong>mi garantisce che non avevo doveri</strong>.
+Il tratto <code>Drop</code> se lo implemento implica che ho un dovere, se ho il tratto <code>Copy</code> non posso avere il tratto <code>Drop</code> perché il compilatore mi blocca, non me lo lascia manco di dichiarare.</p>
+<p>Quindi quella lì è una variabile che non aveva dei doveri, e se non aveva dei doveri va benissimo fare delle copie perché non ci diamo fastidio.</p>
+<p><strong>È possibile perché il valore contenuto non è una risorsa che richiede ulteriori azioni di rilascio.</strong></p>
+<p>Ad esempio è un numero semplice che posso usare per fare le somme, le moltiplicazioni etc.. non è l'indice di un array, non è una cosa strana che richiede che altri ci facciano dei conti sopra, invece i file descriptor, ad esempio, che sono un'informazione che mi viene dal kernel che mi permette di stare allineato tra quella che è la mia immagine del kernel e quello che il kernel sa davvero, ecco quelle cose lì devono restare gestite bene.
+Io sul file descriptor non ci faccio le somme o le moltiplicazioni, lo prendo solo come identificativo univoco.</p>
+<p>Quindi <strong>i tipi semplici e le loro combinazioni</strong> (ad esempio le tuple di tipi semplici o gli array di tipi semplici) <strong>sono automaticamente copiabili</strong> e quindi questo mi garantisce che io posso accedere dopo un'assegnazione ancora all'originale.</p>
+<p><strong>Anche i riferimenti non mutabili sono copiabili</strong>: se io ho preso un riferimento semplice <code>&amp;T</code> e lo assegno ad un altro riferimento, entrambi restano visibili.
+L'unica faccenda è che nel momento in cui esiste un riferimento, il dato originale non è modificabile anche se era mutabile, perché la presenza del riferimento è un prestito e dice “<em>mentre l'hai prestato a qualcun altro quel dato lì non lo tocchi, perché non deve cambiargli sotto il naso”</em>.
+Se io un riferimento lo copio, allungo la durata del prestito, ovvero la durata del prestito diventa il massimo tra la durata della prima copia e la durata della seconda copia, quindi solo quando tutte le copie saranno finite e avranno esaurito la propria visibilità allora il dato tornerà ad essere modificabile.</p>
+<p><img src="images/possesso/image%2013.png" alt="image.png" /></p>
+<p>Quindi quando io avessi un tipo (come String o Vec) che non implementa <code>Copy</code>, nel momento in cui io cerco di riassegnare o di consumare il valore originale — ad esempio qui abbiamo <code>let s = String::from("hello");</code> , benissimo ho creato una stringa, e poi <code>let b = s + " world";</code> — di fatto quell’istruzione <code>s + “ world”</code> è la chiamata ad una funzione (anche se non lo vedo apparentemente in modo esplicito), la funzione <code>concat()</code> che unisce il contenuto di <code>s</code> con il contenuto di “ world”.</p>
+<p>Quindi <code>s</code> è stata passata come argomento alla funzione <code>concat()</code> di String, e di conseguenza <code>s</code> ha ceduto, ha mosso il suo contenuto dentro il parametro di <code>concat()</code> che l'ha usato per i fatti suoi.
+Dunque <code>s</code> non è più accessibile.</p>
+<p>Viceversa per i tipi che implementano il tratto <code>Copy</code> questa cosa non succede: <code>let i = 42</code> e poi <code>let j = i + 1;</code>  si può fare perché <code>i</code> inteso come numero semplice godeva del tratto copy perché non ha obblighi, quindi posso tranquillamente copiarlo dentro <code>j</code>: non ci sono doppi obblighi dell'uno e dell'altro, quindi quando <code>i</code> cesserà di esistere sparisce dallo stack per i fatti suoi, quando <code>j</code> finirà di esistere sparirà dallo stack per i fatti suoi, e non c'erano obblighi di rilascio.</p>
+<p>Quindi non si può verificare il doppio rilascio, non potendosi verificare il doppio rilascio va tutto bene.
+Questa è la ragione per cui <code>Copy</code> e <code>Drop</code> sono mutuamente esclusivi: per risolvere il problema del doppio rilascio che invece affligge il C e C++.</p>
+<h2 id="31-esempio"><a class="header" href="#31-esempio">3.1 Esempio</a></h2>
+<p><img src="images/possesso/image%2014.png" alt="image.png" /></p>
+<p>Con <code>let string2 = string1</code>  trasferisco tutto quello che c'era dentro <code>string1</code> in <code>string2</code>, quindi adesso ho due puntatori di fatto che vanno allo stesso blocco sull'heap, ma la prima terna è <strong>inaccessibile</strong> e non ha nessun obbligo, quindi per il compilatore <code>string1</code> è come se fosse vuota — non mi genererà assolutamente nessuna chiamata a <code>drop()</code>, non fa nulla.</p>
+<p>Se io cerco di accedere a <code>string1</code> vengo bloccato, invece subito dopo c'è <code>let num1 = 3</code>, e <code>let num2 = num 1</code>, e in questo caso invece <code>num2</code> contiene un altro 3 indipendente da <code>num1</code> — non si danno fastidio, posso decidere che (ammesso che sia mutabile) <code>num1</code> lo faccio diventare qualcos'altro, posso leggerli entrambi e non si impicciano perché i numeri sono <em><strong>copiabili</strong></em>.</p>
+<h1 id="4-clone"><a class="header" href="#4-clone">4. Clone</a></h1>
+<p><img src="images/possesso/image%2015.png" alt="image.png" /></p>
+<p>Il movimento piace perché spesso quando ho le stringhe, i vettori etc.. posso avere delle cose molto grosse allocate — io posso trovarmi ad avere un vettore con 100.000 elementi tranquillamente.
+Io posso tranquillamente copiare <code>v1 = v2</code> sapendo che quello che sposto sono 24 byte, i tre puntatori, quindi va bene.</p>
+<p>Però chiaramente ho un unico buffer che transita dal possessore 1 al possessore 2.
+In certe situazioni invece io ho bisogno di creare due buffer disgiunti, perchè io l'originale non me lo voglio perdere, quindi in quel caso lì non posso fare <code>v1 = v2</code> perché se facessi così, sì <code>v2</code> avrebbe il buffer ma <code>v1</code> non ce l'avrebbe più.
+Io vorrei avere una copia completa delle due cose.</p>
+<p>Questo tipo di operazione in Rust si chiama <strong>clonazione</strong>, è fattibile a condizione che il tipo implementi il tratto <code>Clone</code> — il tratto <code>Clone</code> è un tratto molto semplice: dispone dell’unico metodo <code>clone()</code>, che provvede a generare una copia in profondità di tutto quello che c'è dentro l'originale, quindi io non solo ho sullo stack un nuovo vettore con i suoi 24 byte ma ho sullo heap un nuovo blocco grande quanto era grande il blocco originale e che contiene una copia completa del tutto.</p>
+<p>Clonare è un’operazione costosa ma è sotto il controllo del programmatore che sceglie quando applicarla, e <em>come</em> applicarla.
+Nel momento in cui definite le vostre strutture dati siete liberi di scegliervi qual è l’algoritmo più adeguato per effettuare le copie in profondità, implementando il tratto Clone e il corrispondente metodo <code>.clone()</code>.</p>
+<p>Viceversa le assegnazioni che sottendono un movimento o una copia a seconda del caso voi non le potete governare perché è il compilatore che genera il codice, e il codice che viene generato è una <code>memcpy</code> dall’indirizzo della variabile di partenza verso l’indirizzo della variabile di destinazione per una quantità di byte pari al size del tipo — quindi se quel tipo lì è un tipo che ha come size 30 byte lui copia 30 byte sapendo che va bene così e che non c’è bisogno di fare altro.</p>
+<p>Il tratto <strong><code>Clone</code> è implicato dal tratto <code>Copy</code></strong> — cioè un tipo per poter implementare <code>Copy</code> deve anche implementare <code>Clone</code>.
+Il tratto <code>Copy</code> è mutuamente esclusivo a <code>Drop</code>, mentre <code>Clone</code> no.
+Infatti un <code>Vec</code> è clonabile ed è anche droppable, viceversa un numero non è droppable, ma è copiabile ed è anche clonabile (di fatto se voi prendete <code>let x = 1</code> e scrivete <code>let x2 = x.clone()</code> ottenete un altro 1 paro paro — è inutile ma si può fare).</p>
+<p><img src="images/possesso/image%2016.png" alt="image.png" /></p>
+<p>Questo è una sottolineatura che trova una sua giustificazione nel fatto che il C++ invece si comporta molto diversamente.
+Nel C++ il programmatore è responsabile di definire per i tipi che si crea per i fatti propri <strong>l’operatore di copia</strong>: cosa succede quando scrivo <code>a = b</code>.</p>
+<p>Se a e b hanno come tipo il tipo t1 di qualche genere io dovrò definire nel tipo t1 il comportamento del costruttore di copia e dovrò anche definire il comportamento dell’operatore di assegnazione, e i due (che sono distinti tra di loro) devono però essere congruenti.</p>
+<p>Questo mette nel programmatore una responsabilità grossa, perché deve farle bene le cose, e il linguaggio non ti aiuta: se tu definisci il costruttore di copia che faccia certe cose e l’operatore di assegnazione che ne fa di diverse puoi trovarti in una situazione molto brutta in cui certe volte il tuo programma fa in un modo e certe volte in un altro e non sai perché.
+Non solo, ma tutte le volte che assegni — e questo succede tantissimo ad esempio usando l’std::string del C++ — tu stai in realtà clonando ma non lo capisci, non è evidente.
+Siccome quando scrivi <code>s1 = s2</code> in C++ tu stai allocando un nuovo buffer e stai copiandotele, e se quelle due stringhe erano grosse stai muovendo un mucchio di cose, ma magari tu non avevi intenzione di fare quella faccenda lì.</p>
+<p>Rust mette in ordine tutto questo e stabilisce una netta distinzione: quando segni uguale oppure passi come parametro tu stai facendo un <strong>movimento</strong>, un’operazione superficiale che dice semplicemente “<em>io trasferisco il possesso dall’uno all’altro, l’originale ha perso le cose</em>”, invece quando hai veramente bisogno di duplicare i valori lo chiedi esplicitamente.</p>
+<p>Rust ti obbliga a capire cosa stai facendo: quando copi lo puoi fare solo se quel dato è elementare; puoi clonare prendendoti la responsabilità del fatto che la clonazione è potenzialmente un’operazione lenta.</p>
+<p>Dunque le assegnazioni sono prevalentemente assegnazioni per movimento, quindi costano poco e quelle che non sono per movimento costano comunque poco perché la definizione è che in realtà movimento e copia da un punto di vista del runtime hanno lo stesso costo: la copia di fatto di n byte, dove n è noto a priori perchè dipende dal tipo di partenza e non dalla dimensione delle sue aggiunte (sullo heap).</p>
+<h2 id="41-esempio"><a class="header" href="#41-esempio">4.1 Esempio</a></h2>
+<p><img src="images/possesso/image%2017.png" alt="image.png" /></p>
+<p>Qui vediamo un esempio di clonazione.</p>
+<p><img src="images/possesso/image%2018.png" alt="image.png" /></p>
+<p><code>let s2 = s1.clone();</code> → quello che succede è che <code>s2</code> esiste sullo stack, ha un nuovo puntatore che punta ad un buffer differente da quello di <code>s1</code>, e i due buffer al momento hanno la stessa lunghezza e lo stesso contenuto.</p>
+<p><img src="images/possesso/image%2019.png" alt="image.png" /></p>
+<p>Siccome <code>s1</code> era mutabile decido di aggiungere al fondo un punto esclamativo, ma non ho capacità residua! Allora rialloco un altro buffer un po’ più grande: prima avevo un buffer da 2, ne facciamo uno da 4.
+Quindi <code>s1</code> adesso si trova ad avere dentro di sé un buffer da 4, con due spazi vuoti e quindi diventa possibile inserire l’esclamativo.
+Al termine di questa operazione <code>s1</code> ha una capacity di 4 e un size di 3.</p>
+<h2 id="42-confronto-con-c-e-c"><a class="header" href="#42-confronto-con-c-e-c">4.2 Confronto con C e C++</a></h2>
+<p><img src="images/possesso/image%2020.png" alt="image.png" /></p>
+<p>Questo ci serve per mettere un po in prospettiva le scelte che sono fatte.</p>
+<p>In C il concetto di movimento non esiste, esiste solo il concetto di copia — quindi quello che succede è che quando voi assegnate la variabile 1 alla variabile 2 viene fatta una copia della variabile così com’è.</p>
+<p>In C++ invece esiste il concetto di movimento — quando voi definite un tipo custom (tipicamente una classe) avete la possibilità di (a condizione che usiate il C++ dallo standard 2011 a seguire) associare al tipo anche <em><strong>un</strong></em> <em><strong>costruttore di movimento</strong></em> <em><strong>e un operatore di assegnazione per movimento</strong></em>.</p>
+<p>Quindi definite un tipo, gli spiegate qual è il suo costruttore, qual è il suo distruttore, poi definite il costruttore di copia (cosa fare quando io partendo da zero creo una nuova istanza che deve essere una copia di un altro oggetto dello stesso tipo), l’operatore di assegnazione che dice “<em>io avevo già un valore precedentemente, tu adesso mi stai chiedendo di sovrascriverlo con quest’altro. Che faccio?</em>” — devo prima sbarazzarmi del valore vecchio, e quindi è un pezzo di responsabilità simile al distruttore, e poi ci metto quello nuovo.</p>
+<p>Allora <em>l’operatore di assegnazione</em> si distingue dal <em>costruttore di copia</em> perché il costruttore di copia crea dal nuovo, non c’è niente da buttare via!
+L’operatore di assegnazione invece riscrive sul vecchio, c’è qualcosa prima da liberare e poi ci metto il nuovo.</p>
+<p>Dopodiché il C++ moderno ci dice “oltre a costruttore, distruttore, operatore di copia, operatore di assegnazione puoi anche definirti il <em><strong>costruttore di movimento</strong></em> e l’<em><strong>operatore di assegnazione</strong></em> <em><strong>per movimento</strong></em>” e che fanno questi qua?
+Sottraggono il contenuto dell’originale e lo piazzano nella destinazione, quindi si pigliano i pezzi e se li mettono dentro ma hanno la responsabilità di riempire la sorgente da dove hanno attinto con dei placeholder, in modo tale che la distruzione del pezzo da cui hanno attinto non faccia casino (di nuovo grande responsabilità sul programmatore che deve fare le cose congruenti).</p>
+<p>In più il C++ pur dando la possibilità di avere l’idea di movimento, di suo la applica in pochissimi casi e richiede invece al programmatore in modo esplicito di dire <em>“qui voglio muovere”,</em> e lo fa invocando una funzione che si chiama <code>std::move</code> che serve proprio a invocare il movimento.</p>
+<p>Quindi per default il C++ adotta il concetto di copia, e in alcuni casi ti lascia scegliere di mettere il movimento, ma tu come programmatore hai la responsabilità di implementarlo correttamente — c’è una famosa regola (la regola dei 5) che dice che se implementi uno qualunque tra distruttore, costruttore di copia, costruttore di momento, operatore di assegnazione per copia, operatore di assegnazione per movimento, devi implementare anche tutti gli altri quattro, e devi farlo in modo coerente — un gran casino!
+Quindi il debugging anche di una semplice classe in C++ è complicato, richiede un approccio estremamente metodico da parte del programmatore che deve avere molto chiaro nella testa che ha tutta quella responsabilità sulle spalle.</p>
+<p>Allora l’avere introdotto il concetto di movimento in C++ nasce proprio dall’esigenza di ricercare una ottimizzazione nel codice, di raggiungere un livello di efficienza più elevata perché io posso scegliere (laddove non ho bisogno un duplicato) di <em>riusare</em> delle parti, ma siccome è l’eccezione e non la regola, bisogna che il programmatore scelga lui quando farlo.</p>
+<p>Rust adotta il contrario, dice “<em>per me la regola è il movimento, la copia è un’eccezione. Io la faccio in automatico là dove son tranquillo che non ci sono rischi: è stato implementato il tratto Copy, che è implementabile solo se non c’è Drop, e il fatto che non ci sia Drop vuol dire non ci sono risorse da rilasciare, quindi sono tranquillo. Oppure la faccio perché me lo chiede un esplicito <code>.clone()</code></em>"</p>
+<p>Perché la copia davvero è l’eccezione: non abbiamo sempre bisogno di copiare le cose, nella maggior parte dei casi ci basta guardarci dentro, non ci serve <em>farne un altro</em>.</p>
+<h1 id="5-riferimenti-simple-pointer-e-fat-pointer"><a class="header" href="#5-riferimenti-simple-pointer-e-fat-pointer">5. Riferimenti: simple pointer e fat pointer</a></h1>
+<p><img src="images/possesso/image%2021.png" alt="image.png" /></p>
+<p>Dopodichè, in alcune situazioni io ho bisogno di poter accedere a un dato e guardarci dentro senza prenderne il possesso.
+O se ho bisogno anche di modificarlo posso chiedere di farlo senza però aver la responsabilità di doverlo rilasciare.</p>
+<p>Per permettere questo genere di cose Rust introduce il concetto di <strong>riferimento</strong>.
+Il riferimento non è nient’altro che un modo per avere accesso in lettura o in scrittura (se ho un riferimento mutabile) a un dato che non sto possedendo.
+Questo accesso non ce l’ho per sempre, ce l’ho <em>temporaneamente</em>, è un prestito.</p>
+<p><em>Io chiedo in prestito questa cosa, la uso per il mio scopo, e la restituisco.</em></p>
+<p><em>Come avviene la restituzione?</em>
+Nel momento in cui cesso di usarla il compilatore tiene traccia di questa cosa e capisce automaticamente <em>“qui hai cessato di usarla, quindi il prestito è finito”.</em>
+Il modulo che governa tutta la faccenda del possesso si chiama <em><strong>borrow checker</strong></em>.</p>
+<p>Il riferimento è un puntatore in sola lettura a un blocco che appartiene a un’altra variabile, quindi se mi viene dato un riferimento io posso dereferenziarlo (cioè metterci l’asterisco davanti e andarci a guardare dentro per leggere quello che c’è scritto), non ho obblighi se non quello di piantarla lì a un certo punto in modo che il possessore possa poi ritornare in pieno possesso delle sue cose.</p>
+<p>Un riferimento permette di accedere ad un valore senza trasferirne la proprietà, chiaramente questo pone dei vincoli: bisogna che il riferimento esista solo nel momento in cui la variabile che possiede il valore di cui ho ottenuto il riferimento esista anch’essa.
+Il compilatore si prende la briga di verificare questa cosa qua, e se io cerco di accedere ad un riferimento in un momento in cui la variabile originale (da cui quel riferimento nasce) ha cessato di esistere, mi blocca.</p>
+<p>Nella slide vediamo un esempio: ho creato una tupla che contiene un paio di numeri, 1 e 0, e poi <code>let reference = &amp;point</code>, se io scrivessi <code>let reference = point</code> ne farei a tutti gli effetti una copia (in questo momento point sono due float a 64 bit, e quindi è grande 128 bit, cioè 16 byte), reference di suo sono solo 8 Byte.
+Se avessi scritto <code>let reference = point</code> avrei fatto una copia, questo perché quella tupla lì è fatta di numeri, le tuple fatte di numeri sono copiabili perché i numeri sono copiabili e quindi lì si concludeva velocemente.
+Qui invece ho preso l’indirizzo, e posso usarlo per accedere ai singoli campi: in questo caso nella print line successiva stampo reference.0 e reference.1 — quando uso l’annotazione punto con un reference, il compilatore automaticamente va a guardare cosa c’è prima del punto e se è un reference ci mette un asterisco, se il tipo che gli viene è ancora un reference ci mette un secondo asterisco e così via quanti ne servono fino ad accedere al livello giusto. Questa è l’auto dereferenziazione.
+Questo avviene solo con l’annotazione punto, se io non avessi l’annotazione punto questa cosa non succede: ci devo mettere l’asterisco esplicito.</p>
+<p><img src="images/possesso/image%2022.png" alt="image.png" /></p>
+<p>Un riferimento prende a prestito l’indirizzo in cui esiste il valore.
+Fino che il riferimento è accessibile non posso modificare il valore anche se la variabile originaria che lo possiede è mutabile, questo perché il prestito presuppone che “<em>io te l’ho data in lettura, tu la puoi leggere, io anche la posso leggere ma nessuno la cambia”</em>, perché se no c’è il rischio di prendere delle decisioni sbagliate.</p>
+<p>Nel momento in cui io creo un prestito e ottengo un reference, quel reference lo posso facilmente copiare, perché i reference in lettura sono copiabili tranquillamente — sto copiando un indirizzo, è un numero.
+La presenza di più riferimenti a un valore originale aumenta la durata del prestito, che rimane in essere fino a che c’è almeno un riferimento presente.
+Quando anche l’ultimo riferimento sarà andato via allora la variabile tornerà in pieno possesso del suo valore.</p>
+<p>Il compilatore si fa garante di questo: il fatto che in un dato momento ci siano <code>n</code> riferimenti esistenti al valore originale è un’informazione che il compilatore tiene al suo interno, e che non si vede a runtime, è un puro dato di compilazione, fa parte delle strutture dati che il compilatore si tiene per garantire la correttezza del nostro programma, quindi non c’è costo a runtime.
+C’è un po’ più di costo in compilazione, motivo per cui compilare i file Rust è più lento rispetto a C++.</p>
+<p><img src="images/possesso/image%2023.png" alt="image.png" /></p>
+<p>A partire da una variabile che possiede un valore, se la variabile è mutabile potete creare un riferimento mutabile.
+Se la variabile non era mutabile non potete creare un riferimento mutabile.
+Il riferimento mutabile esiste <strong>in modo univoco</strong>, è mutuamente esclusivo: mentre c’è un riferimento mutabile a quella variabile lì non ce ne può essere un altro, e non ci può essere neanche un riferimento immutabile, e la variabile originale non è accessibile né in lettura né in scrittura.</p>
+<p><em>Come funziona un metodo che prende e modifica una stringa?</em>
+Ad esempio io potrei avere il metodo <code>.push()</code> che abbiamo visto prima che mi aggiunge un carattere al fondo della stringa. Quando scrivo <code>s.push()</code> quello che succede è che il metodo push è dichiarato ad agire su un riferimento mutabile della stringa <code>s</code>, quindi bisogna che <code>s</code> sia mutabile e quello che succede è che il metodo push riceve un riferimento mutabile, quindi viene preso temporaneamente il riferimento, il metodo push vedrà l’indirizzo di <code>s</code> e potrà andare dentro e farci delle cose, quindi per esempio chiedere di riallocare e fare cose del genere, e quando il metodo push finisce, quel riferimento lì è restituito ed <code>s</code> torna in pieno possesso delle facoltà, solo che sarà diversa dall’originale.</p>
+<p>In questo modo i metodi possono decidere come operano:</p>
+<ul>
+<li>possono operare prendendo il <strong>totale possesso</strong> del dato, che quindi dopo l’invocazione del metodo non è più accessibile</li>
+<li>possono prendere accesso in <strong>sola lettura</strong> al dato, e quindi mentre loro girano quel dato lì è ancora leggibile e possono succedere altre cose</li>
+<li>possono prendere accesso con un <strong>riferimento mutabile</strong> e quindi mentre il metodo è in esecuzione il dato originale è inaccessibile</li>
+</ul>
+<p><img src="images/possesso/image%2024.png" alt="image.png" /></p>
+<p>Qui vediamo questa cosa rappresentata, abbiamo una variabile <code>s</code> mutabile e faccio aperta graffa — inizia un blocco.
+Quindi c’è uno scopo sintattico ridotto. Dentro questo blocco dichiaro <code>m</code> come <code>&amp;mut s</code> — cosa c’è dentro <code>m</code>?
+C’è un puntatore che punta alla struttura <code>s</code>, e che può modificarne il contenuto, quindi <code>m</code> di per sé è un puntatore.
+Può essere mosso, quindi lo posso trasferire da un’altra parte.
+Posso dire <em>“non mi serve più mutabile, lo riduco a riferimento semplice”,</em> sto riducendomi il privilegio d’accesso — questo è lecito, nel momento in cui mi riduco il privilegio d’accesso permetto di farne delle copie.
+Quello che non posso fare è copiarlo, perché di riferimenti mutabili ce ne può essere uno solo.
+E non posso neanche accedere ad <code>s</code> in alcun modo.</p>
+<p>Quando giungo al chiusa graffa <code>m</code> evapora perché ha finito il suo ciclo di vita, ed <code>s</code> diventa nuovamente accessibile.</p>
+<p>Il comportamento di Rust è molto <em>smart</em>: di fatto l’inaccessibilità di <code>s</code> non si estende necessariamente fino al chiusa graffa. Rust fa attenzione e vede che se l’ultima volta che avete usato <code>m</code> è a metà del pezzo viola da lì in avanti dice “<em>m non lo stai più usando, quindi anche se di fatto esiste ancora io ti ridò l’accesso ad s</em>”, quindi la durata effettiva del vincolo corrisponde all’uso effettivo.</p>
+<p>Al contrario quando mi procuro un riferimento semplice, r è sempre un riferimento, è sempre un puntatore, non è cambiato niente rispetto a prima se non nei poteri.
+Lo posso duplicare senza problemi, ne posso fare quante copie voglio, chiaramente queste copie andranno ad aumentare il tempo in cui s è immodificabile (a parte il fatto che in questo momento s è tutta immodificabile perché l’abbiamo creata non mutabile, ma avessimo scritto <code>let mut s = String::from"hello");</code> non potrei farci delle cose).
+Quello che non posso fare è fare l’upgrade a riferimento mutabile, perché mentre esiste un riferimento semplice so che potrebbero esisterne anche degli altri.
+Non posso sicuramente muovere s: è leggibile ma non posso cederla a nessun altro, perché se la cedessi a qualcun altro il suo indirizzo non sarebbe più valido (o meglio l’indirizzo sarebbe quello lì ma i dati contenuti al suo interno non rifletterebbero più la vera natura delle cose).</p>
+<p><img src="images/possesso/image%2025.png" alt="image.png" /></p>
+<p>A differenza di quello che succede in C e in C++ i riferimenti non sono di dimensione costante: <strong>dipende da cosa puntano</strong>.
+Ci sono riferimenti che sono grandi usize e ci sono riferimenti che sono grandi 2*usize — ovvero possono essere, con un’architettura a 64 bit, grandi 64 bit oppure 128.</p>
+<p><em>Perchè?</em>
+Tutte le volte in cui il compilatore sa esattamente qual è la dimensione del tipo a cui puntano, il riferimento è implementato come un puntatore semplice, e quindi è grande usize, cioè su un’architettura 64 bit è grande 64 bit.
+Quando invece il compilatore non sa la dimensione del dato puntato, perchè questa è nota solo a runtime, come ad esempio nel caso degli slice, un reference è un <em><strong>fat pointer</strong></em>, ovvero è grande 2*usize (64 + 64) — il primo è il puntatore all’inizio dello slice, il secondo è la dimensione dello slice.</p>
+<p>È quello che succede ad esempio con <code>&amp;str</code>.
+Gli oggetti <code>&amp;str</code> sono grandi 128 bit perchè contengono nel primo pezzo il puntatore al buffer dove i caratteri sono memorizzati, e nel secondo pezzo la dimensione di quel buffer.</p>
+<p>Oppure potrebbe trattarsi di un <em><strong>doppio puntatore</strong></em>, questo succede con i dati di <strong>tipi dinamici</strong>, che implementano il polimorfismo.
+Si riconoscono perchè sono marcati <code>&amp;dyn</code>.</p>
+<p>Qui vediamo i primi due tipi.</p>
+<p>Se abbiamo la variabile <code>i</code> di tipo i32, che vale 10 e poi ci prepariamo il riferimento, il compilatore sa che quello lì è un riferimento ad un i32.
+Un i32 è grande 4 byte, perfetto, non ho bisogno di nient’altro, mi basta il puntatore, e quindi il suo riferimento è un <em>simple pointer</em>.</p>
+<p>Nell’altro esempio a destra abbiamo un array dove ci sono tre interi: mi creo <code>r2</code> come slice, ovvero non solo come riferimento all’array, che di per sé saprei essere un array di tre interi, ma in questo caso <code>r2</code> l’ho ribattezzato come slice di interi, quindi r2 è un riferimento <em>a un pezzo</em>, che in questo caso coincide con l’intero array, ma avrei potuto scrivere <code>&amp;a[..]</code>, oppure <code>&amp;a[0..1]</code>, oppure <code>&amp;a[..2]</code>, etc.. quindi avrei la possibilità di prenderne solo delle parti.
+Di conseguenza il riferimento diventa un <em><strong>fat pointer</strong></em>, e quindi il compilatore alloca 128 bit: i primi 64 puntano all’array, i secondi 64 mi dicono di quanti pezzi è fatto quell’array, in questo caso tre pezzi.</p>
+<p><img src="images/possesso/image%2026.png" alt="image.png" /></p>
+<p>La terza situazione possibile è quando io ho un dato che ha un certo tipo, ad esempio <code>f</code> è di tipo <code>File</code> .
+In questo caso io voglio dire “<em>vai a vedere se nella cartella corrente c’è già un file che si chiama test.txt, se no crealo. Se c’è già lo fai diventare lungo zero, come se lo creassi da nuovo</em>”, su questo file io potrò poi leggere e scrivere.</p>
+<p>Di per sé <code>f</code> è un oggetto <code>File</code> che è un oggetto più o meno complicato che ha dentro di sé tanti campi x per i fatti suoi.
+L’oggetto <code>File</code> ha un certo numero di capacità che sono rappresentate dai tratti che implementa. Uno dei tratti che implementa è il tratto <code>Write</code> — il tratto <code>Write</code> è la capacità di fare 4 operazioni, oltre al drop: <code>write()</code> , <code>write_vectored()</code>, <code>is_write_vectored()</code> e <code>flush()</code>. Da notare che non c’è solo l’oggetto <code>File</code> che implementa questo tratto, anche <code>Vec</code> implementa lo stesso tratto.</p>
+<p>Ovviamente in modi diversi: quando invoco <code>write()</code> sul file, e gli passo un contenuto, quello che succede è che il file sul disco si allunga e mette al suo interno l’insieme dei byte che gli ho passato come parametro di <code>write()</code>, appendendoli.
+Se chiamassi su un <code>Vec</code> il metodo <code>write()</code> anche lì nel vector i bytes li appenderei ma chiaramente l’operazione è molto diversa: nel caso del vector starebbero solo in memoria, nel caso del file vanno proprio sul disco, quindi l’insieme di istruzioni che poi vado a eseguire sono totalmente diverse, ma in ogni caso io farei sempre <code>write()</code>.</p>
+<p>Quando ho un blocco come quello scritto in giallo nella slide <code>let f = File::create("test.txt");</code> e poi <code>let r3: &amp;dyn Write = &amp;f;</code>, con quest’ultima istruzione io prendo <code>f</code> non come un riferimento a file (quindi volendo sapere che quello lì è un file), ma mi limito a considerare il fatto che <code>f</code> è <em>una cosa scrivibile</em>.</p>
+<p>Avrei potuto inizializzare lo stesso <code>r3</code>, di tipo <code>&amp;dyn Write</code>, prendendo il riferimento di un <code>Vec</code> di byte, avrei acquisito le stesse possibilità, chiaramente con dei metodi totalmente diversi.</p>
+<p><em>Come farebbe il compilatore a questo punto a capire qual è la vera funzione da chiamare? Devo fare la write() sul File o devo fare la write() sul Vec?</em>
+In queste situazioni il reference diventa un <em><strong>double pointer</strong></em>: nella prima metà punta alla <strong>struttura</strong> vera e propria (in questo caso alla struttura file), nell’altro punta a una tabellina che si chiama <em><strong>vtable</strong></em> che contiene per il tratto in questione — <code>r3</code> è dichiarato come tratto dinamico <code>Write</code> — l’insieme dei metodi che il tratto <code>Write</code> mi mette a disposizione, mi dice <em>“ok tu vuoi guardare f non come file ma genericamente come cosa scrivibile”.</em></p>
+<p><em>Come è fatta una cosa scrivibile?</em>
+Una cosa scrivibile è una cosa che ha un metodo <code>drop()</code>, un metodo <code>write()</code>, un metodo <code>write_vectored()</code>, un metodo <code>is_write_vectored()</code> e un metodo <code>flush()</code>.
+Sapendo questa cosa, lui mi compila quella tabellina mettendomi le giuste funzioni da chiamare, quindi nell’esempio r3 siccome bisogna associare a una graffia forse un titolo è utilizzato r3 che tipo è?</p>
+<aside>
+💡
+<p><em><strong>Ma il tratto è un tipo?</strong></em>
+I <strong>tratti</strong> in Rust non sono “tipi” nel senso diretto del termine, ma rappresentano un <strong>insieme di comportamenti</strong> (cioè metodi e/o funzioni associate) che un tipo può implementare. Un tratto definisce un contratto che i tipi devono soddisfare per essere considerati come “aderenti” a quel tratto.</p>
+<p>Possiamo paragonare i tratti alle interfacce di Java o di altri linguaggi orientati agli oggetti. In Java, un’interfaccia è un tipo astratto che può essere implementato da una classe concreta. Similmente, un tratto in Rust definisce un contratto che un tipo (ad esempio, una struct o un enum) può implementare. In Rust, si usa la parola chiave impl per implementare i tratti.</p>
+<p>Anche se i tratti non sono “tipi” in sé, Rust consente di utilizzarli come <strong>trait object</strong> tramite puntatori come <code>&amp;dyn Trait</code> o <code>Box&lt;dyn Trait&gt;</code>. Questo permette di trattare i tipi che implementano un tratto come se fossero dello stesso tipo astratto. Ad esempio:</p>
+<p><img src="images/possesso/image%2027.png" alt="image.png" /></p>
+<p>L’idea che un tratto rappresenti “un pezzo di tipo” è utile per capire che un tratto definisce un insieme di capacità che un tipo può avere. Però, dire che una variabile è “di tipo Runnable” (per esempio) significa, tecnicamente, che la variabile è un <strong>trait object</strong>, non il tratto stesso.</p>
+<p>Un tratto da solo non può essere “istanziato”. Può essere implementato da tipi concreti, e puoi usare trait object per lavorare con tipi che lo implementano in modo polimorfico.</p>
+</aside>
+<p>Quindi quello che succede è che i riferimenti così costruiti, che riconosciamo perché sono dichiarati di tipo <code>&amp;dyn</code>, la parola <em>dynamic</em> è messa lì a posta per aiutare il programmatore a capire che quello che sta costruendo è un <strong>double pointer</strong>, gli costa il doppio ma probabilmente gli va bene che gli costi il doppio perché implementato in questo modo il programmatore può scrivere del codice che funziona sia con i file che con i vettori e quindi gli può star bene.</p>
+<p>In seguito approfondiremo l’argomento dei tratti e andremo a imparare tutto quello che serve a riguardo, per il momento ci serve prendere in considerazione il fatto che Rust si è dato delle libertà nel scegliere delle cose, ha detto “<em>non è che tutti i riferimenti debbono essere uguali, tutti i riferimenti devono darmi le informazioni di cui ho bisogno. Laddove le informazioni che io posso capire staticamente dal programma mi bastano, il riferimento è un puntatore semplice. Laddove invece non mi bastano, il riferimento è un fat pointer (costituito da puntatore e size). Laddove non mi bastano ancora il riferimento è un double pointer (costituito da un puntatore alla struttura e un puntatore ad una vtable)</em>”.</p>
+<p>Notate che la vtable contiene al suo interno, oltre che il puntatore e i vari metodi (e quindi al codice effettivo che dovrà essere invocato nelle varie situazioni), anche due dati che sono <em><strong>size</strong></em> e <em><strong>alignment</strong></em>.
+Quel size lì permette di dire <em>“ok, ho capito che il primo pezzo del mio fat pointer punta al blocco dove c’è scritto hidden implementation, ma quel blocco lì quanto è grande?”,</em> e allora guardando la vtable vedo size.
+L’alignment mi dice se l’oggetto puntato può cominciare ad un indirizzo qualsiasi o può iniziare solo un indirizzo pari, o può iniziare ad un indirizzo che sia multiplo di 4, che sia multiplo di 8 e così via.. questo perché permette poi, dovendo manipolare questo oggetto, di manipolarlo in un modo che sia congruente con i vincoli con cui quel blocco di memoria è stato acquisito.</p>
+<aside>
+💡
+<p><em><strong>La vtable</strong></em>
+Il double pointer punta a una vtable che è allocata <strong>una volta sola</strong>, quindi se io avessi 25 file diversi di cui mi faccio dare il reference, la prima parte del puntatore punta in 25 zone diverse dello heap, la seconda parte del puntatore punta alla stessa vtable perché di tipo <code>File</code> ce n’è uno solo: c’è una sola versione del metodo <code>drop()</code> per <code>File</code>, una sola versione del metodo <code>write_vectored()</code> etc...</p>
+<p>La vtable non sta nello heap, sta nella zona statica del programma (dove vivono ad esempio le stringhe costanti) perché il compilatore la prealloca. È una zona che esiste da sempre: nel momento in cui io ho definito che esiste un tratto il compilatore si crea sta tabellina che rappresenta l’insieme delle funzioni che quel tratto in particolare sta dichiarando.</p>
+</aside>
+<aside>
+⚠️
+<p><strong>Fat pointer e double pointer</strong></p>
+<p>In questa spiegazione abbiamo fatto distinzione tra <strong>fat pointer</strong> e <strong>double pointer</strong> per maggiore chiarezza, ma in seguito parleremo di fat pointer indistintamente, indicando un riferimento che è, in generale, grande 2*usize.</p>
+<p>In un caso, il secondo usize indica un valore (la size del dato puntato), nell’altro caso invece indica un puntatore alla vtable.</p>
+</aside>
+<h1 id="6-tempo-di-vita-dei-riferimenti"><a class="header" href="#6-tempo-di-vita-dei-riferimenti">6. Tempo di vita dei riferimenti</a></h1>
+<p><img src="images/possesso/image%2028.png" alt="image.png" /></p>
+<p>I riferimenti hanno un tempo di vita.
+Questo, di nuovo, è quello che il borrow checker mette a disposizione per garantirmi che non scriviamo stupidaggini — ovvero, il borrow checker garantisce che io utilizzo un certo riferimento solo in quell’intervallo di tempo in cui il dato originale (da cui quel riferimento nasce) esiste, per evitare di creare dei <strong>dangling pointer</strong>.</p>
+<p>Perché se io accedessi al riferimento <em>dopo</em> che il dato originale è stato distrutto avrei fatto un dangling pointer.</p>
+<p>Il concetto di tempo di vita — <em><strong>lifetime</strong></em> — è una di quelle cose che sfugge, perché non c’è nessun linguaggio che lo manifesta.
+Il fatto che non venga manifestato sintatticamente nei linguaggi, non vuol dire che non ci sia un tempo di vita.
+In C, il tempo di vita è assolutamente una cosa essenziale: se io scrivo <code>int *ptr = malloc(sizeof(int))</code> in quel momento il mio <code>ptr</code> comincia ad esistere.
+Se 5 righe dopo scrivo <code>free(ptr)</code>, <code>ptr</code> lì cessa di esistere, cioè <code>ptr</code> come variabile c’è ancora ma il numero puntato da <code>ptr</code> non mi indica più un blocco su cui posso fare delle cose, ha cessato di esistere — chiamando <code>free</code> l’ho restituito al sistema operativo.</p>
+<p>Il problema è che <code>ptr</code> come variabile di per sé potrebbe stare ancora in giro, il C non mi protegge su questo, tocca a me programmatore dire <em>“caspita, ma io qui ho appena fatto la free, non devo più andare a leggere o fare</em> <code>ptr*</code><em>,</em> <code>ptr-&gt;</code> <em>o cose del genere”.</em>
+Ma siccome tocca a me come programmatore, è difficile andare a cercare tutte le strade che un programma fa, mentre il borrow checker invece non si stufa e le fa tutte, e va a verificare che non ci sia nel nostro programma nessuna strada che mette a rischio questa situazione, ovvero per la quale possa esistere la possibilità che ad un certo punto la variabile originale ha cessato di esistere, ma il riferimento c’è ancora.</p>
+<p>Nella maggior parte delle situazioni quindi il tempo di vita è un qualcosa che possiamo immaginare, ma non viene materializzato.
+Rust a differenza degli altri linguaggi ci dà la possibilità sintattica di <strong>materializzare il tempo di vita</strong>, ovvero quando introduciamo un reference (mutabile o non mutabile) abbiamo la possibilità di <em>decorarlo con un nome simbolico</em>: io posso scrivere, se ho la variabile <code>i</code> che contiene 42, <code>let r = &amp;i</code>, oppure posso dire <code>let r = &amp;’a i</code>.</p>
+<p>Cosa succede quando scrivo <code>&amp;'*qualcosa*</code>?
+Apice si legge <em><strong>tic</strong></em>, e poi di solito si usa un nome, una lettera singola, ad esempio <code>&amp;’a</code> .
+Sto semplicemente dicendo che ho deciso di dare un nome a quel tempo di vita.
+Non sto dicendo quanto è lungo, non sto dicendo quale sia, gli ho dato solo un nome.</p>
+<p><em>Perchè gli ho dato un nome?
+P</em>erchè in certi casi può servire esprimere il fatto che ho bisogno che due riferimenti abbiano lo stesso tempo di vita, e quindi posso dire che quel pezzo di codice vale nell’intersezione dei loro tempi di vita, oppure che vale nell’unione dei loro tempi di vita, oppure posso dire che io da due riferimenti diversi ricavo un risultato che è ancora un riferimento, il cui tempo di vita è legato in qualche modo all’uno piuttosto che all’altro, per questo motivo esiste la possibilità di materializzarlo, cioè di dargli un nome, ma è solo un nome.</p>
+<p>C’è un’eccezione importante: il nome che dò al tempo di vita è quello che voglio (quindi una stringa, una lettera etc..), l’eccezione è <strong>static</strong>.
+<code>&amp;’static</code> il compilatore lo interpreta in un modo molto forte: vuol dire “<em>questa cosa qua esiste dall’inizio alla fine</em>”.
+Questa cosa è importante sulle stringhe: quando voi scrivete “<em>hello world</em>”, scritto così questa stringa finisce nella zona statica del vostro programma, la crea il compilatore, ci sarà dall’inizio fino alla fine.
+Quella stringa lì non è solo una <code>&amp;str</code>, è una <code>&amp;’static str</code>: siete sicuri che quella stringa lì ha durata quanto l’intero vostro programma.</p>
+<p>In alcune situazioni voi volete forzare una struttura dati, ad esempio un vettore o una mappa, a contenere delle <code>&amp;’static str</code>, in quel caso ci potrete mettere solo delle costanti e non potrete mettere dei valori di altro tipo perché quegli altri avranno un tempo di vita differente.</p>
+<p><img src="images/possesso/image%2029.png" alt="image.png" /></p>
+<p>Indipendentemente dal fatto che noi li materializziamo o meno i tempi di vita vengono verificati dal compilatore.
+Per il compilatore i tempi di vita non sono nient’altro che l’intervallo di righe in cui è lecito accedere a quel particolare riferimento.</p>
+<p>Quando noi creiamo una funzione che prende come parametro dei riferimenti dotati di un tempo di vita materializzato, il compilatore andrà a verificare che quando noi chiamiamo quella funzione gli passiamo dei parametri che vivano in modo compatibile con i vincoli che abbiamo espresso nella funzione stessa.</p>
+<p>Il primo criterio che il compilatore adotta è controllare che un riferimento esista soltanto nell’intervallo di tempo in cui esiste il valore da cui è stato tratto.
+Se io ho creato il riferimento <code>r</code> preso dalla stringa <code>s</code>, <code>r</code> può esistere solo fin tanto che <code>s</code> esiste, quando <code>s</code> non c’è più <code>r</code> non deve esserci, perché se ci fosse sarebbe un dangling pointer.</p>
+<p>Il tempo di vita è un aiuto enorme — voi lo vivrete inizialmente come un impiccio perchè è difficile, perchè non ha corrispondenza negli altri linguaggi.
+Le variabili hanno un tempo di vita e ragionarci sopra è essenziale.
+Il fatto che il compilatore per noi faccia questo mestiere è davvero un enorme servizio perchè è quello che ci garantisce che non facciamo schifezze.
+Nel momento in cui ci troviamo a dover salvare dei riferimenti dentro delle strutture più complesse o passare dei riferimenti alle funzioni, i tempi di vita hanno bisogno di essere esplicitati.</p>
+<p>Questa cosa è un pezzo un po’ meno ovvio, perchè cosa succede?
+Immaginate che abbia una bottiglia di latte che scade domani, se io con quel latte lì ci faccio il budino, ho trasferito la scadenza del latte nel budino.
+Anche il budino adesso scade domani.</p>
+<p>Quindi se io ho una variabile di tipo riferimento che scade perchè prende dati da qualche parte che tra un po’ evaporano, se questa variabile la metto dentro qualcosa di più grande anche questa cosa più grande riceve il limite, si riduce in possibilità di utilizzo.</p>
+<p>Questo è una delle conseguenze poco ovvie dei tempi di vita, ma assolutamente vere.
+E quindi io sono obbligato a dire che se io in quella struttura lì metto un dato che dura <code>a</code> tutta quella struttura dura al massimo <code>a</code>, perchè se durasse di più potenzialmente leggerebbe schifezze — c’è una propagazione del tempo di vita.
+E se chiamo la funzione che consuma il dato <code>'a</code> e lo usa per darmi il suo risultato, il suo risultato ha tempo di vita <code>'a</code>, al massimo.
+E se faccio la funzione che consuma il dato <code>'a'b</code>, il suo risultato ha tempo di vita che è il più breve tra i due.</p>
+<p>Vediamo un esempio.</p>
+<h2 id="61-esempi"><a class="header" href="#61-esempi">6.1 Esempi</a></h2>
+<p><img src="images/possesso/image%2030.png" alt="image.png" /></p>
+<p>Qui partiamo con una variabile <code>r</code>, l’abbiamo solo introdotta senza dargli un valore iniziale o un tipo.
+Il compilatore ce lo lascia fare, quello che sa è che r comincia lì alla riga 2 e finirà all’ultima chiusa graffa.</p>
+<p>Poi apriamo un blocco, e introduciamo <code>x = 1</code>, il compilatore prepara un <code>x</code> e ci mette dentro un 1, e poi subito dopo diciamo <code>r = &amp;x</code>, quindi il compilatore ha capito che <code>r</code> è un reference non mutabile, e punta alla variabile <code>x</code>.
+Poi chiudiamo la graffa, chiudendo la graffa <code>x</code> cessa di esistere, lo stack si accorcia. Però <code>r</code> rimane, e punta dove?
+Nel vuoto, in una zona che non è più nostra.</p>
+<p>Sotto ci chiediamo “*è vero che <em>r vale 1?</em>”.
+Perigliosissimo!
+Tra l’altro già solo facendo quell’assert, questa è una macro, che viene espansa e diventa una chiamata funzione eccetera, quel pezzo di stack si sporca, non c’è più scritto 1, chissà cosa c’è.</p>
+<p>Qua il compilatore ci aiuta perché dice “<em>x non vive abbastanza, sta roba non la puoi fare. Alla riga 9 hai preso in prestito x, alla riga 11 x è morto ma alla riga 12, 13 tu sei andato ancora a leggere r che puntava ad x, ma non puoi leggere r che punta un x che non c’è più</em>”.</p>
+<p><img src="images/possesso/image%2031.png" alt="image.png" /></p>
+<p>Questo è l’intervallo in cui x esiste: dalla riga in cui compare fino alla chiusa graffa.</p>
+<p><img src="images/possesso/image%2032.png" alt="image.png" /></p>
+<p>Questo è l’intervallo di valità di r: da dove viene inizializzata fino al suo ultimo uso.</p>
+<p><img src="images/possesso/image%2033.png" alt="image.png" /></p>
+<p>Ma non si sovrappongono!
+E quindi c’è almeno un punto, la riga in fondo, in cui c’è una <strong>violazione</strong>, e quindi il compilatore mi dice <em>“no, non si può fare”.</em>
+Il compilatore C non ve lo dice..</p>
+<p><img src="images/possesso/image%2034.png" alt="image.png" /></p>
+<p>Queste regole valgono anche quando si crea un riferimento a una parte di struttura dati più grande.</p>
+<p>Se ad esempio io ho un Vec <code>v</code> che contiene [1, 2, 3], e prendo il riferimento al secondo elemento con <code>let r = &amp;v[1];</code>, che cosa succede? Che <code>r</code> può esistere solo finché esiste <code>v</code>!
+Dal fatto che ho preso un riferimento ad un suo pezzettino, <code>v</code> diventa immutabile per tutto il tempo in cui esiste <code>r</code>, perché se io <code>v</code> lo lasciassi mutabile quello che potrebbe succedere è che magari qualcuno me lo fa crescere e lui si sposta, ha bisogno di riallocare quindi quel puntatore che avevo preso non punta più o al contrario qualcuno potrebbe invocare <code>clear()</code> sul mio vettore e me lo cancella tutto, e di nuovo mi trovo un puntatore dangling o qualunque altra cosa.</p>
+<p>Quindi se memorizzo dei riferimenti in una struttura (come l’esempio di prima del latte e del budino), la struttura diventa a scadenza: scade non appena scade il più giovane, il più prossimo di tutti gli elementi.
+E quindi io devo garantire che quella struttura lì esiste al massimo quanto esiste il più vicino degli elementi a scadenza.</p>
+<p>Il compilatore Rust è molto preciso nelle sue indicazioni e si sforza di dirci con chiarezza che cosa succede, ovviamente noi dobbiamo capirne un po’: nell’esempio di questa slide io sto cercando di inserire in questo vettore un riferimento, e quindi quello lì diventa un vettore di riferimenti, ad un dato che però appena arrivo alla chiusa graffa prima della println non c’è più, e quindi subito sotto quando cercherò di stampare cosa c’è nel vettore farei casino perché mi troverei in quel vettore lì un dato che non esiste più e quindi il compilatore non me lo fa fare.</p>
+<h1 id="7-possesso---riassunto-regole"><a class="header" href="#7-possesso---riassunto-regole">7. Possesso - Riassunto regole</a></h1>
+<p><img src="images/possesso/image%2035.png" alt="image.png" /></p>
+<p>Cerchiamo di mettere un minimo di ordine in tutta questa serie di regole.</p>
+<p><strong>Ogni valore ha uno e un solo possessore</strong>.</p>
+<p><em>Chi è il possessore del valore?</em>
+È una variabile singola, ad esempio <code>v = 27</code>, oppure il campo di una struttura, se io ho preparato un vettore, e ho inserito nel vettore un certo dato il vettore diventa proprietario di quel dato, e quando il vettore sparirà quel dato lì sarà rilasciato.
+A sua volta il vettore potrà essere posseduto da qualcun altro, che sarà posseduto da qualcuno etc.. quindi il possesso è una catena lunga.</p>
+<p><strong>A un dato valore può esistere al più un solo riferimento mutabile</strong>.
+<strong>Oppure, a un dato valore possono esistere molti riferimenti immutabili</strong>, ma fin tanto che esiste almeno un riferimento immutabile il dato originale (quindi il possessore del valore) può solo leggerlo e non può cambiarlo.
+Viceversa mentre esiste l’unico riferimento mutabile l’originale non ci può proprio accedere, questo significa che se io prendo un riferimento mutabile al terzo elemento di un <code>Vec</code>, io quel <code>Vec</code> non lo leggo proprio, perchè se lo potessi leggere leggerei anche il terzo elemento, però non devo e quindi propago il lock — che è un lock che esiste solo nella testa del compilatore, nelle sue strutture dati e nei suoi ragionamenti — per tutto il tempo in cui ho quel riferimento lì.</p>
+<p><strong>Tutti i riferimenti devono avere una durata di vita inferiore a quella del valore a cui fanno riferimento da cui sono stati tratti</strong>, ****perchè altrimenti diventano dei dangling pointer.</p>
+<p><strong>I riferimenti sono implementati come <em>puntatori semplici</em> quando il dato ha dimensione nota,</strong> <strong>come <em>puntatori fat</em></strong> (cioè come puntatori fatti di un puntatore e di un size) <strong>quando il dato ha dimensione del dato nota solo a run time,</strong> <strong>e come <em>doppi puntatori</em> quando il dato è conosciuto non per il suo tipo ma solo per un tratto che implementa</strong> e quindi il dato è un dato che è conosciuto non per il suo tipo ma solo per un tratto che implementa e in questo caso il doppio puntatore rappresenta il puntatore al dato vero e proprio e il puntatore alla vtable che mi descrive il tratto per il quale io lo conosco.</p>
+<h1 id="8-slice"><a class="header" href="#8-slice">8. Slice</a></h1>
+<p><img src="images/possesso/image%2036.png" alt="image.png" /></p>
+<p>Le slice le abbiamo già incontrate, sono fette — possiamo definire uno slice come <em><strong>viste</strong></em>, un po’ come nei database.</p>
+<p><em>Cos’è una vista in un database?</em>
+È un modo di guardare un gruppo di record senza avere accesso alla tabella stessa.
+Una vista può essere una selezione, per cui vedete non tutta la tabella ma solo righe che hanno certe caratteristiche.
+Su una vista leggete ma non scrivete.</p>
+<p>Tipicamente noi creiamo delle slice, le possiamo creare a partire da dati replicati, quindi si possono fare delle slice su degli array, si possono fare delle slice su dei vettori.
+Tipicamente la slice è un blocco di elementi consecutivi la cui dimensione è nota a run time.</p>
+<p>Le slice sono rappresentate da dei fat pointer: il primo elemento punta all’inizio della mia slice, il secondo mi dice quanti elementi ho considerato all’interno.
+<strong>In quanto riferimento la slice non possiede</strong>, quindi ho creato la slice a partire da un <code>Vec</code>, ad esempio, ed è il <code>Vec</code> a possedere il dato.
+La slice lo guarda, mi da l’accesso, mi dà la possibilità di manipolarlo in alcune situazioni.</p>
+<p>Posso creare una slice partendo da un array, ma anche partendo da vari tipi di contenitori: posso creare slice a partire da dei <code>Vec</code>, dei <code>Box</code>, da delle <code>String</code> e così via.</p>
+<p>Gli <code>&amp;str</code> sono delle slice, sono slice di byte.
+Un <code>&amp;str</code> è una sequenza consecutiva di n byte, quegli n byte in generale corrispondono a m caratteri con m ≤ n, dato che alcuni caratteri sono rappresentati dal singolo byte, alcuni da 2, alcuni da 3, e alcuni da 4, quindi il fatto che io abbia una slice di 8 byte non mi dice niente di per sé su quanti caratteri ci sono: ce ne possono essere da 2 a 8.</p>
+<p><img src="images/possesso/image%2037.png" alt="image.png" /></p>
+<p>Qui vediamo una rappresentazione: se io ho un <code>Vec</code> posso trasformarlo in un <em><strong>boxed slice</strong></em>, cosa succede?
+Il <code>Vec</code> evapora, lo consumo, ma tengo di buono puntatore e lunghezza, e butto via la capacity, e mi rimane il boxed slice associato, e quindi ho creato un <code>Box</code> che rappresenta un array degli n elementi che sono attualmente presenti.</p>
+<p>Al contrario, se io ho un boxed slice, posso trasformarlo e farlo diventare un vector, e quindi gli dò la possibilità di aggiungere elementi.
+Quando lo faccio diventare un vector, di solito il vector ha capacity pari alla len perché a priori non avrei una preallocazione.</p>
+<p>Notate che <code>Vec</code> e <code>String</code> sono parenti stretti, nel senso che da un punto di vista della disposizione in memoria una <code>String</code> è esattamente un <code>Vec</code> di byte.
+Dal punto di vista dei metodi sono molto diversi: la <code>String</code> ha metodi per essere messa in maiuscolo, in minuscolo, per essere divisa in token e cose del genere, cose che il vector non ha. Il fatto che la <code>String</code> sia un <code>Vec</code> di byte, non vuol dire che (come dicevamo prima) ha tanti caratteri quanti sono i byte presenti, per via della codifica utf-8.</p>
+<p>Parimenti, una <code>&amp;str</code> ha lo stesso layout di memoria di uno slice di byte, semplicemente è un puntatore ad una sequenza di n byte all’interno.</p>
+<h1 id="9-vantaggi-introdotti-dal-possesso"><a class="header" href="#9-vantaggi-introdotti-dal-possesso">9. Vantaggi introdotti dal Possesso</a></h1>
+<p><img src="images/possesso/image%2038.png" alt="image.png" /></p>
+<p><em>Perché tutto questo è importante?</em>
+Il problema di gestire in modo affidabile la memoria è una cosa che affligge i programmatori da quando sono stati introdotti i linguaggi ad alto livello.
+Con l’introduzione dei linguaggi di alto livello si è messo nelle mani del programmatore la capacità di creare delle cose più complicate, ma al tempo stesso ha sollevato l’enorme problema dell’allocazione della memoria e della corretta gestione.</p>
+<p>Nel 1992-1993 nel tentativo di dare una risposta a questo enorme problema è nato Java, che poi è stato copiato per questa idea iniziale da n altri linguaggi.
+Java introduce il concetto di <em>garbage collector</em>, dicendo “<em>Ok, gestire la memoria è un grosso problema. Il programmatore non ce la fa, quindi ci penso io. Mi prendo la briga di rilasciarla, quindi io — garbage collector — sono il possessore della memoria. Quando la rilascio? La rilascio nel momento in cui vedo che più nessuno la sta usando, e quando la rilascio posso compattarla. Ma se la compatto cambio gli indirizzi: una cosa che prima stava qua la sposto un po’ più in là perché devo compattare. Ma questo mi spacca tutto, quindi devo fare in modo che quando compatto la memoria nulla si muova</em>”, e qui nasce il problema della garbage collection.</p>
+<p>La garbage collection in Java blocca l’esecuzione.
+Se sto facendo un gestionale per le paghe e stipendi non è mica un problema, ogni tanto questa cosa qua si ferma e fa la sua garbage collection e poi riparte.
+Se sto facendo un sistema real time invece è un grosso problema, perché nel frattempo la fisica va avanti e se ad esempio sto cadendo continuo a cadere etc..</p>
+<p>Secondo problema: la maggior parte dei linguaggi che gestiscono l’idea di puntatore lo fanno alla luce del fatto che il puntatore permette di rappresentare delle cose che i tipi elementari non permettono, in particolare permette di condividere l’accesso a strutture o a rappresentare dei grafi o cose del genere che altrimenti sarebbe molto complicato.
+Solo che la maggior parte dei programmi che usano i puntatori è afflitta da quello che si chiama il “<em><strong>billion dollar error</strong></em>”, cioè il fatto che è stato introdotto il concetto di <strong>null pointer</strong>.
+Concetto di null pointer che è problematico in quanto spesso ce lo si dimentica: Java non risolve il problema del null pointer, tanto che rimane il grosso casino delle <em><strong>null pointer exceptions</strong></em>.</p>
+<p>Per questo motivo sono stati introdotti altri linguaggi come Kotlin che duplicano il sistema dei tipi e ti dicono “<em>c’è tutta una gerarchia di tipi non annullabili, non possono mai diventare null, e parimenti c’è una gerarchia di tipi annullabili: possono diventare null. Tocca a te caro programmatore dirmi che cosa è l’uno e cosa è l’altro, se un tipo non è annullabile io compilatore vigilo che tu non ci metti mai null dentro, se un tipo è annullabile io compilatore vigilo che tu acceda soltanto con un null safe expression, e non faccia casino la cosa</em>”.
+La cosa si migliora un po’, ma non è ancora perfetta.</p>
+<p>In Rust il problema è molto più facile: non esiste il riferimento nullo, non può essere scritto e dunque non c’è possibilità che venga fuori, per lo meno fin tanto che usiamo la parte safe di Rust.</p>
+<p>Poiché il borrow checker vigila sull’assegnazione dei riferimenti e sugli intervalli temporali in cui sono usati non c’è il rischio di accedere in modo illecito a dei contenuti, non c’è il dangling pointer né tantomeno ho problemi di <em><strong>segment violation</strong></em> dovuti al fatto che vado a leggere a casa di qualcun altro, cioè in zone che non sono mappate nel mio spazio di indirizzamento.</p>
+<p>Inoltre poiché tutte le strutture hanno una dimensione nota a compile time, oppure hanno un esplicito campo che permette a runtime di validarle, risolvo a priori i problemi dei <em><strong>buffer overflow</strong></em> che affliggono disperatamente i programmi scritti in C e C++, e sono la sorgente della maggior parte degli attacchi hacker, perché se io ho una slice che ha lunghezza ignota a compile time, a runtime lì c’è scritto quanto è grande, e se provo ad andare oltre i suoi limiti (quindi a prendere un indice più piccolo di zero, questo sarebbe facile comunque, o un indice più grande della sua vera dimensione) il programma mi blocca, va in panico.
+Andare in panico vuol dire che lui si ferma, ma è un comportamento deterministico!
+Non mi lascia andare avanti e poi bene se viene, perché è proprio su questa cosa qua che gli hacker lavorano per forzare i sistemi.</p>
+<p>Quindi non possono verificarsi né buffer overflow né buffer underflow, cioè cerco di andare prima del loro inizio.
+Analogamente gli iteratori presenti in Rust, che mi consentono di esplorare delle strutture dati complesse come un vettore, una mappa o cose del genere per prendere gli elementi presenti al loro interno, non possono mai eccedere il limite e quindi non c’è il rischio di andare oltre il fondo o prima dell’inizio, e questo mi dà garanzia di correttezza.</p>
+<p><img src="images/possesso/image%2039.png" alt="image.png" /></p>
+<p>Tutte le variabili per default sono immutabili e tocca a noi come programmatori scegliere quali rendere mutabili.
+La scelta fatta così è ispirata al <em>principio del minimo privilegio</em>: se una cosa non ti serve, non ce l’hai.  Se proprio hai bisogno lo chiedi, e siccome lo devi chiedere, allora chiedere è sempre un po’ faticoso e questo vuol dire che dovrai spenderci qualche secondo per pensarci — e questo è buono per valutare meglio cosa stai facendo.</p>
+<p>Notate che il principio di possesso si vede esplicitamente in modo evidente con la gestione della memoria per cui non ho doppio rilascio, non ho dangling pointer, non ho null pointer exception, non ho tutta questa serie di cose qua… ma vale anche con tutte le altre risorse: se posseggo un file lo debbo rilasciare, se posseggo un socket lo debbo chiudere, se posseggo un mutex altrettanto e così via.
+Quindi vale nei confronti di qualunque tipo di risorsa io possa aver preso in prestito dal sistema operativo — il concetto di prestito è molto ampio.</p>
+<p><img src="images/possesso/image%2040.png" alt="image.png" /></p>
+<p><em>Un’applicazione Rust è automaticamente sicura rispetto agli attacchi degli hacker?</em>
+In parte si, in parte no.</p>
+<p>Certamente io ho una buona parte del mio programma, che è quella che qui è rappresentata da quel blocco disegnato in giallo nella zona in basso a sinistra di questa slide, che è data da tutte quelle garanzie che nascono a compile time — per cui a compile time so che non posso accedere a una variabile se non è stata inizializzata, so che posso usare solo riferimenti validi, so che non ci sono dangling pointer e non ci sono le corse critiche tra thread differenti, quando cioè due thread cercano di leggere o di scrivere insieme una certa variabile.
+Questi li abbiamo esclusi a priori <em>by design</em>.</p>
+<p>In più Rust mi aggiunge una serie di safety che nascono a run time, ad esempio se tu accedi a uno slice che a compile time ha dimensione ignota io non posso a priori vedere se tu stai uscendo o meno dai limiti, ma a run time stai tranquillo che ti becco, perché me lo sono scritto quanto è grande e di volta in volta lo vado a verificare.
+Questo mi garantisce che non ho rischi sullo stack, quindi non posso andare in overflow perché mi becca prima, posso essere tranquillo sui bound per cui gli slice non escono dai loro confini e su un insieme di cose posso fare dei controlli su alcune API unsafe.</p>
+<p>Detto questo, però, il mio programma consiste della parte verde che è quella in qualche modo controllata — è il cosiddetto <em><strong>safe Rust</strong></em>, quella parte lì o a run time o a compile time è stata validata e sono sicuro che lì non ci sono errori — ma nel mio programma può essere presente qualche blocco unsafe, che dipende come è stato scritto, potrebbe essere soggetto ad attacco, devo scriverlo proprio bene.
+Se fa uso di librerie native in C e quelle sono tutte attaccabili, sono soggetto a vulnerabilità.</p>
+<p>Dopodiché il mio programma fa uso del sistema operativo, che a sua volta è attaccabile e a sua volta il sistema operativo fa uso dell’hardware, che anche lui è attaccabile.</p>
+<p>Quindi Rust è certamente un contesto dove la sicurezza è stata considerata in modo serio.
+La superficie di attacco è grande e quindi Rust difende se stesso, e tutto il resto bisogna difendersi.
+Allora va detto che i sistemi operativi crescono nel tempo e fanno tutto il possibile per difendersi a propria volta.
+Le librerie C che mediamente usiamo sono, nella maggior parte, librerie C di lunga data che hanno in qualche modo già dimostrato nel tempo la loro solidità, però il rischio esiste sempre.
+Se poi mettiamo dei blocchi unsafe, chiaramente dobbiamo prenderci la responsabilità di quello che facciamo con l’unsafe.</p>
+<h1 id="10-riferimenti"><a class="header" href="#10-riferimenti">10. Riferimenti</a></h1>
+<p><img src="images/possesso/image%2041.png" alt="image.png" /></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="05-il_linguaggio_parte_2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="07-tipi_composti.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="05-il_linguaggio_parte_2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="07-tipi_composti.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

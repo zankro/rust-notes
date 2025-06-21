@@ -1,0 +1,423 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Processi (Parte 1)</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="processi---malnati-26"><a class="header" href="#processi---malnati-26">Processi - Malnati 26 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-introduzione">1. Introduzione</a>
+<ul>
+<li><a href="#11-processi-in-windows">1.1 Processi in Windows</a></li>
+<li><a href="#12-processi-in-linux">1.2 Processi in Linux</a></li>
+<li><a href="#13-creazione-di-processi">1.3 Creazione di processi</a>
+<ul>
+<li><a href="#131-esempio">1.3.1 Esempio</a></li>
+</ul>
+</li>
+<li><a href="#14-fork-e-thread">1.4 <code>fork()</code> e thread</a>
+<ul>
+<li><a href="#141-esempio">1.4.1 Esempio</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#2-processi-in-rust">2. Processi in Rust</a></li>
+</ul>
+<p>La parte sui processi è assolutamente più semplice, perché in realtà la maggior parte della complessità deriva proprio dalla concorrenza, che però è stata già abbastanza vista nel momento in cui abbiamo trattato i thread.</p>
+<h1 id="1-introduzione"><a class="header" href="#1-introduzione">1. Introduzione</a></h1>
+<p><img src="images/processi/image.png" alt="image.png" /></p>
+<p><em>Cos'è un processo?</em>
+È lo strumento col quale il sistema operativo garantisce che possano essere eseguite applicazioni distinte senza che si pestino i piedi reciprocamente e lo fa fondamentalmente <strong>isolando gli spazi di indirizzamento</strong>. Quindi un processo è un programma in esecuzione che ha un suo spazio di indirizzamento all'interno del quale vengono ricavati gli stack, lo heap eccetera, e all'interno del quale sono presenti uno o più thread.</p>
+<p>Il processo ha una sua identità a livello di sistema operativo garantito da un codice univoco, il <strong>process ID (PID)</strong>, e ha associato uno <em><strong>stato</strong></em>, ovvero può essere in esecuzione oppure terminato. Quando un processo diventa terminato, questo processo restituisce un codice che ha una certa struttura. Tipicamente il codice di uscita di un processo viene utilizzato per comprendere se quel processo è morto bene o è morto male, quindi rappresenta sostanzialmente un codice d'errore.</p>
+<p>Il principio di assegnare a ciascun processo uno spazio di indirizzamento è alla base dell'<strong>isolamento</strong>, che garantisce fondamentalmente che due processi non si impiccino troppo. Notate che l'isolamento offerto dai processi è <strong>limitato</strong>, <em>perché?</em> Perché in realtà è vero che nello spazio di indirizzamento ognuno fa quello che vuole e gli altri non possono vedere, ma tutti i processi hanno <em>risorse comuni</em>:</p>
+<ul>
+<li><strong>Tutti vedono lo stesso file system</strong>
+Quindi se ad esempio il processo 1 crea un file e il processo 2 lo distrugge, si impicciano.</li>
+<li><strong>Tutti i processi vedono lo stesso stack di rete</strong>
+Quindi se il processo 1 crea una socket in ascolto sulla porta 80, il processo 2 non può creare un’altra socket sulla porta 80, e quindi si impicciano.</li>
+</ul>
+<p>Tutti i processi vedono le stesse librerie condivise, ovvero il codice eseguibile che viene mappato all'interno di un processo in parte è l'eseguibile specifico, e in parte è contenuto in <strong>librerie condivise</strong> che si chiamano <strong>DLL</strong> dentro Windows, si chiamano <strong>SO</strong> (Shared Object) nel mondo Unix-like, ma sostanzialmente sono pezzi aggiuntivi che vengono messi insieme alla parte di codice nello spazio di indirizzamento.</p>
+<p>Il problema è che queste librerie hanno una <em>versione</em>. Se io ho in esecuzione un programma che vuole caricare la libreria <code>libm</code>, responsabile della matematica, e ha bisogno della <strong>versione 32</strong>, ma poi ho un altro processo che quando si è installato mi ha caricato la <strong>versione 35</strong> che non è più compatibile con la 32, il file <code>libm[.](http://ibem.so/)so</code> viene trovato (nella relativa cartella di sistema, a seconda del sistema operativo), ma è la versione sbagliata e quindi quando poi vado a cercare dentro di mappare le funzioni che devo chiamare magari non le trovo, o le trovo fatte in un modo diverso da come me le aspetto, quindi si impicciano.</p>
+<p>Quindi la vita dei processi non è così ben isolata, motivo per cui oggi giorno vengono distribuiti come unità di esecuzione i <em><strong>container</strong></em> piuttosto che i processi. Il container sfrutta la capacità che i kernel hanno di separare i diversi ambiti (l'insieme degli utenti, l'insieme del file system, lo stack di rete, l'uso delle risorse e così via) in <strong>namespace indipendenti</strong> e sfruttano del kernel del sistema operativo soltanto la sua capacità di scheduling, affidando poi a componenti totalmente disgiunti il resto delle astrazioni offerte dalla macchina. Questo permette di avere un insieme di processi apparentemente isolati, ognuno con il proprio <em>indirizzo IP</em> associato, indipendente l'uno dall'altro, ognuno con il suo insieme di <em>porte</em>, ognuno con le sue <em>DLL</em> e così via, che possono convivere sulla stessa macchina abbattendo i costi di configurazione, facilitando la convivenza tra cose molto eterogenee tra di loro.</p>
+<p><img src="images/processi/image%201.png" alt="image.png" /></p>
+<p>Il criterio dell'<strong>isolamento</strong> dovuto al fatto che due processi hanno spazi di indirizzamento separati, in alcune situazioni è un impiccio, <em>perché?</em> Perché impedirebbe a due programmi distinti, ad esempio <em>Word</em> ed <em>Excel</em>, di scambiarsi dei dati, se non passando attraverso un file, che però è una cosa poco efficiente. Affinchè voi possiate fare <strong>copia</strong> su Word e <strong>incolla</strong> su Excel, bisogna che ci sia un pezzo di memoria condiviso, perché quando faccio <em>“copia”</em> devo scrivere da qualche parte questa cosa che sto copiando, e devo andare a finire su una qualche zona che Excel possa vedere, se no su Excel come ce lo faccio l'<em>“incolla”</em>?</p>
+<p>Per questo motivo i sistemi operativi, se da un lato <strong>isolano i processi</strong> assegnando loro spazi di indirizzamento disgiunti, dall'altro offrono alcune <strong>primitive</strong> che permettono di muovere dei dati da uno spazio all'altro. Queste primitive hanno caratteristiche diverse e cadono dentro un nome più ampio che va sotto la sigla di <strong>IPC</strong> (<em>Inter Process Communication</em>). Qua le differenze tra sistemi operativi diventano molto grandi. Anche nel concetto stesso di processo le differenze sono molto grandi. E il modello adottato dai sistemi Unix ha poca analogia col modello adottato dal sistema Windows.</p>
+<p><img src="images/processi/image%202.png" alt="image.png" /></p>
+<p>Ciò che rende un po' parenti il concetto di processo e il concetto di thread è che <strong>ogni processo ha associato almeno un thread</strong>. Nel momento in cui un processo non ha più nessun thread associato, quel processo è morto, e viene buttato via dal sistema operativo. All'atto della creazione di un processo, il sistema operativo si prende la responsabilità di allocare anche il <strong>thread principale</strong>. Questo thread principale potrà poi creare thread ulteriori a proprio piacimento.</p>
+<p>Nei primi momenti di vita dei sistemi <em>multi-user</em>, quindi quando Unix è nato, negli anni '70, il processo era l'unità fondamentale anche di concorrenza. Se io dovevo creare un server di rete, dovevo necessariamente pensarlo multiprocesso. Oggigiorno noi troviamo ancora la programmazione multiprocesso in varie condizioni. In parte come scelta per facilitare la <strong>system integration</strong>, ovvero: <em>perché devo reinventarmi una cosa che già esiste e tanto comoda?</em> In fondo posso delegare un altro programma, fare un pezzo per me e poi prendermi il suo risultato. È quello che facciamo ad esempio quando compiliamo un programma: ci affidiamo al fatto che possiamo sfruttare il <em>compilatore</em> che traduce un file sorgente in un file oggetto e poi chiamare il <em>linker</em> che prende insieme vari file oggetto e ci produce un file eseguibile, senza bisogno di fondere queste cose in un unico oggetto. Quindi possiamo beneficiare col principio della <strong>separazione delle responsabilità</strong>, il compilatore è molto bravo a fare un pezzo, il linker è molto bravo a farne un altro e si appoggiano dei file intermedi per passarsi delle cose.</p>
+<p>Altre volte sfruttiamo, come nel caso di <strong>Chrome</strong>, ad esempio, processi per motivi di <strong>security</strong>. Chrome, per ogni tab che voi create, crea un <em>processo separato</em>. Questo garantisce che eventuali vulnerabilità presenti all'interno delle librerie che usa (che potrebbero permettere potenzialmente a del codice malevolo di farsi i fatti del vostro pc), non possano fare danni. Semplicemente perché se anche a seguito di qualcosa io riesco a iniettare del javascript che lavora nel contesto di una delle tab, al meglio potrò sapere che cosa c'è in quella tab, ma non riesco a vedere le altre tab che cosa hanno, perché sono in <strong>processi separati</strong> e non ho l'accesso.</p>
+<h2 id="11-processi-in-windows"><a class="header" href="#11-processi-in-windows">1.1 Processi in Windows</a></h2>
+<p><img src="images/processi/image%203.png" alt="image.png" /></p>
+<p>I processi si creano in modo molto distinto nei sistemi operativi, con filosofie distinte. In <strong>Windows</strong> si crea un processo con la system called <code>CreateProcess</code> o con la sua variante <code>CreateProcessEx</code>, che differiscono sostanzialmente nel numero di parametri che passiamo. Un processo creato in Windows richiede l'indicazione del eseguibile da caricare, quindi <code>CreateProcess</code> si prende la briga di fare diverse operazioni:</p>
+<ul>
+<li>Crea innanzitutto un nuovo <em>spazio di indirizzamento</em>, vuoto</li>
+<li>All'interno di quello spazio di indirizzamento mappa il <em>file eseguibile</em> il cui nome gli abbiamo passato come parametro della <code>CreateProcess</code></li>
+<li>Poi crea il <em>thread principale</em> all'interno di quel processo e lo avvia</li>
+</ul>
+<p>Quel thread principale punterà alla funzione <code>crt_startup</code> o alla funzione <code>_winmain</code> che saranno responsabili a loro volta di chiamare il <code>main</code> della nostra applicazione vera e propria. Quindi inizializzeranno le strutture di supporto e poi faranno partire il resto. Questo fa si che il processo parte pulito, immagine esatta di quello che c'è nell'exe che io ho caricato.</p>
+<p>Questo processo troverà dentro la propria memoria alcune <strong>handle già presenti</strong>, in particolare potrà contenere dei riferimenti ad alcuni <em>file</em> che sono stati precedentemente aperti e che gli sono resi disponibili oppure potrà trovare riferimento rispetto a <strong>oggetti kernel</strong> come semafori, pipe, mutex, eventi. Potrà anche trovare inizializzate delle <strong>variabili d'ambiente</strong>. Le variabili d'ambiente sono una mappa di <code>string</code> in <code>string</code> per cui ad esempio io ho la variabile d'ambiente <code>PATH</code> che ha come valore ad esempio: <code>C:/Windows;C:/Windows/System32;</code> etc…</p>
+<p>Però quello che <em>non può condividere</em> un processo figlio sono riferimenti a thread presenti nel processo padre, non potrà contenere riferimenti a processi presenti nel processo padre, a librerie dinamiche o regioni di memoria presenti nel processo padre. Quindi c'è un <strong>isolamento molto buono</strong>.</p>
+<p><img src="images/processi/image%204.png" alt="image.png" /></p>
+<p><img src="images/processi/image%205.png" alt="image.png" /></p>
+<p>La funzione che crea un processo fa un po' di operazioni, e qua vediamo la <code>CreateProcess</code>, vedete che ha una valanga di parametri, ed è la versione semplice perché se avessimo mostrato <code>CreateProcessEx</code>, di parametri questa ne ha ancora di più.</p>
+<h2 id="12-processi-in-linux"><a class="header" href="#12-processi-in-linux">1.2 Processi in Linux</a></h2>
+<p><img src="images/processi/image%206.png" alt="image.png" /></p>
+<p>Nel mondo <strong>Unix</strong> (mettendo insieme <strong>Linux</strong> ma anche <strong>BSD,</strong> <strong>macOS</strong> e cose del genere) i processi si creano con una system call che si chiama <code>fork</code>.</p>
+<p>A differenza della <code>CreateProcess</code>, <code>fork</code> di parametri ne ha <strong>zero</strong>.</p>
+<p><em>Cosa fa fork?</em> <strong><em>Duplica lo spazio di indirizzamento corrente</em>.</strong>
+Quindi nel contesto di un processo che già esiste e che ha il suo spazio di indirizzamento dentro cui c'è uno <strong>stack</strong> (uno o più stack), c'è lo <strong>heap</strong>, ci sono le <strong>variabili statiche</strong>, ci sono le <strong>cose globali</strong>, ci sono le <strong>variabili di ambiente</strong>, etc… questo processo viene duplicato: ne ho due copie totalmente indipendenti, ma identiche inizialmente.</p>
+<p><code>fork</code> lascia il processo padre inalterato, nel processo figlio inietta un unico thread che si trova lo stack già completamente popolato. <em>Perché?</em> Perché è duplicazione dello stack che aveva chi nel processo padre ha invocato <code>fork</code>.</p>
+<p><strong><code>fork</code></strong> esce e nel processo figlio riprende l'esecuzione dal valore ritornato dalla funzione stessa — questo thread non parte da zero, ma nasce con una <em>storia pregressa</em>. Dopo essere uscito da fork, potrebbe eseguire un return e tornerebbe a un punto precedente del codice, potrebbe fare un altro return e tornerebbe ancora più indietro. <em>Perché?</em> Perché viene duplicato tutto, compreso lo stack.</p>
+<p>Questa duplicazione è ottenuta in modo molto efficiente sfruttando una caratteristica dell'<strong>MMU</strong>: il nostro spazio di indirizzamento è uno spazio di indirizzamento <em>virtuale</em>. Abbiamo degli indirizzi che corrispondono alle pagine virtuali, poi la MMU ha le sue tabelle con cui mappa queste pagine virtuali in pagine fisiche. In questa tabella c'è un flag hardware che si chiama <code>cow</code>, <em>copy on write</em>.</p>
+<p>Nel momento in cui viene eseguita la <code>fork</code>, all'interno della system call si vanno a settare nella pagina della MMU i bit <code>cow</code> di ciascuna pagina in uso. Da questo momento in avanti avrò due esecuzioni che proseguono: fin tanto che queste due esecuzioni non modificano niente, leggeranno le stesse pagine. La prima delle due che va a cambiare un byte qualunque provocherà una <em>trap</em> del sistema operativo che duplicherà fisicamente la pagina. L'originale resta di proprietà dell'altro, il flag <code>cow</code> viene resettato e viene allocata una nuova pagina fisica (inizialmente copia della precedente) su cui si va a fare la modifica. Da questo momento in avanti i due processi non si impicciano più.</p>
+<p>Questo rende <strong>efficace</strong> ed <strong>efficiente</strong> il sistema di creazione dei processi, ma anche <em>complicato</em> perché non si parte da pulito, parto da sporco: in base a dove è avvenuta la <code>fork</code> nel processo — se nel <code>main</code>, o nella funzione A chiamata da B, che era stata chiamata da C, che a sua volta era stata chiamata dal main — ci si ritroverà in quel punto. Quindi chi si sveglia dalla <code>fork</code> come <em>child</em> deve capire <em>dove si trova.</em></p>
+<h2 id="13-creazione-di-processi"><a class="header" href="#13-creazione-di-processi">1.3 Creazione di processi</a></h2>
+<p><img src="images/processi/image%207.png" alt="image.png" /></p>
+<p>Per questo motivo nei sistemi <strong>Unix</strong>, subito dopo la <code>fork</code>, spesso, se si è <em>child</em>, si invoca <code>exec</code>.</p>
+<p><em>Cosa fa exec?</em> <strong>Spiana completamente lo spazio di indirizzamento e lo sostituisce con il contenuto di un file eseguibile.</strong>
+Notate che <code>exec</code> può essere chiamata da qualunque programma in qualunque momento. Io ho un programma che inizia a fare in un certo modo e poi invoco <code>exec ls</code>. <em>Cosa succede?</em> Che il mio programma ha fatto alcune cose e poi finisce come se avessi chiamato <code>ls</code>. Perché <code>exec</code> dice <em>“Ok, butta via tutto e riparti da zero”</em>.</p>
+<p><code>exec</code> qui è scritto con l'asterisco perché viene in tante diverse versioni (<code>execl</code>, <code>exece</code>, <code>execle</code> etc…), la differenza tra le versioni è solo sui parametri che mettiamo. Quelli che hanno una <code>e</code> al fondo hanno un parametro aggiuntivo che contiene un puntatore alle <em>variabili d'ambiente</em>. Quelli che prima della <code>e</code> hanno una <code>l</code> ricevono una <em>lista di parametri</em>. Quelli che prima della <code>e</code> hanno una <code>v</code> ricevono un <em>vettore</em>, cioè un array di parametri. Quindi la differenza è su <em>come io passo i parametri alla mia funzione</em>. Ma sostanzialmente, a parte questo, sono tutti uguali.</p>
+<h3 id="131-esempio"><a class="header" href="#131-esempio">1.3.1 Esempio</a></h3>
+<p><img src="images/processi/image%208.png" alt="image.png" /></p>
+<p>Vediamo un esempio banale. Io qui in un <code>main</code> semplice scritto in C, la prima cosa che faccio all'interno del main è invocare <code>fork</code>.</p>
+<p><code>fork</code> è una funzione che quando esce mi ritorna un numero.</p>
+<p><strong><code>fork</code> viene chiamata una volta ma esce due volte:</strong> una volta nello spazio di indirizzamento del processo <em>padre</em>, una volta nello spazio di indirizzamento del processo <em>figlio</em>.
+<em>Come le distinguo?</em> Se il valore che restituisce <code>fork</code> vale <code>0</code> sono il figlio, se non vale <code>0</code> sono il padre.
+Se non vale <code>0</code> quel numero che mi restituisce è il <strong>PID</strong>, il <em>process ID</em> del figlio. Questo mi permette di sapere che ho fatto un figlio e il sistema operativo me l'ha chiamato <code>77</code>.</p>
+<p>Il figlio stesso invece se vuole sapere come si chiama lui deve chiamare la system call <code>getpid</code> che gli restituisce il suo nome. Oppure può chiamare la funzione system call <code>getppid</code> che gli ritorna il <em>parent pid</em>, cioè il process ID del suo genitore. Questo perché in <strong>Unix</strong>, i processi mantengono una <strong>forte relazione padre-figlio</strong> proprio per via della <code>fork</code>. In <strong>Windows</strong> questa relazione è debolissima per cui non c'è un equivalente così, soprattutto non c'è l'equivalente della <code>fork</code>.</p>
+<p><strong><code>fork</code></strong> potrebbe anche restituire <code>-1</code> nel caso in cui il sistema operativo non avesse risorse necessarie a creare un ulteriore processo. Nell’esempio in slide viene fatto uno <code>switch</code> sul valore ritornato da <code>fork</code>:</p>
+<ul>
+<li>Se viene ritornato <code>-1</code>, si pianta lì tutto dicendo che c'è stato un problema</li>
+<li>Se ritorna <code>0</code>, questa è l'istanza nel processo <em>figlio</em> e quindi ho la possibilità di fare cose diverse.
+In questo caso viene invocato un processo completamente diverso: il processo <code>ch.exe</code>. Quando viene invocato <code>execl</code>, lo spazio di indirizzamento viene completamente reinizializzato col contenuto dell'eseguibile, perdendo ogni altra cosa. Quindi alle righe dopo <code>execl</code> non ci arriviamo nemmeno.</li>
+<li>Se invece non ha ritornato né <code>-1</code> né <code>0</code>, vuol dire che questa è la copia del processo <em>padre</em>, nel qual caso stampa semplicemente come si chiama il processo figlio e ritorna.</li>
+</ul>
+<h2 id="14-fork-e-thread"><a class="header" href="#14-fork-e-thread">1.4 <code>fork()</code> e thread</a></h2>
+<p><img src="images/processi/image%209.png" alt="image.png" /></p>
+<p>Questo aspetto è importante da capire: se il processo padre nel momento in cui chiama la <code>fork</code> avesse più di un thread, uno di questi è quello che chiama <code>fork</code>, ma gli altri che cosa stanno facendo? Boh, non lo sappiamo. In ogni caso nel processo padre rimangono <strong>tutti i thread</strong> che c'erano, mentre nel processo figlio <strong>resta un solo thread</strong>, che comincia dall'uscita della <code>fork</code> avendo la storia pregressa ricevuta dal padre.</p>
+<p><strong>Questo può portare dei disastri</strong>, perché se uno degli altri thread possedeva un mutex, nel padre tutto continua perfettamente, ma nel figlio il mutex rimane di possesso di qualcuno <em>che non c'è più</em>, di cui si è persa completamente traccia. E il thread unico che ha, se mai cercasse di chiedere l'accesso a quel mutex, non lo potrebbe ottenere, perché il mutex risulta occupato, ma <em>nessuno lo potrà mai rilasciare</em>.</p>
+<p>Per questo motivo, quando sono stati introdotti i thread nella specifica <strong>POSIX</strong>, cercando di razionalizzare un po' le cose, è stata aggiunta una funzione che si chiama <code>pthread_atfork</code>, che serve a dire <em>“Che cosa bisogna fare con i thread nel momento in cui si fa la fork?”</em></p>
+<p>Questa funzione riceve <strong>tre parametri</strong>, che sono tre puntatori a funzione:</p>
+<ul>
+<li>Il primo puntatore a funzione viene chiamato <em>prima</em> di fare la fork, serve a garantire che nel processo padre si faccia qualche forma di pulizia</li>
+<li>Le restanti due vengono eseguite in modo esclusivo solo nel figlio o solo nel padre:
+<ul>
+<li>Una si chiama <code>parent</code>, ovviamente va rieseguita solo nel padre</li>
+<li>L'altra si chiama <code>child</code>, solo nel figlio</li>
+</ul>
+</li>
+</ul>
+<p><em>A cosa servono?</em></p>
+<ul>
+<li>Quella di preparazione serve a fermare tutti i thread, a fargli rilasciare le cose, eccetera, insomma aspettare che ci siano le condizioni per poter creare il nuovo processo</li>
+<li>Le altre due servono a rimettere a posto le cose come vanno rimesse a posto, una volta che si è creato il nuovo processo</li>
+</ul>
+<h3 id="141-esempio"><a class="header" href="#141-esempio">1.4.1 Esempio</a></h3>
+<p><img src="images/processi/image%2010.png" alt="image.png" /></p>
+<p><img src="images/processi/image%2011.png" alt="image.png" /></p>
+<p>Qui vediamo cosa succede: il processo genitore chiama <code>fork</code> nel suo main, avendo precedentemente invocato <code>pthread_atfork(f1, f2, f3)</code>, dove <code>f1</code>, <code>f2</code>, ed <code>f3</code> sono tre funzioni che dobbiamo definire noi.</p>
+<p>Nel momento in cui chiamassimo <code>fork</code>, automaticamente, prima che avvenga qualunque cosa, verrebbe chiamato <code>f1</code>, che ha la possibilità di preparare le condizioni, dopodiché avverrebbe l'effettiva duplicazione del processo, e poi il processo padre continuerebbe invocando <code>f2</code>, e poi dalla <code>fork</code> esce con l'indicazione del <em>child</em>, <code>pid</code>.</p>
+<p><img src="images/processi/image%2012.png" alt="image.png" /></p>
+<p>Nel <strong>figlio</strong>, invece, quello che succede è che dalla <code>fork</code> esce un unico thread, che per prima cosa chiama <code>f3</code>. Quando <code>f3</code> ritorna, prosegue uscendo dalla <code>fork</code> col valore <code>0</code>, e poi di lì continua come gli pare.</p>
+<p><img src="images/processi/image%2013.png" alt="image.png" /></p>
+<p><strong>Questo è importante da capire</strong> perché in un contesto di programmazione multiprocesso, se voi volete continuare in un processo figlio sfruttando il meccanismo della <code>fork</code>, quindi senza buttare via lo spazio di indirizzamento attuale e reinizializzarlo facendo un <code>exec</code>, ma volete semplicemente continuare, dovete tener conto che in un contesto multi thread questo può portare tutta una serie di problemi e dovete prendere necessarie contromisure.</p>
+<p>I processi tendenzialmente, una volta creati, si svolgono fino a che il <em><strong>thread principale</strong></em> presente al loro interno non termina. Se il thread principale presente al loro interno genera uno o più thread, l'esecuzione continua fino a che esiste <strong>almeno un thread</strong>, oppure semplicemente fino a che il thread principale non muore del tutto, oppure fino a che uno dei thread secondari non muore in modo anomalo, e così via. Qui c'è tutta una casistica complicatissima dove sistemi operativi vari fanno cose diverse.</p>
+<p><img src="images/processi/image%2014.png" alt="image.png" /></p>
+<p>Un singolo thread, qualunque esso sia, sia esso il principale o il secondario, può in qualunque momento chiedere di piantarla lì. <em><strong>Come?</strong></em></p>
+<ul>
+<li>In <strong>Windows</strong> invocando <code>ExitProcess</code></li>
+<li>In <strong>Linux</strong> invocando la system call che si chiama <code>_exit</code></li>
+</ul>
+<p>In entrambi i casi passa un numerino intero a 8 bit, che rappresenta il <em>codice di uscita</em>. Questo codice di uscita potrà essere usato da altri processi per capire se è morto bene o morto male.</p>
+<p>La convenzione che si usa:</p>
+<ul>
+<li>Se il codice di uscita è 0 tutto è andato per il meglio, il processo ha fatto quello che ci si aspettava facesse</li>
+<li>Se il codice di uscita è diverso da 0, quel codice rappresenta condizioni anormali, e non c'è nessuna convenzione: ognuno sceglie quel che gli pare. Ad esempio, termino con 32. <em>Che vuol dire 32?</em> Boh, bisogna leggere nella documentazione del programma, ammesso che ci sia.</li>
+</ul>
+<p>La chiusura del processo, l'invocazione di <code>_exit</code> o di <code>ExitProcess</code>, comporta l'<strong>immediata terminazione</strong> di tutti i thread che sono presenti. Questi immediatamente vengono marcati come <em>"not runnable"</em> e poi buttati via, bruscamente e senza svuotare i loro stack, di conseguenza senza fare nessuna azione associata a eventuali distruttori presenti all'interno. Se ci sono dei file aperti, questi vengono marcati come "chiusi". Se, nel caso di <strong>Windows</strong>, sono state mappate all'interno di questo processo delle DLL, queste DLL vengono <em>"unmapped"</em>, vengono rilasciate.</p>
+<p><img src="images/processi/image%2015.png" alt="image.png" /></p>
+<p>In <strong>Linux</strong> noi possiamo chiamare la system call <code>_exit</code>, che viene riverberata anche nella libreria standard del C e del C++. La differenza è solo sintattica: in C si chiama solo <code>exit</code>, è una funzione semplice, in C++ si chiama <code>std::exit</code>. In entrambi i casi c'è la possibilità di registrare a priori una callback che sarà invocata per permettere qualche operazione di clean up generale. Lo si fa invocando la funzione <code>atexit</code> e passando il puntatore di una funzione da chiamare.</p>
+<p><img src="images/processi/image%2016.png" alt="image.png" /></p>
+<p>Quando il thread principale finisce, e quindi la funzione <code>main</code> (o chi per lei) ritorna al suo chiamante, il codice di startup aggiunge automaticamente una <code>exit</code>, passando come valore di ritorno il codice ritornato da <code>main</code>. Per cui in C dove <code>main</code> ha come signature <code>int main(int argc, char** argv)</code>, quell'<code>int</code> ritornato viene usato come codice di ritorno del processo. Quindi se <code>main</code> fa <code>return 5</code>, il processo termina col codice 5. Se <code>main</code> fa <code>return 0</code>, il processo termina ritornando 0.</p>
+<p><img src="images/processi/image%2017.png" alt="image.png" /></p>
+<p><strong>Notate</strong> che il fatto che <code>main</code> ritorni, quindi, vuol dire che chiamando <code>exit</code> e tutti i thread terminano.</p>
+<p>I <strong>thread secondari</strong> sono tutti costruiti con un costrutto <code>try catch</code> che, in caso di eccezione non gestita, chiama la <code>exit</code>. A seconda del sistema operativo viene usato un codice diverso (-1, 17, 52), ma viene sempre chiamata <code>exit</code>. In realtà, viene invocata <code>terminate</code> che a sua volta esegue <code>exit</code> con un codice non zero. Se un thread secondario termina in modo anomalo, l'intero processo viene terminato restituendo un codice non zero. <em>Questo comportamento è presente in C e C++, ma non in Java né in Rust.</em></p>
+<p><strong>Vediamo cosa capita in Rust</strong>.</p>
+<h1 id="2-processi-in-rust"><a class="header" href="#2-processi-in-rust">2. Processi in Rust</a></h1>
+<p><img src="images/processi/image%2018.png" alt="image.png" /></p>
+<p>Prima di tutto Rust ci mette a disposizione un modulo che si chiama <code>std::process</code> che contiene un insieme di strutture dati mediante le quali possiamo:</p>
+<ul>
+<li>creare un processo</li>
+<li>attendere la terminazione di un processo</li>
+<li>chiedere informazioni al sistema operativo su quali sono i processi che esistono</li>
+</ul>
+<p>Quindi ci mette a disposizione delle astrazioni che cercano di nascondere le differenze grandi che i diversi sistemi operativi hanno al loro interno.</p>
+<p>In particolare, per poter creare un nuovo processo all'interno di Rust usiamo la struct che si chiama <code>Command</code>. Quindi <code>Command::new</code> ci permette fondamentalmente di creare un nuovo processo, passandogli dei parametri e quindi dicendo che questo processo deve:</p>
+<ul>
+<li>cominciare caricando un certo eseguibile</li>
+<li>ricevere determinati parametri che userà per comportarsi in modo opportuno</li>
+</ul>
+<p>Inoltre potremo:</p>
+<ul>
+<li>customizzare l'insieme delle variabili d'ambiente</li>
+<li>aspettare che questo processo non solo parta ma anche che finisca</li>
+<li>indicargli un contenuto dello standard input a priori oppure fare in modo che il suo standard input venga prelevato da qualche fonte particolare</li>
+<li>prelevare il contenuto del suo <strong>standard output</strong> quando sarà terminato e leggerlo sotto forma di stringa o sotto forma di array, e lo stesso potremmo fare con <strong>standard error</strong></li>
+</ul>
+<p><img src="images/processi/image%2019.png" alt="image.png" /></p>
+<p>In particolare, noi creiamo un nuovo processo con <code>Command::new</code> che è un <em>builder</em>: <code>Command::new</code> non ha ancora costruito il processo stesso.</p>
+<p>In questo caso <code>Command::new("cmd.exe")</code>, questo vuol dire che provo a creare un prompt dei comandi (se sono in Windows), <em>e cosa passo a questo prompt di command?</em>
+Ho la possibilità di farci delle cose: ad esempio <code>.args()</code> accetta un array di stringhe (di <code>str</code> in realtà), dove posso indicare quali argomenti voglio dare, se io sto compilando questo programma sotto Windows lancerò <code>cmd</code> e gli passerò <code>/C</code> maiuscolo e poi <code>echo hello</code>. Sto preparando l'esecuzione del nuovo processo, ma al momento non è ancora partito.</p>
+<p>Per farlo partire davvero devo invocare <code>.output()</code>, o un altro metodo analogo.
+Questo fa sì che il processo parta e mi venga restituita una <code>struct</code> destinata a contenere i dettagli di questo processo, in particolare ci troverò il suo <strong>standard input</strong>, il suo <strong>standard output</strong>, il suo <strong>standard error</strong> e così via, e il suo codice d'errore.</p>
+<p><code>output()</code> ritorna un <code>Result</code>, quindi di solito si fa l'<code>unwrap()</code> o l'<code>expect()</code>; se non è possibile creare il processo, <code>output()</code> torna un errore, altrimenti il processo torna normalmente.</p>
+<p>Qua c'è un <strong><code>if</code></strong> che gestiva due casi: se siamo su <strong>Windows</strong> lancia <code>cmd</code>, altrimenti lancia <code>shell</code>. I comandi passati sono diversi: se devo lanciare <code>shell</code>, invece di usare <code>args()</code> che accetta un vettore di stringhe, uso più volte <code>.arg()</code>.
+Ogni chiamata a <code>.arg()</code> aggiunge un argomento per lanciare il programma — in questo caso passo prima <code>-c</code>, poi <code>echo hello</code>. Poi invoco <code>output()</code> per avviare effettivamente il processo e attendere.</p>
+<p>Dopo l'esecuzione, stampo il valore di uscita e posso verificare il codice di errore.</p>
+<p><em>Nota</em>: questa riga è commentata perché <code>ExitStatus</code> qui è definito su <strong><code>unix_wait_status</code></strong>, ma su <strong>Windows</strong> va chiamata una funzione diversa.</p>
+<p><img src="images/processi/image%2020.png" alt="image.png" /></p>
+<p>Quando invoco il processo, oltre a configurare i parametri di ingresso con <code>arg()</code> o <code>args()</code>, posso utilizzare <code>env()</code> o <code>envs()</code> per passare <strong>variabili d'ambiente</strong>. Queste sono coppie chiave-valore (entrambe di tipo stringa) che forniscono parametri addizionali al programma.</p>
+<p>Tipicamente nelle variabili d'ambiente si trova:</p>
+<ul>
+<li>Il <code>PATH</code> - percorsi degli eseguibili</li>
+<li>I percorsi delle librerie</li>
+<li>Credenziali (es. password per database)</li>
+<li>Altri parametri configurabili</li>
+</ul>
+<p>Ogni programma può utilizzare le variabili d'ambiente come preferisce, incluso il non usarle affatto.</p>
+<p>All'interno dell'oggetto <code>output</code> io trovo tre oggetti che si chiamano <strong><code>stdin</code></strong>, <strong><code>stdout</code></strong> e <strong><code>stderr</code></strong>, che mi permettono di configurare quel processo che ho creato da dove legge per default (il suo standard input), dove scrive per default (il suo standard output) e dove scrive le indicazioni degli errori (il suo standard error), che corrispondono nel mondo di Unix in generale, a tre handle: tre file descriptor il cui valore è predefinito <code>0</code>, <code>1</code> e <code>2</code>.</p>
+<ul>
+<li><code>0</code> è standard input</li>
+<li><code>1</code> è standard output</li>
+<li><code>2</code> è standard error</li>
+</ul>
+<p>In Windows non è così, ci sono tre handle predefinite che sono degli alias, degli handle di file veri e propri, che hanno un valore negativo.</p>
+<p>Io posso inizializzare il contenuto di standard input, standard output e standard error con delle funzioni di inizializzazione. Posso dire <code>inherit</code> per dire <em>“Usa lo stesso standard input o lo stesso standard output o lo stesso standard error del processo creante”</em>, cioè di quello in cui sto facendo il mio figlio. Quindi condividiamo — se ad esempio qualcuno scrive sulla tastiera "ciao" lo potranno vedere sia il processo padre che il figlio.</p>
+<p>Standard output, anche qui se uso <code>inherit</code>, le righe stampate l'uno e dell'altro si mescoleranno, come fossero quelle di due thread.</p>
+<p>Posso anche usare l'opzione <strong><code>piped</code></strong>: se la imposto su standard input, il processo leggerà da una <em>pipe</em> (una sorta di canale) di cui io ho a disposizione l'altro estremo, permettendomi di inviargli i dati da leggere. Se imposto <code>piped</code> su standard output o standard error, il processo scriverà su un canale da cui potrò prelevare l'output.</p>
+<p>In alternativa, posso usare l'opzione <strong><code>null</code></strong>: in questo caso, se il processo tenta di leggere troverà subito end of file, mentre se tenta di scrivere l'operazione fallirà.</p>
+<p><img src="images/processi/image%2021.png" alt="image.png" /></p>
+<p>Posso configurare il processo in diversi modi prima di avviarlo. Ad esempio, usando <code>current_dir()</code> posso specificare una cartella di lavoro diversa da quella del processo padre. Per quanto riguarda l'avvio, ho tre opzioni principali:</p>
+<ul>
+<li><strong><code>output()</code></strong> → avvia e attende l'output completo</li>
+<li><strong><code>status()</code></strong> → avvia e si blocca fino alla terminazione</li>
+<li><strong><code>spawn()</code></strong> → avvia senza attendere la terminazione</li>
+</ul>
+<p><img src="images/processi/image%2022.png" alt="image.png" /></p>
+<p>Dopo lo <code>spawn()</code>, ottengo un oggetto <code>Child</code> che contiene i dettagli del processo creato. Questa struttura include anche il metodo <code>kill()</code> che permette di terminare forzatamente il processo figlio prima della sua naturale conclusione.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="16-concorrenza.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="18-processi_parte_2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="16-concorrenza.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="18-processi_parte_2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

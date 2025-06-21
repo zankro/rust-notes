@@ -1,0 +1,648 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Gestione degli Errori</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="gestione-degli-errori---malnati-16"><a class="header" href="#gestione-degli-errori---malnati-16">Gestione degli errori - Malnati 16 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-introduzione">1. Introduzione</a>
+<ul>
+<li><a href="#11-due-tipi-di-errori">1.1 Due Tipi di Errori</a></li>
+<li><a href="#12-come-gestire-gli-errori">1.2 Come Gestire gli Errori</a></li>
+<li><a href="#13-strategie-di-ripristino">1.3 Strategie di Ripristino</a></li>
+<li><a href="#14-rilevamento-degli-errori">1.4 Rilevamento degli Errori</a></li>
+<li><a href="#15-result">1.5 <code>Result</code></a></li>
+<li><a href="#16-option">1.6 <code>Option</code></a></li>
+<li><a href="#17-panic">1.7 <code>panic!</code></a></li>
+</ul>
+</li>
+<li><a href="#2-supporto-sintattico-alla-gestione-degli-errori">2. Supporto sintattico alla gestione degli errori</a>
+<ul>
+<li><a href="#21-eccezioni-in-c">2.1 Eccezioni in C++</a></li>
+<li><a href="#22-i-limiti-della-gestione-delle-eccezioni-in-c">2.2 I limiti della gestione delle eccezioni in C++</a></li>
+</ul>
+</li>
+<li><a href="#3-gestione-delle-eccezioni-in-rust">3. Gestione delle eccezioni in Rust</a>
+<ul>
+<li><a href="#31-elaborare-i-risultati">3.1 Elaborare i risultati</a>
+<ul>
+<li><a href="#311-is_ok-e-is_err">3.1.1 <code>.is_ok()</code> e <code>is_err()</code></a></li>
+<li><a href="#312-ok">3.1.2 <code>.ok()</code></a></li>
+<li><a href="#313-map">3.1.3 <code>.map()</code></a></li>
+<li><a href="#314-contains">3.1.4 <code>.contains()</code></a></li>
+<li><a href="#315-unwrap">3.1.5 <code>.unwrap()</code></a></li>
+</ul>
+</li>
+<li><a href="#32-la-macro-panic">3.2 La macro <code>panic!()</code></a></li>
+<li><a href="#33-ignorare-gli-errori">3.3 Ignorare gli errori</a></li>
+<li><a href="#34-propagare-gli-errori">3.4 Propagare gli errori</a></li>
+<li><a href="#35-propagare-errori-eterogenei">3.5 Propagare errori eterogenei</a>
+<ul>
+<li><a href="#351-boxdyn-errorerror">3.5.1 <code>Box&lt;dyn error::Error&gt;</code></a></li>
+<li><a href="#352-enum-di-errore-custom">3.5.2 Enum di errore custom</a></li>
+<li><a href="#353-thiserror-e-anyhow">3.5.3 <code>thiserror</code> e <code>anyhow</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#4-riferimenti">4. Riferimenti</a></li>
+<li><a href="#5-live-coding-24042024">5. Live coding 24/04/2024</a>
+<ul>
+<li><a href="#creiamo-una-funzione-che-pu%C3%B2-fallire">Creiamo una funzione che può fallire</a></li>
+<li><a href="#modelliamo-lerrore">Modelliamo l'errore</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="1-introduzione"><a class="header" href="#1-introduzione">1. Introduzione</a></h1>
+<p>L'argomento è relativamente facile dal punto di vista strettamente tecnico, perché sono due stupidaggini in croce, ma in realtà è complesso dal punto di vista operativo, perché affronta come gestire gli impossibili errori che si verificano durante lo svolgimento di un programma. Qui la difficoltà non è banalmente cosa faccio per segnalare l'errore o cosa faccio per farci delle cose, ma è: <em>se il mio programma arriva a un punto e si blocca, che strategia metto in atto per farlo funzionare?</em></p>
+<p>Che se volete è un po' il problema che ha uno che parte per un viaggio e buca una gomma. E a quel punto lì il viaggio non può continuare subito. Deve decidere se quella gomma lì la può riparare, ammesso che abbia la ruota di scorta e quindi riesce a cambiarla, oppure se ha il kit per il gonfiaggio, che forse va bene, ma in quel caso lì tiene finché il buco non si dilata e non si sgonfia di nuovo. Oppure la gomma è così lacerata che non c'è verso, non è sostituibile facilmente e quindi bisogna essere trainati via. Questo tipo di situazione che di per sé si può verificare richiede una gestione e quella gestione lì non ha delle soluzioni preconfezionate facili.</p>
+<p>Allora, la difficoltà della gestione degli errori è legata a <strong>capire cosa faccio quando capitano delle cose.</strong>
+Poi chiaramente c'è un pezzo di tecnicismo che adesso affronteremo e vediamo di sviscerare.</p>
+<p>In generale noi sappiamo che una computazione, cioè l'invocazione di una funzione, può risultare con successo, e quindi dar origine al risultato della funzione stessa, oppure può arrestarsi in qualche punto perché capita un evento inatteso. I diversi linguaggi offrono vari tipi di supporto per intervenire e innanzitutto segnalare che è successo qualcosa di strano, e separatamente mettere in atto delle strategie di <em><strong>recovery</strong></em>, cioè cerco di aggiustare le cose in qualche maniera.</p>
+<p><img src="images/gestione_degli_errori/image.png" alt="image.png" /></p>
+<p>Allora, il principio di fondo è che di per sé tutte le computazioni possono fallire. Il fatto che falliscano vuol dire che non solo non ci danno il risultato atteso (se quella è una funzione che dovrà calcolare un dato, beh, il dato non ce l'abbiamo perché mi son fermato prima), ma hanno un secondo problema.
+Se questa computazione produceva degli effetti collaterali, ad esempio se stavo scrivendo un file sul disco, io so che se va tutto bene, e ho scritto la funzione in modo corretto, al termine della funzione il file è sul disco, tutto intero. Ma se la funzione si blocca per qualche motivo, cioè incontra una qualche difficoltà, <em>cosa posso dire del file?</em> Di per sé niente, dipende da dove si è bloccata, magari prima ancora di crearlo e quindi non c'è niente, magari mentre lo sta scrivendo e quindi quel file lì è incompleto, o magari si è rotta dopo, quando quel file lì è già tutto buono. Non so dire di per sé, in assenza di contratti di qualche forma, cosa succeda.</p>
+<p>Questo problema è assolutamente presente, ad esempio, nel mondo dei database. I database correggono questo genere di situazione con il concetto di <em><strong>transazione</strong></em>.
+<em>Cosa succede?</em> Se io devo fare delle operazioni su un database, posso demarcarle con una transazione. La transazione comincia, faccio le mie operazioni, che possono aver successo o fallire. Se falliscono, quello che succede è che la transazione viene <em>rolled back</em>, viene annullata. L'effetto di annullare la transazione è che nel database si mette in atto una qualche strategia che permette di buttare via le modifiche che sono state fatte dall'inizio di questa transazione fino al momento attuale e rimettere come minimo le cose come erano in origine. Che è molto meglio che non lasciarle spaccate a metà.</p>
+<p>Questo però è un concetto che nei sistemi operativi di base non esiste. Il fatto che voi iniziate a scrivere un file non è compreso come pezzo di una transazione. E banalmente voi aprite il file, il sistema operativo ve lo apre, voi scrivete sul file, via via che scrivete, il sistema operativo ci aggiunge delle cose, a un certo punto dite che avete finito e chiudete il file, e va bene. Però il sistema operativo non ha nessuna consapevolezza del fatto che questo file sia in divenire, che sia parte di un'azione più o meno lunga.
+Quando però voi avete bisogno di garantire che quel file lì o c'è tutto o non c'è per niente, allora bisogna mettere in atto qualche meccanismo. Chiaramente con uno sforzo in termini di progetto del vostro codice. Cioè siete voi che dovete pensarci prima, perché né il sistema operativo né i linguaggi vi danno supporto per questa cosa.</p>
+<p><em>Perché mai una computazione dovrebbe fallire?</em>
+Le cause possono essere molto diverse. Alcune sono in qualche modo prevedibili. Nel senso che, se ad esempio l'utente è coinvolto in un'operazione, banalmente perché l'utente deve inserirmi un dato, e quindi nell'ambito della mia operazione chiedo all'utente di darmi questo dato qui, l'utente potrebbe darmi un dato sbagliato. Ad esempio, quando gli chiedo un numero, lui potrebbe scrivere una cosa che non è un numero. Quando cerco di leggerla come numero, l'operazione di parsing fallisce. Ci sta: errare è umano, quindi ci sta, devo prevederlo e in qualche modo monterò un loop che dice <em>"provo a leggere, se questa cosa qua non è un numero ti dico che non è un numero, e te lo chiedo di nuovo".</em> Che chiaramente ha un senso nel momento in cui sono sicuro che c'è l'utente davvero davanti alla tastiera. Perché se il mio programma sarà invece eseguito <code>qualcosa | mio_programma</code> (pipe), e quindi il mio programma non sta leggendo dalla tastiera, ma sta leggendo dall'output di qualche altro programma, perché l'ho montato così con la pipe, e beh, lui potrà anche dire "non è un numero”, ma chi gli sta mandando i dati non è che lo capisce. Quindi da lì in avanti succedono dei mostri.</p>
+<p>Quindi questi li posso in qualche modo immaginare e posso cercare di costruire il mio software affinché possa essere in qualche modo robusto. Altri invece no, cioè possono anche essere immaginati, ma esattamente come ciascuno di noi ha presente che potrebbe morire tra un nanosecondo perché gli viene un coccolone, mediamente non agisce sulla base di questo. Il fatto che quella cosa sia di per sé possibile non vuol dire che viviamo con un'angoscia di questa cosa.</p>
+<p>Nel nostro contesto, <em>che cosa potrebbe capitare?</em>
+Ad esempio, banalmente sto scrivendo sul disco e il disco si riempie.</p>
+<p>Noi siamo abituati ormai ad avere dischi che sono molto grossi, per cui è normalissimo, comprate un PC che ci sia un tera di disco, anche di più. Ma nonostante questo ci troviamo a gestire spesso e volentieri montagne di dati. Un po' perché scarichiamo film a destra manca, un po' perché magari siamo appassionati di Big Data e tritiamo delle cose di qualche tipo, e quindi, nonostante il fatto che abbiamo dei dischi via via sempre più grossi, li riempiamo facilmente.</p>
+<p>A volte può essere un problema magari di rete. Il mio programma tinge per una parte dei suoi dati da delle informazioni che arrivano dalla rete, in modo più o meno conscio. Perché magari io sono convinto di leggere dal file che si chiama pippo.txt, ma quel file lì, pippo.txt, è servito da un driver remoto. E cosa succede? Succede che magari la rete si interrompe. Qualcuno ha spento l'access point e all’improvviso quello che mi sembrava essere un file locale, non c'è più. È andato via. Oppure leggevo da una chiavetta USB e qualcuno l'ha tirata via. Lì non c'è il recovery che tenga, non ci possiamo fare niente.</p>
+<h3 id="11-due-tipi-di-errori"><a class="header" href="#11-due-tipi-di-errori">1.1 Due Tipi di Errori</a></h3>
+<p>Indipendentemente dalla causa che ha prodotto questo errore, posso dividere i nostri errori in due famiglie:</p>
+<ul>
+<li><strong>Errori Recuperabili:</strong> quelli per i quali sono in grado di mettere in atto una strategia di ripristino. Ci posso fare qualcosa.</li>
+<li><strong>Errori Irrecuperabili:</strong> quelli per cui non ci posso fare nulla.</li>
+</ul>
+<p>E se non ci posso fare nulla, l'unica alternativa che ho è piantarla lì. Fermarmi. Perché qualunque cosa cercassi di fare di seguito, mancherebbe dei presupposti e quindi sarebbe potenzialmente anche dannosa.</p>
+<p>"<em>Ex falso, sequitur quodlibet</em>" — si può dedurre qualsiasi cosa da premesse false. Per esempio, potrei dimostrarvi che 1=2 usando semplici passaggi matematici. Il problema è che per farlo dovrei dividere per zero — un'operazione matematicamente illecita. Questa manipolazione invalida tutto il ragionamento successivo. È per questo che devo fermarmi: proseguire significherebbe solo produrre conclusioni prive di senso.</p>
+<h3 id="12-come-gestire-gli-errori"><a class="header" href="#12-come-gestire-gli-errori">1.2 Come Gestire gli Errori</a></h3>
+<p>La scelta di ciò che è recuperabile o irrecuperabile non può derivare dal linguaggio, dal sistema operativo o dall'intelligenza artificiale. Può nascere solo dal buonsenso di chi analizza attentamente il proprio problema, lo comprende a fondo e ne valuta tutte le possibili conseguenze.</p>
+<p><img src="images/gestione_degli_errori/image%201.png" alt="image.png" /></p>
+<p>In caso di errore irrecuperabile, l'azione tipica è terminare il processo. Mi fermo, lasciando che qualcuno intervenga in seguito per risolvere il problema. La questione è che la terminazione può avvenire in due modi: brusca e immediata, oppure graduale, eseguendo una serie di operazioni per lasciare tutto in ordine prima di fermarsi.</p>
+<h3 id="13-strategie-di-ripristino"><a class="header" href="#13-strategie-di-ripristino">1.3 Strategie di Ripristino</a></h3>
+<p>Quando sono di fronte a errori che reputo di tipo recuperabile, allora posso provare una qualche strategia di ripristino.</p>
+<p><em>Quali sono le strategie di ripristino?</em>
+Alla buona ce ne sono quelle legate al <em>"ci provo ancora".</em> Alcuni mali si guariscono in questa maniera.</p>
+<p>Esempi:</p>
+<ul>
+<li><strong>Retry con l'utente:</strong> L'utente ha scritto una cosa sbagliata, gli dico <em>"no, è sbagliato, dimmelo di nuovo".</em> Se lì davvero c'è l'utente, può dar sì che ce la faccio.</li>
+<li><strong>Retry di rete:</strong> Una connessione di rete andata in timeout. Posso sperare che la rete non sia definitivamente rotta, ma che sia stata solo parzialmente intasata. E quindi anche in questo caso posso riprovare, magari mettendoci una pausa in mezzo. Dico <em>"aspettiamo 10 secondi, poi ci riprovo".</em> Magari si ripiglia.</li>
+</ul>
+<p>Buona parte dei malfunzionamenti nascono in realtà da congestioni temporanee o meccanismi che hanno un auto recovery indipendente da me, che fa sì che se io riprovo la stessa azione dopo tempo, può dar sì che quella cosa lì vada a posto.</p>
+<p>In altri casi posso invece provare a invocare un amministratore, cioè a coinvolgere un utente in qualche modo. Gli mando una mail dicendo <em>"attenzione, io mi devo fermare, magari invece che spegnermi mi blocco e non vado avanti fino a che tu, caro amministratore, non fai una certa cosa".</em></p>
+<p>In alcuni casi posso provare a fare quella cosa che stavo facendo in un modo diverso. Se ce l'ho, magari per certi tipi di operazione ammettono due o più approcci, uno dei quali efficiente, interessante, simpatico, che quindi normalmente scelgo, e uno brutto, noioso e lento, che però in mancanza d'altro va anche bene.</p>
+<h3 id="14-rilevamento-degli-errori"><a class="header" href="#14-rilevamento-degli-errori">1.4 Rilevamento degli Errori</a></h3>
+<p>Piccolo problema. <em>Dov'è che mi accorgo che si è rotto qualcosa?</em>
+Tipicamente nel provare a fare una qualche operazione, dove è coinvolto un pezzo di sistema che si può rompere. Ad esempio, dove faccio qualche operazione di I/O, che normalmente è embedded in una system call. Quel punto lì preciso potrebbe non saperne a sufficienza di che cosa realmente sto facendo.</p>
+<p>Supponiamo di scrivere su un file e che il disco sia pieno. L'operazione di scrittura sul file la fa il sistema operativo, che riceve la system call <code>write</code> che è responsabile di andare e aggiungere nel file quello che sto scrivendo.</p>
+<p><em>Chi è che chiama questa system call?</em>
+Non sono certo io programmatore applicativo. Io programmatore applicativo chiamo la libreria del linguaggio, che avrà il metodo <code>write_file</code>, supponiamo, che è responsabile di scrivere. Il metodo <code>write_file</code> chiama la system call, la system call dentro si accorge che c'è qualcosa di rotto, restituisce un codice di errore, e poi il metodo <code>write_file</code> prende atto di questo codice d'errore, ma non sa che cosa farsene. Perché il metodo <code>write_file</code> è genericissimo, me l'ha scritto qualcuno che ha fatto la libreria standard del linguaggio, qualunque esso sia, e non può sapere minimamente che file sto scrivendo, perché lo sto scrivendo, che tipo di assunzioni ci voglio fare. E quindi, sebbene lui se ne sia accorto che c'è stato un errore, non ci può fare niente. E quindi deve passare questa informazione al suo chiamante.</p>
+<p>Questo vuol dire che l'operazione <code>write_file</code> deve essere congegnata in modo tale che se il sistema operativo gli dice di no, supponendo che <code>write_file</code> debba fare più pezzi, se in uno qualunque dei suoi passaggi si accorge che quel passaggio lì non può essere fatto, deve tornare al chiamante. <strong>Ma deve tornare al chiamante con l'indicazione che è andato qualcosa storto.</strong></p>
+<p>Il sistema operativo nelle system call definisce, in modo molto puntuale, come ritorna i codici di errore. Ogni system call è documentata e ti dice "io ho un valore di ritorno", se ritorno un numero 0 vuol dire che è andato bene, un numero diverso da 0 è un codice d'errore, dove 35 vuol dire questo, -2 vuol dire quell'altro, e così via. E quindi lì c'è un'interfaccia predefinita, ben fatta.</p>
+<p>Se tu chiami la system call, non è detto che quell'interfaccia lì possa essere propagata così com'è, perché quello che ha senso a basso livello non ha necessariamente senso in contesti diversi. E quindi devo trovare un modo di segnalare al mio chiamante che si è rotto qualcosa. Anzi, devo segnalare al mio chiamante <em>cosa</em> si è rotto. Quindi non solo che si è rotto qualcosa, ma possibilmente anche cosa si è rotto, perché solo sapendo cosa si è rotto il chiamante potrà decidere se ha una strategia da mettere in atto oppure no.</p>
+<p>Chiaramente noi potremmo usare un approccio simile a quello delle system call restituendo un numero. Un numero però è un problematico, perché supponiamo che 27 voglia dire <em>"File not found".</em> <em>Quale</em> file non hai trovato? Io so solo "File not found", ma non so <em>quale</em> file. Al chiamante magari questa informazione gli potrebbe servire. Oppure potrei volergli dire <em>"non ho scritto tutto".</em> Ma <em>quanto</em> hai scritto? Mi servono dei dettagli. Ogni errore viene con delle informazioni, possibilmente aggiuntive, che fanno capire al chiamante che cosa possa essere successo.</p>
+<p><em>Come trasporto queste informazioni aggiuntive?</em>
+Questo può dare origine a strategie diverse, e qui nella storia dei linguaggi di programmazione sono successe cose varie, dove abbiamo assistito a un movimento prima in un senso, poi nel senso opposto. In ogni caso, val la pena rendersi conto che qualunque cosa io faccio, il mio programma si complica tantissimo.</p>
+<p>Se prima ho una semplice operazione che legge dal file 1, riempie un buffer, scrive sul file 2 e chiude entrambi i file — quindi una funzione basilare con <code>read</code>, <code>write</code>, <code>close</code>, <code>close</code> — nel momento in cui tutte e quattro queste funzioni possono fallire, il mio codice si trasforma in "<em>if</em> fallisce read, fai questo, <em>else if</em> fallisce write, fai quello, <em>else if</em> fallisce la prima close, fai quest'altro, <em>else if</em> fallisce l'altra close, fai quell'altro ancora, <em>else</em> finalmente tutto è andato bene, ritorna il successo". E così quel programma, che prima era chiarissimo da leggere, è diventato un gineprario.</p>
+<p>Perché si hanno "if" annidati uno dentro l'altro, e se le azioni invece di essere quattro fossero 40 — cosa del tutto plausibile — il codice diventa illeggibile. Se poi queste azioni sono dentro un loop, è un vero disastro: diventa impossibile da mantenere. Chi lo legge si mette le mani nei capelli, e rischia di fare anche danni nel tentativo di modificarlo, perché perde completamente il filo della logica.</p>
+<p>Se poi qualche programmatore un po' creativo, a volte dice <em>"if è andato bene”</em>, e altre volte dice <em>"if è andato male”</em>, lì è la disperazione. Perché quello che prima almeno in un caso aveva una struttura standard, e quindi avevo sempre il ramo del "then" che mi indicava una condizione sbagliata, e sempre il ramo dell’ "else" che mi indicava una condizione giusta, o viceversa, se io comincio a fare certe volte il check positivo, certe volte il check negativo, non so più qual è il ramo giusto su cui devo muovermi. Disastro.</p>
+<p>Per questo motivo, a un certo punto nella storia, si è iniziato a mettere in discussione l'approccio in cui le funzioni restituivano semplicemente un codice d'errore, senza regole chiare sul suo significato. Poteva essere un numero, un booleano o una stringa, ma come si potevano comunicare dettagli aggiuntivi sull'errore? Nel linguaggio C, storicamente, non esisteva alcun meccanismo per farlo.</p>
+<p>Se voi prendete la definizione di Windows, che è pure un sistema operativo che ha i suoi 30 anni di storia, e andate a guardare come Windows segnala i suoi errori, allora Windows non vi lascia accedere alle system calls. Le system calls di Windows sono tutte schermate da funzioni, scritte in C, esportate dal file che si chiama <code>system.dll</code>, piuttosto che <code>gdi.dll</code>, piuttosto che <code>user.dll</code>. Quindi voi accedete alle system calls solo chiamando funzioni di quel tipo lì, contenute in quelle dll lì.</p>
+<p>Quelle funzioni sono funzioni tipo <code>create_file</code>, questa prende 27 parametri e ti restituisce qualche cosa, per dire se l'ha creato o meno. Un'altra è <code>write_file</code>.</p>
+<p>Come sono congegnate queste funzioni? Disperazione: alcune tornano un booleano. Di solito con la convenzione che se è true l'operazione è andata bene, se è false è andata male. E se è andata male, <em>come</em> è andata male? Boh.</p>
+<p>Altre funzioni ritornano un intero, con la convenzione che zero indica successo, mentre altri valori indicano errori. <em>E come si interpreta questo codice?</em> Si esamina il bit più significativo: se è 1, indica un errore del kernel. Se è 0, si controlla il secondo bit più significativo: se è 1, significa che l'errore è avvenuto nel wrapper tra il codice utente e il kernel. Se entrambi i bit sono 0, si tratta di un errore applicativo che il programmatore deve gestire autonomamente. I bit rimanenti specificano il tipo specifico di errore verificatosi.</p>
+<p>Ma è anche possibile che la funzione restituisca non un numero ma un handle, definito come <code>void*</code>, quindi un puntatore, con la convenzione che se non è <code>NULL</code> l'operazione è andata bene, mentre se è <code>NULL</code> è fallita. Siamo alla convenzione opposta di prima — un vero disastro! Il programmatore che deve scrivere codice per Windows si trova quindi completamente disorientato.</p>
+<p><strong>È difficilissimo capire</strong>, data una funzione, che tra l'altro non sai neanche bene che è di sistema, perché si maschera, siccome non è una system call ben definita, cioè che ha una sua cosa, ma è semplicemente il nome di una funzione che sai a memoria che <code>create_file</code> te la dà il sistema operativo, ma nessuno ti impedirebbe di fartene tu una che si chiama <code>create_file</code>, cioè non ha una evidenza del suo comportamento. E devi andare a cercare tu, il tapino che l'ha inventata, quale strana idea si è messo in testa come logica di gestione degli errori.</p>
+<p>Per questo motivo a un certo punto nella storia la gente ha cominciato a rifletterci e dire bisogna che il linguaggio mi dia un modo preciso per distinguere i comportamenti corretti dai comportamenti non corretti. E così è nata l'idea delle <em><strong>eccezioni</strong></em>.</p>
+<p>Le eccezioni sono state introdotte in C++ e sono state abbracciate da Java che le ha poi propagate quasi come un'infezione alla maggior parte dei linguaggi moderni. Per cui trovate le eccezioni in JavaScript, trovate le eccezioni in Python, trovate le eccezioni da altre parti. <strong>Disastro.</strong></p>
+<p><em>Perché è disastro?</em> Perché il concetto di eccezione, su cui vale la pena di spenderci due minuti per la sua onnipresenza nella maggior parte dei linguaggi e per il fatto che spesso e volentieri i programmatori, soprattutto quelli junior, non ci riflettono abbastanza, nascondono una serie di problemi.</p>
+<p>I signori che hanno progettato Rust avendo imparato la lezione che le eccezioni <strong>non sono la soluzione migliore</strong>, hanno fatto un mezzo passo indietro, tornando all'idea dei codici di ritorno, ma con un'importantissima differenza, dicendo "<em>non è che lo definisce il programmatore a caso, a volte true, a volte false, a volte uno, a volte zero, o cose del genere. Guarda, io ti metto a disposizione <strong>nel linguaggio</strong> una struttura dati, una <strong>enum</strong> fatta apposta, col quale descrivi se la tua cosa è andata bene o è andata male. Se è andata bene mi descrivi il suo <strong>risultato</strong>, se è andata male mi descrivi <strong>perché</strong></em>".</p>
+<h3 id="15-result"><a class="header" href="#15-result">1.5 <code>Result</code></a></h3>
+<p>Questa enum si chiama <strong><code>Result</code></strong>, ed è un tipo generico perché dipende da due sottotipi. <code>T</code>, che è il tipo che descrive se la cosa è andata bene qual è il vero risultato della funzione. Per cui posso avere funzioni che ritornano <code>String</code>, e quello lì sarà un <strong><code>Result&lt;String, E&gt;</code></strong>. O delle funzioni che ritornano dei booleani, e quello lì sarà un <code>Result&lt;Boolean, E&gt;</code>.</p>
+<p>Quindi il primo parametro di Result serve a descrivere quella particolare funzione, che cosa ritorna se va bene. Il secondo parametro di <code>Result</code> serve a dirmi se quella funzione invece ritorna perché qualcosa è andato storto, che cosa mi devo aspettare? Ed è il tipo <code>E</code>. Tipo <code>E</code> che può essere di per sé qualunque cosa, proprio come il tipo <code>T</code>, ma che normalmente si sceglie che sia un tipo che implementa il tratto <code>Error</code>. Perché implementando il tratto <code>Error</code> ci dà alcune garanzie sulla describilità e sulla utilizzabilità dell' <code>Error</code> stesso. Dopodiché non c'è un vincolo che sia un oggetto che implementa il tratto <code>Error</code>. Ma è molto conveniente se gli facciamo implementare il tratto <code>Error</code>.</p>
+<p>In alcuni casi io posso semplicemente dire che non ho potuto fare quanto atteso, e quindi è possibile, in alternativa a usare <strong><code>Result</code></strong>, segnalare gli errori con il concetto di <strong><code>Option</code></strong>.</p>
+<h3 id="16-option"><a class="header" href="#16-option">1.6 <code>Option</code></a></h3>
+<p><code>Option</code> vuol dire: può darsi che ti dia il tuo risultato; se per qualche motivo non riesco a calcolarlo sappi che ti ritorno <code>None</code>.
+<code>None</code> ti fa capire che il risultato non ce l'hai, ma non <em>perché</em> non l'hai avuto. Va bene in quelle situazioni più semplici in cui in fondo non ci importa sapere perché non è stato possibile, ci basta sapere che non è stato possibile.</p>
+<h3 id="17-panic"><a class="header" href="#17-panic">1.7 <code>panic!</code></a></h3>
+<p>E poi ci dà ancora un altro pezzo che è la macro <code>panic</code> che abbiamo in qualche modo già incrociato nel codice che abbiamo scritto.</p>
+<h1 id="2-supporto-sintattico-alla-gestione-degli-errori"><a class="header" href="#2-supporto-sintattico-alla-gestione-degli-errori">2. Supporto sintattico alla gestione degli errori</a></h1>
+<p><img src="images/gestione_degli_errori/image%202.png" alt="image.png" /></p>
+<p>Prima di vedere però i dettagli di cosa ci dà Rust facciamo uno zoom sui costrutti che sono presenti nella maggior parte degli altri linguaggi che si chiamano <code>try</code>, <code>catch</code>, <code>throw</code> e in alcuni casi <code>finally</code>. Nel senso che <code>finally</code> non è presente ovunque, ma è presente uniformemente dalle varie parti.</p>
+<h2 id="21-eccezioni-in-c"><a class="header" href="#21-eccezioni-in-c">2.1 Eccezioni in C++</a></h2>
+<p><img src="images/gestione_degli_errori/image%203.png" alt="image.png" /></p>
+<p>Allora, detto che il C come linguaggio non vi dà nessun supporto — quindi né modi per indicare che cosa è andato bene e che cosa è andato male (lo scegliete voi a vostro piacimento) né modi per forzare una terminazione avanzata se non l'istruzione <code>return</code> in quanto tale, il C++ invece ha cominciato a introdurre il concetto di <strong>eccezione</strong>.</p>
+<p>In C++ un'eccezione è un dato qualunque: potete usare un numero, potete usare una stringa, potete usare la classe <code>std::exception</code> o una sua derivata, potete usare una lista, potete usare quello che vi pare. Dovete scegliere un tipo di dato per descrivere cosa si è rotto.</p>
+<p>Dopodiché una funzione al suo interno può contenere, in mezzo alle altre istruzioni, l'istruzione <code>throw</code>.</p>
+<p><em>Cosa fa l'istruzione</em> <code>throw</code><em>?</em> Quando viene eseguita prende il suo parametro (che può essere un dato qualunque), se lo segna e forza il ritorno dalla funzione stessa. Quindi per certi aspetti assomiglia a un <code>return</code>: smetto in questo momento di eseguire questa funzione.</p>
+<p>Con una differenza però importante: il <code>return</code> può solo prendere come parametro un dato che abbia come tipo il tipo di ritorno della funzione stessa: se ho dichiarato che questa funzione mi ritornava dei numeri, <code>return</code> può solo prendere un numero. Invece con <code>throw</code>, nel contesto di una funzione che ritorna numeri posso fare <code>throw "ciao"</code>.
+Quindi si slega completamente il tipo ritornato che è noto come firma (quindi il chiamante sa cosa aspettarsi se va tutto bene nel chiamare quella funzione) dal tipo usato per descrivere qualche errore.</p>
+<p>Questa è la <strong>prima grande differenza</strong>: il chiamante non sa nel caso in cui si verifica un errore come quell'errore sarà descritto. Non lo può sapere, <strong>la firma della funzione non lo codifica</strong>.</p>
+<p><strong>Secondo differenza importantissima</strong>, <code>return</code> mi fa tornare alla riga dove c'era la call. Anzi, alla riga successiva. <code>throw</code> mi fa passare da quella riga lì, quindi atterro nella funzione che mi ha chiamato e mi guardo intorno dicendo <em>“questo punto in cui è avvenuta la chiamata era chiuso in un blocco di tipo</em> <strong><code>try</code></strong><em>?”</em>, se sì salto tutte le istruzioni che vengono dopo di me fino a raggiungere la fine del blocco <code>try</code> e guardo le sezioni che seguono <code>try</code>, che si chiamano <strong><code>catch</code></strong> e guardo se per caso il tipo dell'errore che è stato lanciato corrisponde a qualcuno dei <code>catch</code> che sono indicati.</p>
+<p>Se è così, eseguo il codice contenuto nel <code>catch</code>, dopodiché dico <em>“a posto, allarme cessato”</em>. Notate che ho <strong>saltato completamente tutte le righe che venivano dal punto in cui ho fatto la chiamata del posto in cui si è rotto</strong>, quindi le cose che dovevo ancora fare <strong>non</strong> le faccio, atterro sul <code>catch</code>, e se il <code>catch</code> corrisponde faccio quello che c'è scritto dentro il <code>catch</code>, che deve prendersi la briga di rimettere a posto. Tutto quello che potrebbe essersi rotto nella funzione che ha segnato l'errore e anche tutto quello che non ho fatto, perché non c'è verso di rifarlo. E poi proseguo da lì in avanti, quello che viene dopo viene dopo. Quindi, mettendo non poca complessità nella gestione.</p>
+<p>Però potrebbe anche darsi che quando io faccio <code>throw</code> in una funzione, torno al mio chiamante, ma il mio chiamante non abbia racchiuso l'invocazione dentro un blocco try-catch, e quindi non posso fermarmi lì, quindi torno al chiamante del chiamante e di nuovo mi guardo intorno. Sono caduto dentro un try-catch? No, allora torno al chiamante del chiamante del chiamante, e così via. Può darsi che in questa storia, io torno indietro, e indietro, e indietro fino all'inizio del thread. <strong>Se torno fino all'inizio del thread, in C++ il programma si arresta.</strong></p>
+<p>Tipicamente un blocco try-catch ha una struttura come quella in slide:</p>
+<ul>
+<li><code>try</code> che racchiude un certo numero di istruzioni che possono fallire loro direttamente o che possono chiamare qualcuno che fallisce a cascata</li>
+<li>uno o più blocchi <code>catch</code> che introducono il tipo possibile di eccezione e racchiudono le cose da fare se quel tipo di eccezione si verifica</li>
+</ul>
+<p>Questo mi dà dei <strong>vantaggi</strong>, sicuramente rispetto al niente del C. Mi dà un <strong>modo pulito</strong> di interrompere l'esecuzione, non solo della funzione corrente, ma anche della sua chiamante, della chiamante della chiamante e così via, perché devo atterrare in un blocco catch, quindi evito di andare avanti a fare cose strane.</p>
+<p>Mi dà anche un modo di poter veicolare dei <strong>dettagli maggiori</strong>, proprio perché l'eccezione può essere una cosa qualunque, quindi certamente posso usare un numero, posso usare una stringa, ma posso anche usare una classe, una struttura con tanti campi, dentro cui mi segno tutti i dettagli che mi possono interessare. Mi sono rotto scrivendo un file e ci posso descrivere dentro che file stavo scrivendo, fin dove l'ho scritto, che tipo di rottura si è verificata, eccetera eccetera.</p>
+<p>Questo permette al blocco <code>catch</code> di avere una migliore comprensione dell'errore. Inoltre, evita la frustrazione di dover consultare interminabili tabelle di codici (come capire che 0xfffffDC significa "File not found"). È molto più pratico! In questo modo la gestione degli errori diventa più semplice.</p>
+<p><strong>Però ha delle turbe</strong>. Prima di tutto, la funzione che chiama qualcun altro non ha la possibilità di sapere se questo qualcun altro può solo andar bene oppure può rompersi. Non c'è nella firma di una funzione l'indicazione di una possibile rottura. Per questo motivo, a un certo punto, nel C++ hanno aggiunto un modificatore. Al termine del nome di una funzione, dove la definisco, posso aggiungere la parola chiave <code>noexception</code>.</p>
+<p><code>noexception</code> vuol dire <em>"io mi impegno a non lanciare eccezioni e a chiamare solo altre funzioni che a loro volta sono</em> <code>noexception</code><em>".</em> In questo modo so almeno che lì un'eccezione non nasce. Ma tutte quelle che non hanno la clausola <code>noexception</code> potrebbero lanciare eccezioni. Quali? Non lo sappiamo.</p>
+<p>I signori di Java, 1993-94, ci riflettono un po' su e dicono <em>"troppo casino, il fatto che uno possa lanciare cose a caso non va bene"</em>. Java, gerarchia di classi ben definita, tutto nasce da <code>Object</code>, facciamo una classe comoda per descrivere le eccezioni. E sotto <code>Object</code> mettono <code>Throwable</code>. Dopodiché dicono <em>"le eccezioni sono di due famiglie"</em>. Sotto <code>Throwable</code> mettono due ulteriori sottoclasse <code>Error</code> e <code>Exception</code>.</p>
+<p><code>Error</code> serve in tutte quelle situazioni in cui <strong>non c'è altro da fare che morire</strong>. StackOverflow, OutOfHeap, tutti quei problemi legati alla macchina virtuale interna che ha raggiunto uno stato instabile etc... Quelle cose lì non posso fare altro che fermarmi. Quindi se mai viene lanciato un <code>Error</code>, non c'è niente da fare. Si muore e basta.</p>
+<p><code>Exception</code> lo uso invece per descrivere tutte quelle cose in cui posso pensare di farci qualcosa.
+E mettono in un <strong>vincolo:</strong> se una funzione può lanciare un'eccezione, <strong>deve dichiararla</strong>. Per cui ad esempio le operazioni sul file system di Java, nella classe <code>j[ava.io](http://java.io/)</code>, sono tutte operazioni che nella loro firma contengono <code>throws IOEexception</code>.</p>
+<p>Con una fregatura in più: non solo quelle funzioni sono obbligate a dire che lanciano un'eccezione, ma chi le chiama è obbligato o a dire che anche lui può lanciare quell'eccezione, oppure deve costruire un blocco try-catch. Posso solo chiamarti dentro un try-catch. E bisogna che il <code>catch</code> contenga l'eccezione che prendi, altrimenti non va bene.</p>
+<p><strong>Questa cosa qua</strong> che sembrava pulire meglio concettualmente la cosa per cui il programmatore diventava conscio che stava chiamando un pezzo che poteva rompersi e quindi doveva gestire le eventuali rotture, o segnalare che lui stesso di conseguenza si sarebbe potuto rompere, ha portato però alla scrittura di codice immantenibile. Perché è diventato un <em>coacervo di try-catch, catch</em>, di vario tipo. <strong>Ingestibilissimo</strong>.</p>
+<p>In realtà i signori di Java avevano detto <em>"</em><code>Exception</code><em>, se lanci exception o una sua sottoclasse, devi dichiararlo. E chi ti chiama deve farlo in un blocco try-catch”.</em></p>
+<p>Ma c'è una sottoclasse di <code>Exception</code>, che si chiama <code>RuntimeException</code>, che è esentata. Perché è esentata? Perché se no il codice diventerebbe ingestibile. Poiché in Java <strong>tutti i puntatori possono essere nulli</strong>, <code>NullPointerException</code> ti può saltare fuori dovunque. Ma se tutte le volte che tu scrivi qualcosa, punto, qualcos'altro, dovessi farlo in un blocco tra i catch, il tuo codice diventa inscrivibile. E quindi la <code>NullPointerException</code> è in realtà una sottoclasse di <code>RuntimeException</code>.</p>
+<p><strong>Quello che doveva diventare un'eccezione alla regola generale, però è diventata la regola</strong>. Perché i programmatori ne avevano le scatole piene di mettersi lì a scrivere blocchi try-catch, e compagnia bella. E quindi hanno cominciato a modellare esclusivamente le loro eccezioni come <code>RuntimeException</code>. Il risultato è che si è perso tutto il valore della cosa. Altri linguaggi hanno fatto scelte diverse, ma non troppo dissimili.</p>
+<p>Java aveva un'altra differenza importante rispetto al C++. Il blocco <code>try-catch</code> poteva terminare con <code>finally</code>. In C++ <code>finally</code> non esiste. A cosa serve <code>finally</code>? Serve a dire, “<em>comunque sia andata sta roba, bene o male, al termine esegui quello che c'è scritto dentro</em> <code>finally</code><em>”</em>.</p>
+<p>Questo è utile per implementare i concetti simili alle transazioni di database. Cioè io voglio avere un punto di controllo da cui comunque passo. Questo però di fatto ha voluto dire che la maggior parte del codice, ad esempio, che trattava la IO in Java, è diventato un codice del tipo <code>try-catch</code>, che chiama un <code>try-finally</code>, che chiama effettivamente la cosa. <strong>Confusionario</strong>.</p>
+<p><img src="images/gestione_degli_errori/image%204.png" alt="image.png" /></p>
+<p>C++ non ha il <code>finally</code>. Ha solo i <code>catch</code>.</p>
+<p>Vediamo cosa succede. Abbiamo un esempio della funzione <code>f1</code> che chiama la funzione <code>f2</code>, la quale potrebbe fallire. Quando <code>f1</code> viene invocata, C++ ha dovuto implementare un meccanismo speciale per gestire il ritorno. Ha stabilito che <em>"nello stack non metterò solo le variabili locali e l'indirizzo di ritorno, ma anche un dato aggiuntivo: l'ultimo blocco try attraverso cui sono passato"</em>. Nella <strong>ABI</strong> (Binary Interface) è stato specificato che <em>"il processore deve dedicare un registro specifico per ricordare dove si trova questo punto di passaggio"</em>. Questo viene chiamato <strong>Exception Context</strong>.</p>
+<p>Nel caso degli x86 c'è uno dei registri estesi che è <strong>dedicato a tenere questa exception</strong>.</p>
+<p><img src="images/gestione_degli_errori/image%205.png" alt="image.png" /></p>
+<p>Quando entro in un ulteriore blocco try, nello stack viene inserito un nuovo Exception Context che viene fatto puntare all'Exception Context precedente. Dopodiché il registro dedicato viene aggiornato. In questo modo sono sicuro che nel registro dedicato ho sempre il più recente Exception Context, mantenendo anche il resto.</p>
+<p>Una volta entrato nel blocco try, <em>cosa contiene l'Exception Context?</em> <strong>Mi segno dove comincia la parte dei catch che mi riguardano</strong>. Così posso trovarla facilmente, evitando confusione sulla posizione del catch.</p>
+<p><img src="images/gestione_degli_errori/image%206.png" alt="image.png" /></p>
+<p>A questo punto chiamo la funzione <code>f2</code>. La chiamata avviene normalmente: salvo nello stack l'indirizzo di ritorno per quando tutto andrà bene.</p>
+<p><img src="images/gestione_degli_errori/image%207.png" alt="image.png" /></p>
+<p><code>f2</code> esegue le sue operazioni, in questo caso crea <code>i</code>, che va anche lui nello stack.</p>
+<p><img src="images/gestione_degli_errori/image%208.png" alt="image.png" /></p>
+<p>Dopo aver eseguito tutte le operazioni necessarie, <code>f2</code> valuta se il risultato è corretto. Supponiamo che qualcosa non vada bene — ho rilevato un problema che comprometterà l'esecuzione. <strong>Come segnalo questo errore?</strong> Uso <code>throw</code> e lancio un'eccezione.</p>
+<p>In questo esempio si usa una delle classi predefinite del C++. Queste sono solo consigliate, non obbligatorie (a differenza di Java dove si possono lanciare solo <code>Throwable</code>). In C++ si può lanciare qualsiasi cosa, ma è consigliato usare classi derivate da <code>std::exception</code>. <code>std::logic_error</code>, che deriva da <code>std::exception</code>, serve a descrivere possibili problemi logici del programma. Accetta una stringa come parametro per includere dettagli sull'errore.</p>
+<p><em>Cosa succede quando lanciamo</em> <code>logic_error</code><em>?</em> <strong>Le istruzioni seguenti di <code>f2</code> vengono ignorate</strong>. Non torno semplicemente al chiamante — faccio di più: comincio a svuotare lo stack. Invoco tutti i distruttori degli oggetti che incontro finché lo stack non raggiunge l'Exception Context più recente (la cui posizione è salvata nel registro dedicato). Quindi, finché lo stack pointer è diverso dal registro dell'Exception Context, continuo a rimuovere e distruggere elementi: la variabile <code>i</code> viene rimossa, l'indirizzo di ritorno viene rimosso, fino ad arrivare all'Exception Context.</p>
+<p><img src="images/gestione_degli_errori/image%209.png" alt="image.png" /></p>
+<p><strong>Una volta raggiunto l'exception context</strong>, il programma salta al primo blocco <code>catch</code> per verificarne la compatibilità. Il blocco <code>catch</code> controlla se il tipo dell'eccezione lanciata (salvato in un registro del processore) coincide con il tipo specificato. Se c'è corrispondenza, viene eseguito il blocco <code>catch</code>.</p>
+<p>Quando si entra nel blocco <code>catch</code>, il codice al suo interno dovrebbe teoricamente sistemare gli errori riscontrati. <em>Se questo non avviene, i problemi persistono</em>, anche se per il programma tutto appare normale. È come ignorare un allarme antincendio dicendo <em>"ma si, è solo un test"</em> — se poi l'edificio brucia, le conseguenze sono nostre per non aver prestato attenzione.</p>
+<p>Nel blocco catch abbiamo la <strong>responsabilità di risolvere il problema</strong>. Se siamo capaci di "spegnere l'incendio", allora possiamo procedere — ma dobbiamo essere certi che sia davvero risolto, altrimenti il problema potrebbe ripresentarsi.</p>
+<p><img src="images/gestione_degli_errori/image%2010.png" alt="image.png" /></p>
+<p>Se tutto va bene, l'Exception Context viene consumato dopo aver gestito l'errore. Il programma prosegue normalmente fino alla fine della funzione <code>f1</code>, che termina senza segnalare problemi.</p>
+<p>Se invece l'eccezione non corrisponde a nessuno dei blocchi catch disponibili, il programma li esamina tutti, verifica che non ci sono corrispondenze, e utilizza il riferimento all'exception context precedente per continuare lo svuotamento dello stack (<em>"svuota e distruggi"</em>) fino a raggiungere il context precedente, ripetendo poi il processo.</p>
+<p>Questo meccanismo funziona perché <strong>ogni thread viene creato con un exception context iniziale</strong>. Sia il thread principale (con la sua particolare genesi) che i thread secondari nascono con un blocco try-catch, garantendo che tutto il codice che scriviamo abbia sempre un try a monte.</p>
+<p>Il blocco catch alla “base”, che troviamo alla radice dello stack ha un comportamento speciale: per il thread principale esegue una <code>exit</code>, mentre per i thread secondari esegue una <code>terminate</code>. La differenza sta nel codice di <strong>errore restituito</strong>, ma in entrambi i casi il processo termina.</p>
+<p><img src="images/gestione_degli_errori/image%2011.png" alt="image.png" /></p>
+<p>Lo svuotamento automatico dello stack dopo un <code>throw</code> (il meccanismo di "svuota e distruggi") è alla base del pattern <strong>"RAII" (Resource Acquisition Is Initialization)</strong>, che permette di utilizzare i distruttori degli oggetti come meccanismo per sistemare le risorse.</p>
+<p>L'abbiamo già incontrato quando abbiamo parlato di <code>Box</code> e di <code>Vec</code>: il distruttore di <code>Vec</code> rilascia l'array che lui ha allocato sullo heap. Questo vuol dire che, se il <code>Vec</code> viene distrutto normalmente perché la funzione che l'ha dichiarato finisce, lui rilascia la memoria. Ma anche se dovesse finire abnormalmente, a seguito di un arresto anomalo, <strong>il fatto che lo stack venga svuotato con questo meccanismo fa sì che verrà invocato il distruttore del <code>Vec</code> e la memoria sarà effettivamente rilasciata</strong>. Non c'è leakage.</p>
+<p>Questo meccanismo lo possiamo usare a nostro beneficio anche in altre situazioni. Ad esempio, possiamo creare un oggetto che ha solo un costruttore e un distruttore. Nel caso di <strong>Rust</strong>, avrà il metodo <code>new</code> e poi implementa il tratto <code>Drop</code>, dandoci quindi il metodo <code>drop</code>. Questi due metodi saranno congegnati in modo tale da garantirci un comportamento duale: <em>se tutto va bene o se tutto va male, in ogni caso, sono sicuro che le azioni del distruttore vengano eseguite</em>. Questo supplisce il problema del non avere il <code>finally</code>.</p>
+<h2 id="22-i-limiti-della-gestione-delle-eccezioni-in-c"><a class="header" href="#22-i-limiti-della-gestione-delle-eccezioni-in-c">2.2 I limiti della gestione delle eccezioni in C++</a></h2>
+<p><img src="images/gestione_degli_errori/image%2012.png" alt="image.png" /></p>
+<p>Il problema legato al C++, ma in generale a tutti i linguaggi che hanno le eccezioni, è che <strong>il compilatore non è in grado di identificare <em>dove</em> vengano restituite eccezioni</strong>. In C++ specifico, ho solo il <code>nothrow</code>, che mi dice <em>"sono certo che questo non lancia"</em>. Tutte le altre possono lanciare, e siccome tutte possono lanciare, non c'è obbligo di chiamare dentro <code>try-catch</code>. In Java sarebbe un po' meglio, ma per via del meccanismo delle <code>RuntimeException</code>, tutti le usano e quindi il compilatore di nuovo non forza i controlli.</p>
+<p>In secondo luogo, l'eccezione che lancio è una sola. A volte però mi trovo nella situazione di lanciare un'eccezione in conseguenza di un'altra eccezione. In Java questo viene risolto perché la classe <code>Exception</code> ha dentro di sé un puntatore (che può essere nullo) ad un'altra eccezione chiamata <code>cause</code> (causa). Questo permette di risalire alla causa dell'eccezione.</p>
+<p>Per esempio, l'eccezione <em>"non ho creato il file, perchè? Perché il disco è pieno"</em> non richiede necessariamente di notificare che il disco è pieno - al programma è utile sapere che il file non è stato creato, e <strong>separatamente</strong> il motivo. Questo è diverso dal caso <em>"non l'ho creato perché non ho i diritti di scrittura"</em>. L'effetto è lo stesso (il file non c'è), ma la causa è distinta. <strong>Sapere la causa mi permette di correggere l'errore</strong>.</p>
+<p>Se io non riesco a distinguere il caso per cui non l'ho creato perché il disco era pieno, dove l'eventuale cura è <em>"faccio spazio su disco"</em>, rispetto al <em>"non ho i diritti"</em> dove la cura è <em>"devo fare privilege escalation e acquisirli"</em>, non potrò mai aggiustarlo questo tipo di errore.</p>
+<p><strong>Se un errore può essere generato in tanti posti diversi, ma viene gestito solo centralmente, in alto</strong>, chi gestisce l'errore potrebbe avere difficoltà a scegliere la contromisura appropriata senza tutti i dettagli necessari. Inoltre, quando l'errore viene catturato in alto, viene saltata l'esecuzione di molto codice sottostante. Se l'errore si verifica in un punto, non vengono eseguite certe operazioni; se si verifica in un altro punto, ne vengono saltate altre. Anche se riesco a gestire l'errore, non ho modo di sapere quali operazioni specifiche sono state saltate nei diversi scenari possibili.</p>
+<p><strong>Ultimo, ma non ultimo</strong>, il fatto che per poter gestire questa cosa, C++ (come anche Java e altri), è obbligato a sporcarmi lo stack, cioè a dire che nello stack ci stanno anche gli exception context. Questo è un problema, ed è il motivo per cui <strong>non si può usare C++ nel kernel di Linux</strong>. Perché altrimenti il kernel di Linux, che non è costruito sull'assunzione che i thread hanno comunque uno stack che comincia con un exception context, non possono convivere agilmente con questa cosa qui, perché nel kernel i thread si scambiano gli stack con una certa facilità, avvengono delle cose poco belle a vedersi, ma estremamente efficaci dal punto di vista pratico. Ma la presenza di questo exception context rompe le scatole. E quindi nello kernel di Linux non si mette il C++.</p>
+<h1 id="3-gestione-delle-eccezioni-in-rust"><a class="header" href="#3-gestione-delle-eccezioni-in-rust">3. Gestione delle eccezioni in Rust</a></h1>
+<p><img src="images/gestione_degli_errori/image%2013.png" alt="image.png" /></p>
+<p><strong>Come si fanno le cose in Rust?</strong>
+Rust ci mette a disposizione un costrutto specifico e ci dice <em>“se devi gestire qualcosa che può fallire, non inventare niente, usa</em> <code>Result</code><em>"</em>.</p>
+<p><code>Result</code> è un tipo sufficientemente versatile che va bene per tutte le situazioni di cui abbiamo bisogno. <code>Result</code> accetta il tipo che descrive cosa ritorniamo se va bene e accetta il tipo che descrive cosa ritorniamo se va male. Diremo semplicemente che la nostra funzione, se può fallire, ritorna un <code>Result</code>.</p>
+<p>Nell’esempio in slide abbiamo <code>read_file</code> che riceve una stringa col nome del file da leggere e deve ritornarci delle cose.
+<em>Come è fatta?</em> Comincia a fare <code>File::open</code>, di cui non abbiamo ancora visto i dettagli, ma comunque <code>File::open</code> ritorna un <code>Result</code>.</p>
+<p>Può darsi che quel nome lì esista e quindi apre il file. E quindi nella parte, diciamo, positiva, io avrò un <code>Ok</code> con la handle di quel file lì.
+Oppure può darsi che quel file non esista e allora avrò un <code>Error</code> che mi dirà <em>"File not found"</em> o qualcosa di simile. Oppure può darsi che il file esista ma io non abbia i diritti per leggerlo e allora mi dirà <em>"Permission denied".</em></p>
+<p>A questo punto, dopo aver chiamato la funzione per aprire il file, devo leggerlo. Usando <code>match r1 { ... }</code>, verifico il risultato.
+Se è un <code>Error</code>, all'interno troviamo il motivo <code>why</code>, quindi processo questo caso e restituisco semplicemente un messaggio che indica che non sono riuscito a leggere il file, spiegando il motivo dell'interruzione. Se invece l'operazione va a buon fine, nell' <code>Ok</code> trovo la handle del file, che mi segno.</p>
+<p>A questo punto creo una <code>String</code> e provo a leggere il contenuto del file mettendolo dentro questa stringa usando <code>file.read_to_string(&amp;mut s)</code>.
+Di nuovo, questa operazione può andare a buon fine oppure no. Usando <code>match r2 { ... }</code>, se non sono riuscito, ritorno il motivo. Se sono riuscito, ritorno <code>Ok</code> e passo la stringa stessa che contiene quello che volevo. Questa è l'idea base. Si potrebbe dire che questo approccio è verboso, ma i signori di Rust, per fortuna, ci danno una serie di cose. Adesso, tra un attimo, le vediamo.</p>
+<h2 id="31-elaborare-i-risultati"><a class="header" href="#31-elaborare-i-risultati">3.1 Elaborare i risultati</a></h2>
+<p><img src="images/gestione_degli_errori/image%2014.png" alt="image.png" /></p>
+<p>Prima diciamo due cose. Questo <code>Result</code> che noi torniamo è un oggetto ricco di metodi che rende facile la vita per chi ne ha uno tra le mani a fare dei ragionamenti. Certamente noi possiamo guardare cosa c'è in un <code>Result</code> usando <code>match</code> e andando a chiedere se match ha <code>Ok</code> di qualcosa o <code>Err</code> di qualcos'altro.</p>
+<h3 id="311-is_ok-e-is_err"><a class="header" href="#311-is_ok-e-is_err">3.1.1 <code>.is_ok()</code> e <code>is_err()</code></a></h3>
+<p>Ma possiamo anche andare sull'oggetto <code>r</code>, di tipo <code>Result</code>, e chiedere <code>if r.is_ok()</code> e in questo caso avrà successo se lui contiene il dato buono oppure <code>if r.is_err()</code> in questo caso ritornerà <code>true</code> se invece racchiude un errore, senza dirci quale errore, ma semplicemente ci permette di capirlo in fretta.</p>
+<h3 id="312-ok"><a class="header" href="#312-ok">3.1.2 <code>.ok()</code></a></h3>
+<p><code>r.ok()</code> <em>sbriciola</em> il <code>Result</code> — vedete: prende <code>self</code>, quindi consuma l'oggetto.
+<code>r.ok()</code> mi ritorna un <code>Option</code>  — se il risultato non è <code>Ok</code> mi ritorna <code>None</code>, se invece va bene mi ritorna un <code>Some&lt;T&gt;</code>.</p>
+<h3 id="313-map"><a class="header" href="#313-map">3.1.3 <code>.map()</code></a></h3>
+<p><code>map()</code> è utile, viceversa, per quelle situazioni in cui io voglio dire <em>“se c'era un dato buono, trasformamelo in quest'altra maniera”</em>. Quindi se ad esempio mi aspettavo una stringa, posso fare <code>r.map(|s| s.to_uppercase())</code>. Se la lettura del file è andata a buon fine, la funzione specificata dentro map viene applicata. Se invece c'è un errore non fa niente, perché non c'è bisogno di mappare. Questo mi permette di descrivere cosa voglio fare senza doverlo fare subito.</p>
+<h3 id="314-contains"><a class="header" href="#314-contains">3.1.4 <code>.contains()</code></a></h3>
+<p><code>.contains()</code> mi permette di controllare se per caso all'interno c'è qualcosa che matcha il parametro che gli sto passando.</p>
+<h3 id="315-unwrap"><a class="header" href="#315-unwrap">3.1.5 <code>.unwrap()</code></a></h3>
+<p>Infine <code>unwrap()</code> mi permette di dire <em>“io assumo che questo risultato sia buono”</em>.
+Se non è buono panica, che vuol dire mi arresto e la pianto lì. Se invece è buono allora prendo il contenuto, il <code>Result</code> viene sbriciolato e mi prendo direttamente il suo contenuto.</p>
+<h2 id="32-la-macro-panic"><a class="header" href="#32-la-macro-panic">3.2 La macro <code>panic!()</code></a></h2>
+<p><img src="images/gestione_degli_errori/image%2015.png" alt="image.png" /></p>
+<p><strong>Perché viene chiamato "panic"?</strong> Perché smettere brutalmente un programma è più complicato di quel che sembra. Nel momento in cui io scopro che un'operazione che ho fatto è andata male e il <em>tipo di male</em> che si è verificato è di quelli <em>"unrecoverable",</em> allora devo smettere. Ma smettere potrei farlo con <code>exit()</code> (<code>std::process::exit</code>). Il problema è che smetterei di botto lasciando tutte le cose a caso. In alcuni casi non è detto che questo approccio vada bene. Quindi sarebbe meglio cercare di terminare <strong>disfacendo quello che si può ancora disfare</strong>, quindi <strong>eseguendo i distruttori</strong>.</p>
+<p>Se io invoco <code>process::exit()</code> smetto su due punti. È come quando viene il coccolone, non avete possibilità di fare altro. Bang!</p>
+<p><code>panic!()</code> viceversa forza il ritorno al chiamante, al chiamante, al chiamante, e così via fino ad esaurire lo stack. Facendo questo, se ci sono dei distruttori pendenti che avevano segnato delle azioni per disfare qualcosa, questi verranno eseguiti.</p>
+<aside>
+💡
+<p><strong>Distruttori e ritorno al chiamante</strong></p>
+<p>Ricorda che i distruttori vengono invocati quando la corrispondente variabile associata arriva alla fine del suo scope. Quindi, forzando il ritorno al chiamante (e quindi forzando ad uscire dallo scope corrente), i distruttori vengono chiamati.
+E continuando a forzare il ritorno al chiamante fino ad esaurire lo stack possiamo invocare i distruttori di tutto ciò che avevamo allocato.</p>
+</aside>
+<p>In più, se il thread che ha invocato <code>panic!()</code> è il thread principale, il processo cessa, indipendentemente da quanti altri thread secondari ci siano. Se il thread che ha invocato <code>panic!()</code> è un thread secondario, di quelli che avete creato voi, solo lui termina. Gli altri continuano a fare quello che dovevano.</p>
+<p>Per questo motivo, la scelta generale di tutte le API è usare <code>panic!()</code> e non fare <code>exit</code>.</p>
+<p><img src="images/gestione_degli_errori/image%2016.png" alt="image.png" /></p>
+<p><strong>Panic è una macro</strong> che accetta degli argomenti simili a <code>println!()</code> e quindi voi potete mettere, con la stessa sintassi di <code>println!</code> ad esempio <code>panic!("Panic, error: {}", err)</code>, quindi potete creare dei messaggi d'errore.</p>
+<p><em>Perché potete passargli un messaggio d'errore?</em> Perché quel thread lì si svuoterà e quando lo stack sarà vuoto stamperà quel messaggino che gli avete messo. Che è utile perché in questo modo potete comunicare in modo più strutturato all'utente o potenzialmente a un altro programma (se siete connessi tramite pipe o qualcosa del genere) cosa è andato male.</p>
+<h2 id="33-ignorare-gli-errori"><a class="header" href="#33-ignorare-gli-errori">3.3 Ignorare gli errori</a></h2>
+<p><img src="images/gestione_degli_errori/image%2017.png" alt="image.png" /></p>
+<p>A volte noi vogliamo scrivere un programma veloce dove sappiamo che anche se la funzione nominalmente potrebbe fallire non ci importa troppo che fallisca, cioè diamo per buono che non fallirà. <strong>Attenzione, questo va fatto con molta attenzione</strong>.</p>
+<p>Per questo motivo il tipo <code>Result</code> offre <code>unwrap</code>. Il metodo <code>unwrap</code> forza a dire <em>"ma io sono praticamente certo che è andato bene quindi prendi”</em>, se non c'era un <code>Ok</code> dentro quel <code>Result</code> panica. <strong>Il problema è che panica dandoci un messaggio anonimo.</strong></p>
+<p>Per questo motivo <code>Result</code> ci offre anche <code>expect</code> che è come <code>unwrap</code> ma accetta un parametro simile a quello che possiamo dare a <code>panic!</code>, che è una descrizione, dice <em>"prendilo, ma se non riesci a prenderlo stampa questa cosa",</em> almeno se l’operazione è andata storta capiamo qualcosa.</p>
+<p>Quindi, sostanzialmente <code>expect</code> ci permette di <em>customizzare</em> la stringa di errore che viene stampata nel caso in cui non ci sia ciò che vogliamo.</p>
+<h2 id="34-propagare-gli-errori"><a class="header" href="#34-propagare-gli-errori">3.4 Propagare gli errori</a></h2>
+<p><img src="images/gestione_degli_errori/image%2018.png" alt="image.png" /></p>
+<p>Nell'esempio che abbiamo visto prima il codice di <code>read_file</code> non è proprio bello.</p>
+<p><img src="images/gestione_degli_errori/image%2019.png" alt="image.png" /></p>
+<p>Perché di fatto noi qui dobbiamo fare due operazioni: <code>open</code> e <code>read_to_string</code>, ma le abbiamo dovuto mettere dentro due match. È un po' una seccatura.</p>
+<p>I creatori di Rust ci dicono <em>"sì, hai ragione. Ti diamo una soluzione più elegante".</em>
+Se hai una funzione che ritorna un <code>Result</code> (quindi la funzione deve avere come tipo di ritorno <code>Result</code> o eventualmente un <code>Option</code>) e vuoi evitare di scrivere quel codice verboso di prima, puoi fare così: aggiungi semplicemente un punto interrogativo dopo le singole righe che possono fallire.</p>
+<p><strong>Cosa vuol dire quel punto interrogativo messo al fondo?</strong>
+Per esempio, con <code>File::open(name)?</code>, viene chiamata la <code>open</code> e internamente viene verificato il risultato: se <code>open</code> ha restituito <code>Ok</code>, viene estratto e restituito il contenuto; se invece ha dato un errore, quell'errore viene propagato.
+La notazione con il punto interrogativo dopo uno statement significa quindi "se il risultato è di tipo <code>Error</code>, propaga quell'<code>Error</code>".</p>
+<aside>
+💡
+<p><strong>Riassunto</strong></p>
+<p><img src="images/gestione_degli_errori/image%2020.png" alt="image.png" /></p>
+<p><img src="images/gestione_degli_errori/image%2021.png" alt="image.png" /></p>
+</aside>
+<p><strong>Il vincolo</strong> però perché questa cosa funzioni è che la funzione che contiene i punti interrogativi ritorni un <code>Result</code>, perché se non ritorna un <code>Result</code> non va bene: quel punto interrogativo lì non sa che cosa ritornare.
+Non solo, ma deve ritornare un <code>Result</code> che abbia come <code>Error</code> lo stesso <code>Error</code> che si è verificato: se io ho chiamato <code>File::open</code>, che mi ritorna un errore di tipo <code>io::Error</code>, non posso dire che la mia funzione ritorna un <code>Result</code> che nel caso di errore ci mette una <code>String</code>, perché non va bene — non matchano i tipi.</p>
+<p>Quindi nel caso specifico dell’esempio, in effetti la funzione <code>read_file</code> annuncia che se va bene mi dà una <code>String</code>, e se va male mi da un <code>io::Error</code>.</p>
+<aside>
+💡
+<p><strong>Ok(s)</strong></p>
+<p><img src="images/gestione_degli_errori/image%2022.png" alt="image.png" /></p>
+<p><img src="images/gestione_degli_errori/image%2023.png" alt="image.png" /></p>
+</aside>
+<p><img src="images/gestione_degli_errori/image%2024.png" alt="image.png" /></p>
+<p>In alcuni casi potrei anche dire se non mi interessa il dettaglio del perché è non è andata bene, e mi basta dire che non è andata bene, potrei dire che ritorna <code>Option</code> e il punto interrogativo fa la conversione automatica e riesce a gestirsela.</p>
+<h2 id="35-propagare-errori-eterogenei"><a class="header" href="#35-propagare-errori-eterogenei">3.5 Propagare errori eterogenei</a></h2>
+<h3 id="351-boxdyn-errorerror"><a class="header" href="#351-boxdyn-errorerror">3.5.1 <code>Box&lt;dyn error::Error&gt;</code></a></h3>
+<p><img src="images/gestione_degli_errori/image%2025.png" alt="image.png" /></p>
+<p>A volte però mi trovo nella situazione di dover ritornare errori diversi tra di loro, ad esempio quel file lì che legge la stringa potrebbe immaginare che dentro la stringa ci sia un numero, ad esempio è la chiave di un algoritmo di crittografia.</p>
+<p>Può darsi che quel file lì contenga veramente il numero, ma può anche darsi che non ci sia un numero e quindi nel momento in cui cerco di passarlo come numero venga fuori un errore. Peccato che l'errore è un <code>parse::Error</code>, non un <code>io::Error</code> — è un'altra cosa!</p>
+<p>Quindi la mia funzione si può rompere con due tipologie: si può rompere dicendo <code>io::Error</code> perché il file non esiste e non lo posso leggere, o si può rompere con <code>parse::Error</code> perché il file pur esistendo non contiene un numero.</p>
+<p><em>Ma io non riesco a tornare una cosa che è contemporaneamente</em> <code>parse::Error</code> <em>e</em> <code>io::Error</code><em>?</em>
+Se sia <code>parse::Error</code> che <code>io::Error</code> implementano il tratto <code>Error</code> — e in questo caso è così — posso dire che la mia funzione esterna ritorna un <code>Box&lt;dyn error::Error&gt;</code>.</p>
+<p>Questo fa sì che il valore ritornato, in caso di errore, è automaticamente trasferito sullo heap e io restituisco il puntatore a questa cosa.
+<em>Questo perché?</em> Perché può darsi che <code>io::Error</code> sia grande 30 byte e <code>parse::Error</code> sia grande 12, quindi non posso tornare due cose che sono di dimensioni diverse. Viceversa se io dico che torno un <code>Box</code>, il <code>Box</code> è sempre solo un puntatore 8 byte, quindi va benissimo!</p>
+<p>Un <code>Box</code> ha che cosa? Un <code>Box</code> ha un oggetto tratto <code>dyn</code>, in questo caso, di <code>Error</code> perché quell'oggetto lì implementa il tratto <code>Error</code>.</p>
+<p><img src="images/gestione_degli_errori/image%2026.png" alt="image.png" /></p>
+<p><em>E com'è fatto il tratto</em> <code>Error</code><em>?</em>
+Il tratto <code>Error</code> è un tratto sostanzialmente che ha alcuni vincoli: deve essere stampabile quindi implementa sia <code>Debug</code> che <code>Display</code> e in più ha una serie di <code>from</code> — riesce ad essere convertito da un tipo a un altro.</p>
+<p>Quindi qui vediamo un esempio della funzione <code>sum_file</code> dove in alto c'è scritto che ritorno un <code>Box&lt;dyn error:Error&gt;</code>.</p>
+<p>Poi faccio la <code>File::open(path)?</code> con il <strong>punto interrogativo</strong>: quel punto interrogativo automaticamente fa sì che il mio <code>io::Error</code>, se mai si è verificato, viene boxato.</p>
+<p>Poi vado avanti e faccio <code>read_to_string(&amp;mut contents)?</code> di nuovo con <strong>punto interrogativo</strong>: quel punto interrogativo fa sì che l'eventuale altro <code>io::Error</code> diventi un <code>Box&lt;dyn error::Error&gt;</code>.</p>
+<p>Poi più avanti ancora faccio <code>parse</code> della mia linea o qualcosa del genere per decodificare il numero che c'era scritto dentro — se mi viene un <code>ParseIntError</code> (che l'errore è che segnala che non era un numero) anche lui viene boxato e quindi la cosa funziona e va tutto bene!</p>
+<p><strong>Il chiamante come fa a discernere le cose?</strong>
+Lo vediamo nel blocco sotto: prova a chiamare questa cosa qua. Se ha bisogno di mettere in atto una strategia di qualche tipo (anche solo per spiegare all'utente che cosa ha fatto o meno), nel caso <code>Ok</code> fa una stampa, e tutto va bene.</p>
+<p>Nel caso si è verificato un <code>Error</code>, per dare dei messaggi significativi deve distinguere.
+E allora usa il meccanismo del <code>downcast_ref</code> e va a chiedersi: <em>"per caso il particolare</em> <code>Error</code> <em>che si è verificato è di tipo</em> <code>io::Error</code><em>?".</em>
+Se è così allora do un messaggio opportuno, oppure vado a pescare dentro l'<code>io::Error</code> i dettagli del perché.</p>
+<p>Se invece <code>downcast_ref</code> posso ridurlo a un <code>ParseIntError</code> allora darò un altro messaggio d'errore, altrimenti <code>unreachable</code>.</p>
+<p><strong>Unreachable perché?</strong>
+L’ <code>else</code> dobbiamo metterlo per coprire tutte le possibilità del match, dentro mettiamo <code>unreachable</code> che è una macro che dice <em>"se arrivi qua rompiti"</em> perché vuol dire che non ho aggiornato il mio codice correttamente. Cioè al momento io vedo che la funzione <code>sum_file</code> può solo generarmi quei due tipi di errore — se mi esce un terzo tipo c'è un problema: qualcuno ha toccato e non ha messo a posto dove doveva. Quindi quell'<code>unreachable</code> lì va proprio bene, mi aiuta tantissimo perché mi garantisce che nel tempo il mio codice rimarrà coerente.</p>
+<h3 id="352-enum-di-errore-custom"><a class="header" href="#352-enum-di-errore-custom">3.5.2 Enum di errore custom</a></h3>
+<p><img src="images/gestione_degli_errori/image%2027.png" alt="image.png" /></p>
+<p>In alternativa potrei dire che prendo, creo un <code>enum</code> che racchiude sia <code>io::Error</code> che <code>parse::Error</code> e quindi mi creo un mio tipo che può contenere due variazioni se è verificato l'errore tipo IO o l'errore tipo parse che racchiudono le varie informazioni.</p>
+<p>Questo va anche bene, ha solo una fregatura: bisogna che se voglio gestirmi questa cosa bene il mio tipo custom implementi il tratto <code>Error</code>. Ma implementare il tratto <code>Error</code> è una seccatura.</p>
+<p><img src="images/gestione_degli_errori/image%2028.png" alt="image.png" /></p>
+<p>Per implementare il tratto <code>Error</code> devo implementare tutti i pezzi che mi mancano: devo implementare <code>From&lt;io::Error&gt;</code>, devo implementare <code>From&lt;ParseIntError&gt;</code>, devo implementare <code>Display</code>, devo implementare <code>error::Error</code> — ok vedete che viene una strafilata di cose, faticosissimo!</p>
+<p><img src="images/gestione_degli_errori/image%2029.png" alt="image.png" /></p>
+<p>E c'è poi qui vediamo il codice sotto che matcha questo approccio.</p>
+<h3 id="353-thiserror-e-anyhow"><a class="header" href="#353-thiserror-e-anyhow">3.5.3 <code>thiserror</code> e <code>anyhow</code></a></h3>
+<p><img src="images/gestione_degli_errori/image%2030.png" alt="image.png" /></p>
+<p>In realtà le librerie ci vengono in aiuto: ci sono due librerie fondamentali, una si chiama <strong>thiserror</strong> e l'altra si chiama <strong>anyhow.</strong></p>
+<p>Si possono usare in congiunzione o separatamente.</p>
+<p><strong>thiserror</strong> serve a implementare in modo semplice il tratto <code>Error</code> — prevalentemente viene usato da chi crea librerie. Si fa una <code>enum</code> che contiene <code>error1</code>, <code>error2</code>, <code>error3</code>, <code>error27</code> tutte le cose che possono capitare e poi, incorporando la libreria <strong>thiserror,</strong> si riesce a generare in automatico il tratto <code>Error</code> tramite la macro <code>derive</code>.
+Implemento <code>Error</code>, faccio implementare anche <code>Debug</code> dalla <code>derive</code> e poi mi resterebbe <code>Display</code> ma di nuovo il meccanismo <code>#[error]</code> permette di implementare facilmente il <code>Display</code> relativo.</p>
+<p><img src="images/gestione_degli_errori/image%2031.png" alt="image.png" /></p>
+<p>E qui vedete degli esempi.
+<code>#[from]</code> mi genera in automatico il <code>from</code> lì dentro.</p>
+<p>Quindi per descrivere cosa può succedere nella mia funzione dico: "guarda, nella mia funzione possono succedere due problemi — ho un errore di I/O che includo nell'opzione I/O, e ho un errore di parsing che includo nell'opzione di parsing." Faccio derivare automaticamente il tratto <code>Error</code> e il tratto <code>Debug</code>, il tratto <code>Display</code> lo implemento con <code>#[error]</code>, e il tratto <code>from</code> lo implemento mettendo <code>#[from]</code> nei relativi casi. Con poco sforzo documento tutto quello che mi serve!</p>
+<p><img src="images/gestione_degli_errori/image%2032.png" alt="image.png" /></p>
+<p><strong>Anyhow</strong> per contro permette di gestire in modo più semplice la gestione degli errori come? Andando a dire che una funzione genera semplicemente un <code>anyhow::Result</code>.</p>
+<p><img src="images/gestione_degli_errori/image%2033.png" alt="image.png" /></p>
+<p><strong>Anyhow</strong> è capace di convertirsi una serie di cose che mi dà la possibilità di aggiungere dei contesti. Quindi <code>file_open.with_context()</code> cosa succede? Se verrà mai generato un errore questo errore verrà sostituito da una stringa che contiene "missing path" e poi il path specifico che non riuscivamo a mettere.</p>
+<p>Se per qualche motivo non riesco a leggere la stringa genererò l'errore con <code>file read error</code>, se non riesco a fare il parsing dico <em>"mi hai passato questa schifezza che non è un numero".</em></p>
+<p>Le due librerie possono essere usati insieme o separatamente, in ogni caso semplificano la vita tantissimo.</p>
+<h1 id="4-riferimenti"><a class="header" href="#4-riferimenti">4. Riferimenti</a></h1>
+<p><img src="images/gestione_degli_errori/image%2034.png" alt="image.png" /></p>
+<h1 id="5-live-coding-24042024"><a class="header" href="#5-live-coding-24042024">5. Live coding 24/04/2024</a></h1>
+<p><img src="images/gestione_degli_errori/image%2035.png" alt="image.png" /></p>
+<p>Prima di tutto ho creato un progetto nuovo, apro <code>Cargo.toml</code> e mi aggiungo tra le dipendenze <strong>thiserror</strong>.</p>
+<p>Qui mi propone la versione 1.0.59, ma per evitare di essere legato a questa particolare sottoversione, la 0.59, <strong>siccome viene usato il semantic versioning</strong> mi limito a dire che a me basta thiserror 1.0, perché se dopodomani esce la versione 1.0.60, automaticamente questa verrà incorporata, sapendo che mediamente chi rilascia nuove librerie, quando tocca soltanto il minor number, fa delle modifiche che sono retrocompatibili, e sono tendenzialmente solo migliorative di quello che esiste.</p>
+<p><img src="images/gestione_degli_errori/image%2036.png" alt="image.png" /></p>
+<p>Quindi è conveniente lasciare soltanto 1.0. Avendo aggiunto questa cosa, a questo punto lui dovrebbe avere a disposizione thiserror e quindi lo possiamo dare per disponibile.</p>
+<h3 id="creiamo-una-funzione-che-può-fallire"><a class="header" href="#creiamo-una-funzione-che-può-fallire">Creiamo una funzione che può fallire</a></h3>
+<p><img src="images/gestione_degli_errori/image%2037.png" alt="image.png" /></p>
+<p>Facciamo un'ipotetica funzione <code>leggi_file</code>, che non leggerà nessun file, ma ci serve per poter dire che ogni tanto fallisce. Questa funzione prenderà in ingresso un <code>filename: &amp;str</code>, e dovrà ritornarci un <code>Result&lt;String, FileError&gt;</code>, in cui <strong><code>FileError</code></strong> al momento non esiste.</p>
+<h3 id="modelliamo-lerrore"><a class="header" href="#modelliamo-lerrore">Modelliamo l'errore</a></h3>
+<p>Allora modelliamo <code>FileError</code>.</p>
+<p><img src="images/gestione_degli_errori/image%2038.png" alt="image.png" /></p>
+<p>Questa cosa qua accetta una stringa costante come descrizione, per farla semplice. Detto così, è un possibile errore, ma non c'è evidenza che sia un errore, sì c'è scritto “Error” nel nome del tipo, ma non è molto utile. Affinchè sia ragionevolmente usabile e comprensibile da altri programmatori, è bene che questa cosa qua implementi il tratto <code>Error</code>.</p>
+<p><img src="images/gestione_degli_errori/image%2039.png" alt="image.png" /></p>
+<p>Implementare il tratto <code>Error</code> a mano però è faticoso, da questo punto di vista il crate <code>thiserror</code> è particolarmente conveniente, perché ci ha aggiunto magicamente la possibilità di derivare <code>Error</code> tramite la macro <code>derive</code>, e noi vogliamo derivare anche <code>Debug</code>.</p>
+<p>In più, per essere completo, ci serve che implementi anche il tratto <code>Display</code>.</p>
+<p><img src="images/gestione_degli_errori/image%2040.png" alt="image.png" /></p>
+<p>Il tratto <code>Display</code> lo andiamo ad aggiungere qua con <code>#[error]</code> — il tratto <code>display</code> stampa una stringa, <em>"Problema con il file: {0}"</em>, e qua gli mettiamo 0, <em>perché?</em></p>
+<p>Perché <code>FileError</code> è una struct di tipo tupla, vedete che i campi non hanno un nome, e quindi hanno al loro posto un indice, il messaggio che descrive il dettaglio di che cosa si è verificato è il campo 0 dentro cui c'è la descrizione di questa cosa.</p>
+<p><img src="images/gestione_degli_errori/image%2041.png" alt="image.png" /></p>
+<p>A questo punto la nostra funzione <code>leggi_file</code> la possiamo implementare. Ovviamente la implementiamo alla buona, dicendo che:</p>
+<ul>
+<li>Se <code>filename.len</code> è minore di 3, ritorniamo un <code>FileError</code> con messaggio "Nome troppo corto"</li>
+<li>Altrimenti, ritorniamo una <code>String</code> contenente il contenuto del file</li>
+</ul>
+<p>Nel nostro <code>main</code> possiamo verificare se la funzione <code>leggi_file</code> funziona:</p>
+<p><img src="images/gestione_degli_errori/image%2042.png" alt="image.png" /></p>
+<p>Proviamo a eseguirlo e vediamo che:</p>
+<ul>
+<li>Con il file "abcd": funziona correttamente</li>
+<li>Con il file "a": otteniamo l'errore <code>C’è stato un problema: Problema col file: Nome troppo corto</code></li>
+</ul>
+<p>Notiamo che il tratto <code>Display</code> è stato implementato automaticamente, permettendoci di usare <code>{}</code> per la stampa. Se invece usiamo <code>:?</code>, otteniamo la stampa di debug che mostra <code>C’è stato un problema: FileError("Nome troppo corto")</code> .</p>
+<p>La nostra struttura implementa quindi tre tratti fondamentali:</p>
+<ul>
+<li>Il tratto <code>Error</code> (derivato automaticamente)</li>
+<li>Il tratto <code>Debug</code> (verificato con la stampa <code>:?</code>)</li>
+<li>Il tratto <code>Display</code> (verificato con la stampa <code>{}</code>)</li>
+</ul>
+<p><img src="images/gestione_degli_errori/image%2043.png" alt="image.png" /></p>
+<p>Potremmo complicare la logica aggiungendo un altro caso: se <code>filename.len</code> è maggiore di 5, ritorniamo un <code>FileError</code> "Nome troppo lungo".</p>
+<p>Finché i tipi di errori sono riconducibili a questa struttura, il nostro <code>FileError</code> funziona bene per rappresentare l’errore.</p>
+<p>La struct potrebbe essere resa più complessa aggiungendo, ad esempio:</p>
+<ul>
+<li>Il nome del file problematico</li>
+<li>Un codice d'errore univoco per migliore gestione nel <code>match</code></li>
+</ul>
+<p>Ma anche così risulta molto agevole da gestire.</p>
+<p><img src="images/gestione_degli_errori/image%2044.png" alt="image.png" /></p>
+<p>Adesso supponiamo di avere bisogno di costruire un'altra funzione che si chiama <code>elabora_contenuto</code>. Questa prende in ingresso una <code>String</code> e anche questa di per sé può fallire, può fallire in vari modi e quindi ritorna un <code>Result</code>: se va bene mi dà un <code>i32</code>, se va male invece mi vuol dare un errore di altro tipo — lo chiamerei invece che <code>FileError</code> un errore di <code>ContentError</code>.</p>
+<p><code>ContentError</code> al momento non esiste.</p>
+<p><img src="images/gestione_degli_errori/image%2045.png" alt="image.png" /></p>
+<p>Posso crearmelo allo stesso modo: <code>ContentError</code> mi porta dentro di sé altri tipi di informazione. <code>ContentError</code> è fatto di un paio di campi: un campo è di tipo <code>content: String</code> e l'altro campo è <code>code: i32</code>. Sono due pezzi di informazione, gli ho dato un nome così mi viene facile gestirli. Anche questo voglio che derivi <code>Error</code>, <code>Debug</code>, e anche qua vorrei mettermi un'indicazione che implementa <code>Display</code>.</p>
+<p>In realtà anche in questo caso vorrei gestire dei possibili errori, e quindi nella funzione potrei scrivere:</p>
+<p><img src="images/gestione_degli_errori/image%2046.png" alt="image.png" /></p>
+<p>Quindi nel mio <code>main</code>, dopo <code>match leggi_file</code>, potrei scrivere:</p>
+<p><img src="images/gestione_degli_errori/image%2047.png" alt="image.png" /></p>
+<p>Output: <code>Problema: Contenuto non adatto: 1</code></p>
+<p>Quindi a questo punto abbiamo creato due descrizioni possibili di errore, ognuno che si porta dati diversi per i fatti suoi.</p>
+<p>Queste sono due operazioni disgiunte, ma tendenzialmente noi vogliamo una funzione vera che elabora il nostro file: prima lo legge poi lo elabora, quindi vogliamo che faccia in cascata delle cose.</p>
+<p><img src="images/gestione_degli_errori/image%2048.png" alt="image.png" /></p>
+<p>Dunque probabilmente noi vogliamo una funzione principale <code>fn combina_azioni</code> che prende in ingresso il nome di un file <code>filename: &amp;str</code> e ci deve ritornare un <code>Result</code>.</p>
+<p>La funzione <code>combinazioni</code> prima legge il file. Se il file va bene, quello che ha letto dentro il file lo passa a <code>elabora_contenuto</code>. Se <code>elabora_contenuto</code> va bene, ci restituisce il valore finale. <code>elabora_contenuto</code> alla fine, se tutto va bene, ci dà un intero, quindi questo qui è un <code>Result&amp;lt;i32&amp;gt;</code>.</p>
+<p>Che tipo di errore può succedere? Ne possono succedere due:</p>
+<ul>
+<li>Se è andato male <code>FileError</code> (non sono riuscito a leggere il file), mi deve dare l'errore su <code>FileError</code></li>
+<li>Se il file l'ho letto ma nell'elaborarmi il contenuto non mi andava bene, devo dare un <code>ContentError</code></li>
+</ul>
+<p>Quindi qui sono un po' in difficoltà: <em>che cosa scrivo nel campo Error del Result da ritornare?</em></p>
+<p>Allora qui mi devo inventare una classe ulteriore, un qualcosa che al momento non ho ancora presentato. Come lo faccio? Con un <code>enum</code>!</p>
+<p><img src="images/gestione_degli_errori/image%2049.png" alt="image.png" /></p>
+<p>Diamo un nome a questa cosa — questo è un <code>ProcessingError</code> che ha dentro di sé due campi possibili:</p>
+<ul>
+<li>Un campo <code>File</code> che contiene un <code>FileError</code></li>
+<li>Un campo <code>Content</code> che contiene un <code>ContentError</code></li>
+</ul>
+<p>Sono le due alternative possibili.</p>
+<p><img src="images/gestione_degli_errori/image%2050.png" alt="image.png" /></p>
+<p>Piccolo problema: <code>ProcessingError</code> non è noto che sia un errore. Anche qua mi viene in aiuto <code>thiserror</code>: <code>#[derive(Error, Debug)]</code>. E poi devo dare dei messaggi di qualche tipo — <code>#[error("Errore di elaborazione")]</code>.</p>
+<p>Cosa scriviamo dentro <code>combina_azioni</code>?</p>
+<p><img src="images/gestione_degli_errori/image%2051.png" alt="image.png" /></p>
+<p>Allora qui di fatto, se io scrivessi <code>let c = leggi_file(filename)</code>, dentro quel <code>c</code> avrei un <code>Result</code>. Per gestirlo dovrei fare <code>match</code> eccetera, ma abbiamo visto ieri che posso usare il punto interrogativo.</p>
+<p>Però questa cosa qui potrebbe darmi un errore. Il problema è che l'errore che mi dà, se viene, è un errore di tipo <code>FileError</code>, ma questa dice che mi dà un <code>ProcessingError</code>.</p>
+<p><em>Come converto il</em> <code>FileError</code> <em>in un</em> <code>ProcessingError</code><em>?</em></p>
+<p><img src="images/gestione_degli_errori/image%2052.png" alt="image.png" /></p>
+<p>Allora, nella <code>enum</code> io ho la possibilità di aggiungermi ancora un'altra annotazione che dice <code>from</code>. Questa annotazione serve a dire: <em>"se per caso ti passa tra le mani un</em> <code>FileError</code> <em>e hai bisogno di creare un</em> <code>ProcessingError</code><em>, guarda, è facilissimo: quel</em> <code>FileError</code> <em>diventa un</em> <code>ProcessingError</code> <em>creando un</em> <code>ProcessingError</code> <em>che ha come valore dell'enum il campo <code>file</code>".</em> E analogamente posso dire: <em>"Se hai bisogno di creare un</em> <code>ProcessingError</code> <em>a partire da un</em> <code>ContentError</code><em>, fai quest'altra cosa".</em> E quindi ci rimetto <code>from</code>.</p>
+<p><img src="images/gestione_degli_errori/image%2053.png" alt="image.png" /></p>
+<p>Quindi il mio <code>combina_azioni</code> al momento dice: prova a leggere il contenuto. Se ci riesci va bene, se non ci riesci <code>?</code> ritorna (ovvero l'errore che <code>leggi_contenuto</code> genererebbe, che è un <code>FileError</code>, lo converte automaticamente in un <code>ProcessingError</code> creandomi l'opportuno tratto <code>from</code>). Se invece è andato bene, io dentro <code>c</code> ho già la stringa. A questo punto posso passare questa stringa al <code>let r = elabora_contenuto(c)</code>. Anche qua <code>elabora_contenuto</code> può andare bene o male, di nuovo ci metto il <code>?</code>. Questo <code>?</code> automaticamente fa sì che se mi venisse un errore di tipo <code>ProcessingError</code>, lo genererebbe. Se tutto va bene ho il risultato, e a questo punto lo ritorno con <code>Ok(r)</code>.</p>
+<p><img src="images/gestione_degli_errori/image%2054.png" alt="image.png" /></p>
+<p>Vediamo cosa succede nel momento in cui io lo chiamo: invece di chiamare <code>match leggi_file(a)</code> faccio <code>match combina_azioni(a)</code> e tolgo il pezzo sotto.</p>
+<p>Quindi a questo punto lui proverà ad aprire il file chiamato <code>a</code>. Se ci riesce, proverà a elaborare il contenuto.</p>
+<p>In questo modo io ho potuto facilmente combinare errori molto diversi, ognuno dei quali si portava dietro le informazioni che ritenevo opportuno. Li ho modellati semplicemente con una <code>struct</code> in cui ho messo i pezzi che ritenevo interessanti per far capire che cosa è successo lì dentro. Ciascuno di questi l’ho marcato, gli ho fatto implementare il tratto <code>Error</code> tramite la macro <code>derive</code> grazie al crate <code>thiserror</code>, e gli ho fatto implementare anche il tratto <code>Display</code> corrispondente così li posso stampare.</p>
+<p>Poi, dovendo creare una funzione che chiama altre funzioni (ciascuna delle quali fallisce per modi distinti), ho preparato un <code>enum</code> che me li metteva insieme. Questo <code>enum</code> è anche lei un <code>enum</code> che descrive un errore, quindi gli ho fatto implementare il tratto <code>Error</code>, il tratto <code>Debug</code> e il tratto <code>Display</code> in modo opportuno. Ho detto che delle varie alternative erano del tipo 1, del tipo 2, del tipo 3, dandogli anche un nome (File e Content). E poi però ho dovuto dare istruzioni su come passare dall'errore specifico (che potrebbe essere un <code>FileError</code> o un <code>ContentError</code>) all'errore generico (quello che ne comprendeva potenzialmente tanti). E l’ho fatto aggiungendo questa annotazione <code>from</code> che ha fatto sì che dove usavo il <code>?</code> lui dicesse <em>"aspetta, qui potrebbe andar male, ho bisogno di tornare".</em> Se il risultato è <code>is_error</code> (cioè conteneva qualcosa che non andava bene) devo ritornare, ma non posso ritornare direttamente il <code>FileError</code> perché questa vuole il <code>ProcessingError</code>. Ma grazie alla macro <code>from</code> lui mi sa estendere: partendo dal <code>FileError</code> mi sa generare il <code>ProcessingError</code> relativo e quindi il codice diventa smooth.</p>
+<p>Quindi questa soluzione è assolutamente facile se uno sa dove mettere le mani — si riesce a costruirsi una cosa che è al tempo stesso <strong>descrittiva a sufficienza</strong>. In ciascuna classe di errore mi posso portare dietro tutti i dettagli necessari per permettere un recovery di qualche tipo. Al momento non abbiamo fatto nessun recovery, ma potenzialmente ci siamo scritti tutto quello che è andato male, dandoci gli estremi per mettere in atto una strategia.</p>
+<p>È facile perché posso arricchire la mia situazione a piacimento. Contemporaneamente posso gestirla agevolmente perché la sintassi del punto interrogativo mi dà la possibilità di avere uno shortcut. Quindi il metodo <code>combina_azioni</code> resta sostanzialmente leggibile: leggi file, processa contenuto e ritorna il risultato. È agevole da leggere, senza strani accumuli di <code>if</code>, <code>match</code> o costrutti simili.</p>
+<p>La strada prediletta — quella dove tutto va bene — è quella che leggo. Tutte le altre sono strade potenzialmente storte che provocano una <em>uscita rapida</em> grazie al punto interrogativo. Questa uscita rapida mi garantisce di non perdere dettaglio, mantenendo il livello di dettaglio che avevo semplicemente racchiudendolo dentro una struttura un pochino più grande.</p>
+<p>Nel <code>main</code> sono in grado di provare le mie strategie di qualche tipo. Qua di strategia non ne provo nessuna — mi limito a verificare se le cose sono andate bene. Se le cose sono andate male, dico perché e poi la pianto lì.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="10-chiusure.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="12-iteratori.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="10-chiusure.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="12-iteratori.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

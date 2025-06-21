@@ -1,0 +1,455 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Il Linguaggio (Parte 1)</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="il-linguaggio---malnati-5"><a class="header" href="#il-linguaggio---malnati-5">Il Linguaggio - Malnati 5 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
+<ul>
+<li><a href="#1-variabili-e-tipi">1. Variabili e tipi</a></li>
+<li><a href="#2-tipi-e-tratti">2. Tipi e tratti</a>
+<ul>
+<li><a href="#21-tuple">2.1 Tuple</a></li>
+<li><a href="#22-puntatori">2.2 Puntatori</a>
+<ul>
+<li><a href="#221-ref">2.2.1 Ref</a></li>
+<li><a href="#221-ref-mut">2.2.1 Ref mut</a></li>
+<li><a href="#223-box">2.2.3 Box</a></li>
+<li><a href="#224-puntatori-nativi-c">2.2.4 Puntatori nativi C</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-riferimenti">3. Riferimenti</a>
+<ul>
+<li><a href="#31-esempi">3.1 Esempi</a></li>
+</ul>
+</li>
+</ul>
+<h1 id="1-variabili-e-tipi"><a class="header" href="#1-variabili-e-tipi">1. Variabili e tipi</a></h1>
+<p><img src="images/il_linguaggio/image.png" alt="image.png" /></p>
+<p>Le variabili vengono introdotte dalla parola chiave let.
+Let, da sola, vuol dire “quello che segue è il nome di una variabile che ha bisogno di avere un valore iniziale” <code>let i = 25;</code> questa cosa qua dice “la variabile <code>i</code> contiene il valore 25”; siccome 25 è un intero, verosimilmente è un <em>intero a 32 bit con segno</em> perché è la cosa più probabile che sia.</p>
+<p>Se non ti piace che quel 25 sia un intero a 32 bit con segno hai due possibilità:</p>
+<ul>
+<li>aggiungi un suffisso a 25 — <code>let i = 25 u32</code> o <code>u64</code> (che vuol dire un unsigned a 32 bit o un unsigned a 64 bit) o anche <code>u8</code> (che vuol dire un unsigned a 8 bit, cioè un byte)</li>
+<li>dove metti <code>let i</code> prima di dargli il valore scrivi <code>let i:il_suo_tipo</code></li>
+</ul>
+<p>Quando io scrivo <code>let i = 25</code> sto introducendo una variabile <em><strong>immutabile</strong></em>, ******che vuol dire che non posso fare alla riga dopo <code>i = 26</code>, perché il compilatore non me lo consentirebbe.</p>
+<p><code>let</code> introduce la variabile immutabile.
+La maggior parte delle variabili che noi trattiamo di fatto sono immutabili anche se buona parte dei linguaggi a cui siamo abituati vedono l'immutabilità come un caso particolare.
+Rust adotta esattamente l'approccio opposto: il caso normale è l'immutabilità, e ogni tanto serve poter mutare.</p>
+<p><em>Come faccio a creare una variabile mutabile?</em>
+Devo usare la sintassi <code>let mut i = 25</code>, che scritta così vuol dire che <code>i</code> è una variabile intera a 32 bit che contiene 25 ed è <em><strong>mutabile</strong></em>, cioè nel tempo potrei assegnargli dei valori diversi.</p>
+<p>Il concetto di immutabilità non è solo legato al fatto che non posso riassegnarla, è legato al fatto che eventuali operazioni che riguardano quella variabile lì, se fosse una cosa un pochino più complessa invece di un semplice intero (che è un numero e basta), ad esempio una lista, se io la introduco con let sto dicendo che non solo quella è legata a quella lista particolare ma che in quella lista lì non faccio nessun cambiamento — non aggiungo e non tolgo.</p>
+<p>Per poter fare un cambiamento devo metterci per forza la parola chiave <strong><code>mut</code></strong> in modo tale che il compilatore possa farsi i suoi conti e se lo ricordi. Quindi di base una variabile può essere legata a un solo valore per tutta la sua esistenza in vita.
+Posso dire che la variabile può essere legata a valori successivi in futuro purché abbiano lo stesso tipo.</p>
+<p><code>mut</code> suona bene come <em>mutabile</em>, ma in realtà vuol dire <em><strong>mutuamente esclusivo</strong></em>: non solo può cambiare le cose, ma mentre c'è uno che cambia nessun altro cambia!
+Non solo: mentre c'è uno che cambia, gli altri neanche possono guardare perché se gli altri possono guardare mentre io cambio potrebbero leggere potrebbero vedere delle cose sbagliate.</p>
+<p><em>Quindi il <strong>mut</strong>, il diritto di cambiare, me lo prendo solo quando mi serve in quei precisi momenti e per il resto osservo</em>.</p>
+<p>Quest'idea che uno solo per volta ci mette le mani dentro per cambiare le cose è essenziale alla coerenza e la correttezza del programma.
+Ad ogni variabile è associato staticamente, quindi per tutta l'esistenza in vita di quella variabile che va dal punto in cui la dichiaro fino al punto in cui c'è la chiusa graffa corrispondente, resta legato quel tipo.</p>
+<p>Quindi, se ad esempio ho dichiarato <code>i</code>  di tipo i32, a differenza di quello che succede in C, in C++, in Java e in tanti altri linguaggi, io posso, in due righe successive dello stesso blocco, ridefinire la variabile: posso scrivere <code>let i = 25</code> e sotto posso scrivere <code>let i = “ciao mamma”</code> — notate il secondo let.
+Che cosa fa il secondo let? Dice <em>“guarda, prima c'era una cosa che si chiamava</em> <code>i</code><em>, te la nascondo! Adesso te ne faccio un’altra</em> <code>i</code><em>, e questa è una stringa”.</em></p>
+<p>La presenza del secondo automaticamente nasconde il primo, che non si vedrà più!
+Questo in alcune situazioni è comodissimo, perché io ricevo un valore e poi per non impazzire col mio codice lo ribattezzo in qualcos’altro.</p>
+<p><img src="images/il_linguaggio/image%201.png" alt="image.png" /></p>
+<p>Quando io introduco let, non solo metto il nome della variabile ma posso anche aggiungere il tipo.</p>
+<p><code>let v: i32 = 123</code> sto dicendo che <code>v</code> è immutabile e vale 123, e spiego esplicitamente che è un i32.
+Quindi se scrivessi <code>v = -5</code> la riga dopo, senza nessun let davanti, lui dice <em>“no, sta roba non ha senso perchè v è immutabile”.</em></p>
+<p>Se scrivo <code>let mut w = v</code> sto introducendo una nuova variabile.
+Questa qui si, è cambiabile, e inizialmente ha lo stesso valore di v, quindi 123.
+Per il momento io sto <strong>copiando</strong> quel contenuto. <code>w</code> adesso lo posso cambiare: posso scrivere <code>w = -5</code> senza problemi. <code>v</code> è rimasto quello che era perché me lo sono <strong>copiato</strong>.</p>
+<p><code>let x = 1.3278</code> è sempre immutabile ma è un float questa volta, anzi un float 64 per default.</p>
+<p><code>let y = 13278f32</code>  è un float 32, cioè un floating point a singola precisione.</p>
+<p><code>let one_million = 1_000_000</code> è semplicemente un intero, però nei numeri potete usare l’underscore semplicemente come separatore della cifra.</p>
+<p><img src="images/il_linguaggio/image%202.png" alt="image.png" /></p>
+<p>A una variabile dobbiamo assegnare un valore iniziale.
+Quel valore può essere un <strong>valore immediato</strong>, cioè derivato direttamente (tipo un numero, per esempio 27) o può essere il risultato di un’<strong>espressione</strong>, come ad esempio <code>((3 * 5) + 9)</code>.</p>
+<p>Tutte le espressioni <strong>producono un valore</strong> — questo è molto diverso da quello che succede in C e C++, in cui la maggior parte delle cose sono degli <em><strong>statement</strong></em> ovvero sono costrutti che non producono niente: in C <code>if</code> non produce niente, in Rust <code>if</code> produce o quello che c’è nel then, se la condizione è vera, oppure quello che c’è nell’else se la condizione è falsa.
+Quindi è lecito scrivere <code>let max = if a&gt;b a else b</code> .</p>
+<p>C’è un’eccezione importante che è l’assegnazione.
+In C e in C++ l’assegnazione è vista come una <strong>funzione</strong>: voi potete scrivere <code>int i = j = k = 0</code>  — quella cosa lì parte dal fondo, prende lo 0 e lo scrive dentro <code>k</code> , dà come risultato 0 e lo scrive dentro j, dà come risultato 0 e lo scrive dentro i.
+In Rust questo non è possibile, quindi non potete fare l’assegnazione multipla, se ne avete bisogno lo spezzate su più righe.
+Perché è così? Perché in realtà la presenza dell’assegnazione multipla mette in grossa difficoltà il sistema di deduzione automatica e quindi va gestito in modo più furbo perché vincola la validità del principio di transitività tra tipi che non è detto che esista.</p>
+<h1 id="2-tipi-e-tratti"><a class="header" href="#2-tipi-e-tratti">2. Tipi e tratti</a></h1>
+<p><img src="images/il_linguaggio/image%203.png" alt="image.png" /></p>
+<p>Di base tutte le espressioni vengono valutate, producono un valore e il valore ha un tipo.
+Ci sono tipi elementari, che sono quelli predefiniti nel linguaggio, come i numeri, che sono tanti e si dividono tendenzialmente in base alla loro dimensione e alla loro tipologia.</p>
+<p>I tipi che iniziano con <code>i</code> sono gli interi con segno, i8, i16, i32, i64, i128…
+Quelli che iniziano con <code>u</code> sono gli interi senza segno, u8, u16, u32 etc…
+Gli <code>f32</code> sono floating point a singola precisione, gli <code>f64</code> floating point a doppia precisione etc..</p>
+<p>Il programmatore può aggiungere dei tipi attraverso tre costrutti:</p>
+<ul>
+<li>le <strong>tuple</strong></li>
+<li>le <strong>struct</strong></li>
+<li>le <strong>union</strong></li>
+</ul>
+<p>Questi tre tipi permettono di creare qualcosa di nuovo.
+Tra i tipi predefiniti, oltre ai numeri, ci sono anche alcuni tipi di puntatori.
+Ogni tipo di puntatore ha un uso particolare e ha dei vincoli legati al suo utilizzo.</p>
+<p>A ogni tipo è possibile associare zero o più <em><strong>tratti</strong></em>.
+Un tratto è una <em>dichiarazione di impegno</em> a fornire un certo comportamento — tradotto in altre parole, assomiglia molto a quello che in Java si chiama <strong>un’interfaccia</strong>. Quando in Java create un’interfaccia state dicendo non come si comporta un oggetto, ma state dicendo che <em>l’oggetto che implementerà quell’interfaccia si impegna a mettere il codice per il metodo x, y e z</em>.</p>
+<p>Il tratto fa la stessa cosa dire: che il tipo <code>Int</code> gode del tratto <code>Copy</code> vuol dire che mette in atto il comportamento della <strong>copia a fronte dell’assegnazione</strong>, cioè quando io lo assegno il dato di destra viene duplicato nel dato di sinistra.
+Dire che il tipo <code>Int</code> gode del tratto <code>Eq</code> vuol dire che il tipo <code>Int</code> è confrontabile con un altro intero e quindi posso chiedermi se sono uguali.
+Dire che il tipo <code>Int</code> gode del tratto <code>Ord</code> significa che posso valutare la relazione d’ordine cioè posso chiedermi se un intero è più piccolo di un altro o è più grande di un altro o è maggior uguale o cose del genere.</p>
+<p><strong>Quindi il tratto esprime dei comportamenti</strong>.
+Questo non ci stupisce troppo: in Java, ad esempio, io posso confrontare col minore due cose solo se queste implementano l’interfaccia <em><strong>comparable</strong></em>.</p>
+<p><strong>I</strong> <strong>tipi sono tutti indipendenti tra di loro</strong>: non c’è una relazione di ereditarietà, sono cose disgiunte.
+Ogni tipo può avere zero o più tratti. Spesso ne ha tanti.</p>
+<p><strong>I tratti invece sono legati tra di loro in una</strong> <strong>relazione di dipendenza</strong>.
+****A volte in una dipendenza negativa: chi gode del tratto <code>Drop</code> non può avere il tratto <code>Copy</code>, e viceversa.
+Chi ha il tratto <code>Copy</code> deve avere il tratto <code>Clone</code>.
+Serve a garantire la coerenza delle cose</p>
+<p>Ci sono dei tratti che, come in Java, definiscono un gruppo di metodi.
+Ad esempio in Java un’interfaccia nota è <code>runnable</code>, che contiene un unico metodo <code>void run()</code> senza argomenti. Ma in Java ci sono anche interfacce privi di metodi: l’interfaccia <code>serializable</code> non contiene nessun metodo, è un marker!
+Un oggetto che implementa <code>serializable</code> dice “<em>io posso essere serializzato</em>”, cioè trasformato in una sequenza di byte <em>spostabile</em> in un altro processo.</p>
+<p>Anche qua in Rust abbiamo dei tratti vuoti: sono i cosiddetti <em><strong>tratti marker</strong></em>.
+I tratti della concorrenza <code>Sync</code> e <code>Send</code> sono tratti marker. La maggior parte degli oggetti sono sia <code>Sync</code> e <code>Send</code>, alcuni sono esplicitamente non <code>Sync</code> oppure non <code>Send</code> oppure né <code>Sync</code> né <code>Send</code>.</p>
+<p>Quindi i tratti sono delle cose che si possono <em><strong>avere in positivo o avere in negativo</strong></em>, cioè indicare che non mi può appartenere o non avere del tutto.
+Quindi il tratto serve a descrivere dei comportamenti che un certo tipo implementa.
+Il compilatore si serve di questo fatto per capire come trattare le cose: ad esempio, quando vede <code>x &gt; y</code> va a cercare il tipo di x, va a cercare il tipo di y e si chiede innanzitutto “S<em>ono dello stesso tipo? Se sono dello stesso tipo, quel tipo lì implementa il tratto Ord o implementa almeno il tratto PartialOrd?</em>”.
+Se non è nessuno dei due allora si blocca, se invece sono tipi diversi allora da vedere: “<em>ma il tipo di sinistra implementa Ord del tipo di destra?</em>”, cioè posso confrontare pere con mele? In alcuni casi sì, in altri no, e quindi si serve di questa informazione.</p>
+<p>Qualunque tipo che sia predefinito o che sia custom (cioè creato da voi) può implementare zero o più tratti.</p>
+<p><img src="images/il_linguaggio/image%204.png" alt="image.png" /></p>
+<p>Mentre i tipi sono <em>disgiunti</em>, i tratti sono <em>legati tra di loro</em>.
+Ad esempio qui vediamo che il tratto <code>Copy</code> implica il tratto <code>Clone</code> — un dato come i32 gode del tratto <code>Copy</code> e di conseguenza deve anche godere del tratto <code>Clone</code>, se non fosse così non compilerebbe.
+Questi sono tipi predefiniti quindi non c’è problema, ma la cosa ci riguarda quando noi vorremmo attribuire uno di questi tratti ai tipi che noi creiamo e dobbiamo prenderci la briga di farlo a modo. Notate che quella relazione non vuol dire “<em>eredita da Clone</em>” vuol dire “<em>implica Clone</em>”, quindi chi implementa <code>Copy</code> deve anche implementare <code>Clone</code>, esattamente come in Java quando un’interfaccia estende un’altra interfaccia, chi implementa l’interfaccia più di dettaglio ha la responsabilità di implementare i metodi espliciti dell’interfaccia di dettaglio e tutti i metodi dell’interfaccia da cui deriva, e qui lo stesso.</p>
+<p>Il tratto <code>Drop</code> è <em><strong>mutuamente esclusivo</strong></em> a <code>Copy</code>: chi ha <code>Drop</code> non può aver <code>Copy</code> e viceversa. Infatti vedete che i tipi <code>String</code> e <code>Vec</code> hanno <code>Drop</code> ma non <code>Copy</code>, i32 ha <code>Copy</code> ma non <code>Drop</code>; <code>Display</code> lo possono avere in tanti e così via..</p>
+<p><img src="images/il_linguaggio/image%205.png" alt="image.png" /></p>
+<p>Breve rassegna dei tipi.
+Abbiamo già citato la famiglia degli interi i8, i16, i32, i64, i128, più isize, dove <em>size</em> è la dimensione naturale del processore, quindi su un processore 64bit isize vale 64 bit, su un processore 32 bit isize vale 32.
+La stessa cosa senza segno.
+I numeri a virgola mobile f32, f64.
+I valori logici bool.</p>
+<p><strong>Attenzione ai caratteri!</strong>
+In Rust non sono la stessa cosa del C. Un carattere in Rust è un 32bit perché permette di rappresentare qualunque carattere unicode.</p>
+<p>I caratteri a 8bit sono una grossa fregatura perché ci scrivete le 26 lettere dell’alfabeto inglese maiuscole e minuscole, i 10 numeri, un po’ di parentesi, virgole, punti esclamativi etc.. e così avete consumato i primi 128. Poi vi restano altri 128 byte che potreste usare per certe lettere accentate, ma se fate così allora quando scrivete le lettere accentate dell’italiano non ci mettete le lettere greche, se ci mettete le lettere greche non ci mettete i caratteri cirillici.. casino!
+Per questo motivo Rust dice <em>“No! Il carattere è un 32 bit!”</em> perché adotta la codifica unicode dentro cui sono codificati tutti gli alfabeti presenti, passati e in parte futuri.</p>
+<p>Quindi il carattere singolo è un 32 bit, ma questo non vuol dire che le stringhe contengono degli array di 32 bit, perché Rust internamente sceglie, per le stringhe, di adottare la codifica UTF-8 (<em><strong>Unicode Text Format a 8 bit</strong></em>) che dice “<em>Se quello è un carattere frequente, cioè un ASCII, lo scrivo col carattere ASCII, che è un byte. Se quello è un carattere un po’ meno frequente lo scrivo su due byte, se quello è un carattere ancora meno frequente lo scrivo su tre byte, se quella è una faccina lo scrivo su 4 byte</em>” e questo gli permette di compensare.</p>
+<p>Piccolo problema: la <code>strlen()</code> implementata alla C non funziona più perché sapere che una stringa contiene 32 byte non vi dice niente su quanti caratteri sono: possono essere 8 faccine,  32 lettere semplici o qualunque combinazione che ci sta in mezzo.
+<strong>Per cui l’oggetto <code>String</code> ha il suo simpatico metodo <code>length</code> che vi dice quanto è lungo, però se iterate sulla stringa dovete scegliere: o iterate sui byte o iterate sui caratteri</strong>.</p>
+<p>Poi c’è un tipo che si chiama <em><strong>unit</strong></em>, che si scrive si pronuncia unit ma si scrive <code>()</code> e rappresenta quello che in C e in Java si chiama <em><strong>void</strong></em>.
+Serve per descrivere il comportamento di quelle funzioni che non ritornano un valore esplicito. Fisicamente rappresenta la tupla vuota, ovvero ci dice <em>“io ti restituisco un insieme di zero elementi”</em>, non consuma byte però quella è la sua notazione, quindi una funzione che ritorna void in realtà non ritorna niente ma viene segnata in questo modo.</p>
+<h2 id="21-tuple"><a class="header" href="#21-tuple">2.1 Tuple</a></h2>
+<p><img src="images/il_linguaggio/image%206.png" alt="image.png" /></p>
+<p>Visto che parliamo di tuple introduciamo le tuple.
+È il modo più semplice con cui noi possiamo definire un <strong>dato custom</strong> —  in alcune situazioni potremo aver bisogno di rappresentare qualcosa che non si presta bene a essere un singolo valore (pensate ad esempio la posizione di un ristorante, quella cosa lì probabilmente vi conviene scriverla sotto forma di latitudine e longitudine, due numeri diversi che però devono andare insieme perché se ne sapete solo uno dei due ve ne fate assai poco).
+Per questo genere di cose si usano le tuple: un gruppo ordinato di valori che possono essere o meno omogenei.
+Potrebbero anche essere due cose molto distinte: io potrei darvi un voto, che è un Int, e poi darvi un flag che rappresenta se avete la lode o meno.</p>
+<p><em>Quanti elementi può avere una tupla?</em>
+Da 0 (la tupla unit, non ne ha nessuno e non occupa byte), un solo valore (occupa la dimensione di quel valore lì), due valori (occupa la somma della dimensione del primo e del secondo), e così via..</p>
+<p>Se avete una variabile che contiene una tupla accedete ai singoli campi con la notazione <code>variabile.0</code> per il primo campo, <code>variabile.1</code> per il secondo campo etc.. cioè accediamo in modo posizionale, ma non è un array perché i singoli pezzi <strong>non sono omogenei</strong>.
+Nella tupla io ho degli elementi che possono essere eterogenei e quindi nomino con questa notazione <code>variabile.posizione</code>, dove la posizione non mi garantisce automaticamente un offset standard come nel caso dell’array, il compilatore sa che per la tupla di tipo <code>(Int, Boolean)</code> il campo 0 ha offset 0 e il campo 1 ha offset 4.</p>
+<p>Le tuple, esattamente come qualunque altra cosa, possono essere immutabili o mutabili.
+Le tuple sono comode in tante situazioni, soprattutto quando avete una funzione che ritorna più valori e li potete facilmente mettere insieme.</p>
+<h2 id="22-puntatori"><a class="header" href="#22-puntatori">2.2 Puntatori</a></h2>
+<p><img src="images/il_linguaggio/image%207.png" alt="image.png" /></p>
+<p>Poi potete avere a disposizione dei puntatori — il mondo dei puntatori in Rust è variegato, ce ne sono tanti.
+Il tipo più frequente e all’inizio più acido da capire è il <code>ref</code> .
+Ad esempio ho la variabile <code>i</code> che contiene un i32, e voglio far avere il puntatore a questa variabile a qualcuno, quindi non voglio copiare quel 5, ma voglio fargli avere il puntatore in modo tale che quest’altro possa vedere cosa c’è adesso lì dentro e se in futuro io lo cambierò, avendo il puntatore e guardando in futuro vedrà il nuovo valore che c’è.</p>
+<h3 id="221-ref"><a class="header" href="#221-ref">2.2.1 Ref</a></h3>
+<p>Come faccio? Faccio come farei in C: a quell’altro gli dò <code>&amp;i</code>, che si legge <em><strong>ref i</strong></em>, è un riferimento — concretamente è semplicemente il puntatore, nient’altro. Con un vincolo però: quello lì è un riferimento <strong>in sola lettura</strong>.
+Chi lo riceve non può cambiarlo e farmi diventare <code>i</code> 6, perché è un riferimento in sola lettura.</p>
+<p>I riferimenti in sola lettura io <em>li posso dare a chi voglio e quanti ne voglio</em>, perché tanto tutti guardate ma non modificate.
+Piccolo problema, o meglio grande opportunità: nel momento in cui io dò un riferimento a qualcuno Rust dice “<em>Caspita adesso siete in due a conoscere questa cosa, tu che hai la variabile e lui che comunque la può vedere, ergo adesso nessuno la tocca. Fintanto che siete in due a conoscere questa cosa col cavolo che chiunque ci mette le mani: lui no di sicuro perché ce l’ha in sola lettura, ma tu che ne saresti il possessore non la cambi perché siccome non sai che cosa sta facendo lui, se la cambiassi adesso lui potrebbe vedersela modificata sotto il naso</em>”, ad esempio ha appena preso una decisione chiedendosi se lì dentro c’è meno di 10, e al momento in cui ha guardato c’era meno di 10 ma tu subito dopo glielo cambi e quindi la decisione che prende è sbagliata.</p>
+<p><strong>Quindi mentre esiste in vita un riferimento il dato è congelato.</strong></p>
+<p><em>Quando riprenderò il pieno possesso del mio valore?</em>
+Quando tutti i riferimenti saranno andati via dai piedi.</p>
+<p><em>Come fa il compilatore a sapere quando saranno andati via dai piedi?</em>
+Tracciando il tempo di vita. Non è una cosa che scrive a runtime, se lo segna nelle sue strutture dati perché va a guardare quella roba lì fino a che righe è visibile etc.. si fa tutte i suoi ragionamenti e deduce quando i pezzi sono visibili e quando non sono visibili.
+I riferimenti semplici sono danno <em><strong>l’accesso a un’informazione</strong></em>, se io ti passo un intero quasi conviene che ti passi la copia piuttosto che il riferimento, perché l’intero vale 4 byte e il riferimento ne vale 8, quindi sarebbe più furbo. Ma se io avessi invece che un intero anche solo una tupla dentro cui ci sono 10 cose, beh passarti il riferimento è conveniente perché ti do solo quello e poi sei in grado di andarci a vedere i vari pezzi, però mentre tu hai un riferimento io mi impegno questa cosa qua a non toccarla, così non c’è rischio.
+Lo posso dare a tanti un riferimento di questo genere, il compilatore vigila e finché sa che ce n’è ancora uno vivo il dato non si tocca; quando il compilatore ha l’evidenza che non c’è più nessun riferimento vivo l’originale riprende il pieno possesso delle sue cose e, se era stato dichiarato mutabile, può essere mutato (se l’originale era stato creato non mutabile non può essere mutato a prescindere).</p>
+<p>Quindi di base sui riferimenti il compilatore verifica il <em><strong>possesso</strong></em> e il <em><strong>tempo di vita</strong></em>.
+Lo divide in due modi il tempo di vita: non solo mentre esiste il riferimento l’originale non deve cambiare, ma devo garantire anche che l’originale viva più a lungo del riferimento, perché altrimenti quel riferimento lì mi diventa un <strong>dangling pointer</strong>.</p>
+<h3 id="221-ref-mut"><a class="header" href="#221-ref-mut">2.2.1 Ref mut</a></h3>
+<p>Posso anche creare i <em><strong>ref mut</strong></em>.</p>
+<p><em>Come si fa un ref mut?</em>
+Se la mia variabile era <code>i</code> (che deve essere mutabile perchè se <code>i</code> è immutabile non posso ricavare un ref mut perché a priori era immutabile quindi di lì non ne ricavo niente che cambia) posso creare un refmut scrivendo <code>&amp;mut i</code> e passando questa cosa qui a chi di dovere.
+A questo punto è stato creato un <em>riferimento mutabile</em>, <em><strong>riferimento mutuamente esclusivo</strong></em>. Mentre esiste un riferimento mutabile, chi lo riceve può non solo leggere cosa c’è scritto dentro ma può anche cambiarlo perché ha ottenuto il permesso temporaneo di cambiare le cose.</p>
+<p>Mentre esiste un refmut, l’originale è <strong>inaccessibile</strong> — nè lo leggo nè lo scrivo, e di refmut <strong>ne può esistere uno solo</strong>.</p>
+<p>Questo garantisce al compilatore che non faccio casini: uno per volta, in questo è mutuamente esclusivo.</p>
+<p>I ref e refmut sono esempi di puntatori <em><strong>privi di possesso</strong></em>, li posso ricavare soltanto a partire da una variabile che già esiste.
+<strong>Quindi necessariamente chi li riceve non ha la responsabilità del rilascio.</strong>
+La responsabilità del rilascio è <strong>del possessore originale</strong>.</p>
+<p>Quindi alle tante domande attraverso il meccanismo del tempo di vita il compilatore mi sa dire <em>“posso in questo momento accedere o meno?”</em> e fa le verifiche, e mi lascia compilare il codice solo se effettivamente posso e se non posso o al dubbio che potrei non essere in grado mi stoppa e mi blocca lì.</p>
+<aside>
+💡
+<p>Dato che i <strong>ref</strong> e <strong>ref mut</strong> li posso solo costruire applicando l’operatore <code>&amp;</code> o l’operatore <code>&amp;mut</code> a una variabile esistente, sono certo che contengono un puntatore valido.</p>
+<p>Al tempo stesso, poiché sono riferimenti, cioè puntatori privi di possesso, so per certo che non tocca a me rilasciarli, quindi chi si ritrova un ref o un refmut sa che ci può accedere ma non è compito suo occuparsi del rilascio, perché il rilascio è del proprietario.</p>
+<p><img src="images/il_linguaggio/image%208.png" alt="image.png" /></p>
+<p><img src="images/il_linguaggio/image%209.png" alt="image.png" /></p>
+</aside>
+<p>Su un’architettura 64 bit i puntatori sono 64 bit, ma a volte 128 perché a differenza del C, dove i puntatori sono tutti uguali, qua <strong>in base a che cosa punto</strong> posso ottenere un puntatore semplice (uno <em><strong>slim pointer</strong></em>), o un <em><strong>fat pointer</strong></em>.
+Se punto un dato la cui lunghezza non è nota a tempo di compilazione, il compilatore lo fa diventare un fat pointer e ci mette insieme in una tupla (cioè uno a fianco all’altro) il <strong>puntatore</strong> e la <strong>lunghezza</strong>, in modo tale che il destinatario sappia regolarsi. Se quello è un dato di tipo polimorfico il compilatore ci mette un fat pointer e mi dice “<em>guarda il destinatario non sa esattamente questa roba qui che cosa sia, quindi io gli aggiungo una tabellina a lato che lo disambigua</em>”.</p>
+<p>Quindi la dimensione dei puntatori effettiva minima è quella dell’architettura, a volte è il doppio dell’architettura, ma è molto meglio così perché lui in questo modo sa gestirsi e può rispondere all’ulteriore domanda che era nell’elenco “<em>posso accedere solo all’indirizzo indicato o posso accedere anche più avanti?</em>” — per quei tipi la cui dimensione è nota a priori non ho bisogno di aggiungere nient’altro perché il compilatore si è già scritto quello lì è una roba da 7 byte, da 32, da 44 etc.. per i tipi invece la cui dimensione è decisa a runtime necessariamente il compilatore mi include la lunghezza così che chi la riceve possa regolarsi.</p>
+<h3 id="223-box"><a class="header" href="#223-box">2.2.3 Box<T></a></h3>
+<p>A volte ho dei puntatori che invece <strong>possiedono la memoria</strong>, quando prima con C++ abbiamo visto che facevamo <code>new Int</code>, fare <code>new Int</code> significa che ci facciamo dare sullo heap un blocco dentro cui ci scrivo il mio valore, e ne ottengo il puntatore (al blocco nello heap).</p>
+<p>Perché faccio <code>new</code>?
+Abbiamo spiegato che ci sono delle situazioni in cui ho bisogno di avere un valore che dura più a lungo della chiamata della funzione in cui quel valore nasce.
+Se io parto dalla variabile <code>i</code>, che è locale (e vive dunque sullo stack), al massimo questa dura quanto l’invocazione della funzione attuale, e quando la funzione torna <code>i</code> non c’è più e quindi non possono esistere più riferimenti a quella cosa lì.
+Se io ho bisogno di tenere in vita questa cosa più a lungo allora non posso lavorare sullo stack, devo lavorare sullo heap.</p>
+<p>Rust per queste situazioni mi mette a disposizione il tipo <code>Box</code>.
+<code>Box&lt;T&gt;</code>, dove T è un tipo, indica un puntatore a un dato che sta sullo heap che possiede il proprio dato.
+Un box possiede il proprio valore.
+Quando quel box li sparirà il dato verrà distrutto — verrà rilasciata la memoria.</p>
+<p>Mentre i reference danno l’accesso senza dare il possesso (e quindi io ho l’efficienza del puntatore perché vado dritto alla meta ma non ho nessuna responsabilità associata al suo rilascio), il box rappresenta un puntatore che sicuramente punta nello heap e che ha la responsabilità del rilascio: <strong>quando il box esce dalla sua visibilità, quel blocco svanisce,</strong> <strong>e svanisce automaticamente</strong>, non devo ricordarmi io di fare la delete come succede in C/C++!
+Questo <strong>perché il box ha un distruttore</strong> — box implementa il tratto <code>Drop</code>, e la sua implementazione del tratto <code>Drop</code> fa proprio questo: rilascia quel pezzo di memoria di cui è padrone, per cui io sono tranquillissimo quando uso un box, so che quella memoria lì la rilascio una e una sola volta senza fare nulla, automaticamente quando qualcosa svanisce.</p>
+<h3 id="224-puntatori-nativi-c"><a class="header" href="#224-puntatori-nativi-c">2.2.4 Puntatori nativi C</a></h3>
+<p>Ci sono poi, dentro Rust, anche gli stessi puntatori del C.
+Ad esempio, <code>*const int</code> è un <em><strong>puntatore nativo</strong></em>, un puntatore read only proprio come sarebbe un puntatore in C.
+Ha tutti i problemi del C, quindi è soggetto ad accessi illeciti, al fatto che quello può contenere delle cose strambe etc..
+C’è anche il suo fratello, che è la versione mutabile <code>*mut int</code> , questi però non li possiamo usare normalmente, l’unico modo per poterli utilizzare è racchiuderli in un blocco <em><strong>unsafe</strong></em>.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>unsafe {
+	// some unsafe things...
+}
+<span class="boring">}</span></code></pre></pre>
+<p><em>Perché ci sono questi puntatori?</em>
+Perchè Rust si sforza di dire “<em>guarda che io uso delle regole dove ti garantisco che dove ci metto le mani io non c’è errore</em>”, in alcuni casi però, per essere sicuro di non sbagliare, mi vieta delle cose che di per sè sarebbero possibili. Semplicemente alla luce delle informazioni che lui ha non abbastanza evidenza, mentre alla luce di informazioni che abbiamo noi potremmo sapere altro — ad esempio stiamo leggendo da una periferica hardware che sappiamo che è costruita in modo tale che quando in un campo c’è scritta una cosa in un altro non ce ne può essere un’altra, e questo il compilatore non può capirlo, è qualcosa di completamente esterno alla semantica, ma noi che stiamo scrivendo il driver di quella cosa li abbiamo letto il data sheet e sappiamo che è fatto così. Allora il compilatore mi impedirebbe di prendere certe decisioni perché per quello che ne sa lui è pericoloso ma noi sappiamo che in realtà in quel caso particolare lì si può fare, e allora possiamo scrivere unsafe che dice “<em>mi prendo io la responsabilità”.</em>
+In realtà, nel cuore di Rust alcuni suoi meccanismi sono unsafe, ma sono giusti proprio come anche nel C — il fatto che il C abbia degli undefined behaviours e cose del genere non vuol dire che è sbagliato, vuol dire che è molto difficile costruirlo giusto, ma è possibile scrivere programmi giusti, se no non saremmo mai arrivati fino ad adesso.</p>
+<h1 id="3-riferimenti"><a class="header" href="#3-riferimenti">3. Riferimenti</a></h1>
+<p><img src="images/il_linguaggio/image%2010.png" alt="image.png" /></p>
+<p><code>let r1 = &amp;v;</code> dove v è qualunque cosa, anche un’espressione — <code>let r1 = &amp;75;</code> questo in C non è scrivibile perché il valore immediato 75 in C non ha una locazione di memoria, in Rust si: quando lo scriviamo così Rust scrive 75 dentro lo stack, come se avessimo creato una variabile temporanea, prende l’indirizzo di quella variabile e lo salva dentro <code>r1</code> e ci lascia fare delle cose.</p>
+<p>Posso scrivere anche <code>let r1 = &amp;(i*5/4)</code> — calcola il risultato, lo mette in un temporaneo sempre sullo stack, prende il puntatore e mi manda avanti.</p>
+<p><code>r1</code> viene chiamato <em><strong>riferimento</strong></em> perché contiene dentro di sé il puntatore al valore: è un puntatore senza possesso, perché <em>lo prende in prestito</em> — non è suo, è <code>v</code> che possiede quella cosa lì!</p>
+<p>E il pezzo di compilatore responsabile del controllare cosa noi facciamo si chiama <em><strong>borrow checker</strong></em> — il <em>controllore dei prestiti</em> verifica che tutti i prestiti siano onorati correttamente.</p>
+<p><em>Come ci accedo al dato?</em>
+Come farei in C — se quello è un puntatore ci metto un asterisco, quindi se <code>v</code> fosse stato un numero e io voglio sapere che numero è, devo fare <code>*r1</code> e dentro ci leggo il numero.</p>
+<p><strong>Attenzione:</strong> se invece di prendere il valore così com’è, quindi <code>*r1</code>, io volessi operare su <code>r1</code> e quindi su quel valore invocare un certo metodo — abbiamo visto prima che gli interi hanno il metodo <code>to_string()</code> — se <code>v</code> è un intero e io voglio attraverso <code>r1</code> farmi dare la versione stringa, fossi in C dovrei scrivere <code>r1-&gt;to_string()</code> **perché asterisco e punto non si possono combinare, cioè hanno un livello di aggregazione diverso, dovrei scrivere <code>(*r1).to*_*string()</code>.</p>
+<p>In Rust, quando scrivo <em>punto qualcosa</em>, lui va automaticamente a vedere cosa c’è prima del punto, e <strong>se quella cosa lì è un riferimento lui l’asterisco ce lo mette da solo</strong>.
+Quindi se io ho bisogno di accedere al <code>to_string()</code> di quella cosa lì scriverei <code>r1.to_string()</code> anche se <code>r1</code> è un reference, solo perché in automatico tutto ciò che è preceduto da punto se è un reference viene automaticamente dereferenziato, e se fosse un reference a un reference viene dereferenziato due volte etc.. quindi lui va avanti a dereferenziare finché ce n’è.
+Quando arriva al tipo base esegue il metodo, che è molto comodo.
+Il che vuol dire che l’asterisco lo usiamo in casi molto rari.</p>
+<h2 id="31-esempi"><a class="header" href="#31-esempi">3.1 Esempi</a></h2>
+<p><img src="images/il_linguaggio/image%2011.png" alt="image.png" /></p>
+<p>Guardiamo il primo esempio: con <code>let r = &amp;i;</code> ho preso l’indirizzo di <code>i</code>.
+Che c’è in questo indirizzo?</p>
+<p>Qui vediamo la notazione che la print line usa, adotta una notazione simile per certi aspetti alla printf del C, solo che mentre printf distingue %d, %s etc.. qua dice “<em>tu dimmi soltanto, attraverso aperta graffa chiuse graffa, dove devo mettere i pezzi in ordine, in corrispondenza della prima coppia di graffa ci metterò il primo valore, in corrispondenza della seconda copia di graffa ci metterò il secondo valore e così via</em>”.
+Quindi print line prende una prima stringa che la stringa di formato come la printf seguita da tanti pezzettini quante sono le coppie di graffe che compaiono al suo interno che fanno da place holder.</p>
+<p>Quindi stampiamo <code>*r</code> , cioè il valore cui punta r: 32.
+Questo se riuscissi a compilare, ma in realtà alle righe dopo ci sono scritte ancora due cose: <code>i = i+1</code> , sto cambiando <code>i</code>, e dopo c’è di nuovo print line di <code>*r</code>.
+Qua c’è un conflitto perché io sto tenendo in vita il mio riferimento, e durante la durata in vita di <code>r</code>, la parte attiva in cui lo sto usando per qualche motivo, c’è un punto in cui il dato (cioè <code>i</code>) sta cambiando!</p>
+<p>È un problema, perché fin tanto che esiste il riferimento l’originale deve stare fermo, se no prendo decisioni sbagliate e il compilatore mi blocca, e dà questo errore qua: alla riga 8 hai preso in prestito i (<code>let r = &amp;i;</code>) — <em><strong>borrow of i occurs here</strong></em>. Alla riga 11 <em><strong>assignment to borrowed i occurs here</strong></em> — mi stai cambiando questa cosa qua.</p>
+<p>Non sarebbe una tragedia se non ci fosse la riga 12, perché il compilatore è <em>smart enough</em> da dire che dove finisce <code>r</code>, che di per se noi sappiamo che smetterebbe di esistere alla chiusa graffa, il compilatore dice “<em>guarda che anche se fisicamente lui cessa di essere lì, io son tranquillo che per me il posto più problematico è l’ultimo dove lo usi. Se non ci fosse la riga 12 andrebbe benissimo, <code>r</code> l’ho usato un attimino, ci ho guardato dentro e poi non lo considero più, come se non ci fosse. Ma se invece io cambio <code>i</code> e poi guardo ancora <code>r</code>  è un casino perché vorrebbe dire che le due print line mi stamperebbero due cose diverse, che viola l’idea che quello è un ref semplice, un ref immutabile, e quindi attenzione alla riga 11 mi hai assegnato <code>i</code> che è in prestito, ma dopo mi vai ancora sul prestito e non va bene</em>”.</p>
+<p>Nel secondo esempio sotto abbiamo la solita variabile mutabile <code>i = 32</code>, la prendiamo mutabile con <code>let r = &amp;mut i;</code>, mentre la prendiamo mutabile non possiamo accedere a <code>i</code>, e ci dice “<em>attenzione alla riga 8 <strong>mutable borrows occurs here</strong>, ma alla riga 9 <strong>immutable borrow occurs here</strong></em>” — per stampare <code>i</code> la devo prendere in prestito in realtà, perché devo passare il puntatore alla print line e non va bene. In più questo mutable borrow è ancora valido perché alla riga 11 sto facendo <code>*r = *r+1;</code> se non ci fosse la riga 11 me lo farebbe anche fare, qui mi son preso un puntatore potenzialmente mutabile ma non lo uso quindi non è un problema.</p>
+<p><img src="images/il_linguaggio/image%2012.png" alt="image.png" /></p>
+<p>Sebbene appaiano simili ai puntatori del C, sono tutta un’altra cosa: i riferimenti implementano la logica <em><strong>multiple reader single writer</strong></em> — posso avere quante copie ref voglio, una sola ref mut.</p>
+<p>Fa comodo dire mutabile, ma in realtà vuol dire mutuamente esclusivo perché mentre esiste quel mut non ce ne sono altri, di nessun genere!
+E neanche la variabile originale è toccabile, nè la scrivo nè la leggo.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="04-introduzione_al_linguaggio.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="05-il_linguaggio_parte_2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="04-introduzione_al_linguaggio.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="05-il_linguaggio_parte_2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
