@@ -88,7 +88,7 @@
 
 > 💡 **Le struct stanno sullo stack, SEMPRE (a meno che non sono boxate)**
 > 
-> ![image.png](images/images/keep_in_mind/image.png)
+> ![image.png](images/keep_in_mind/image.png)
 > 
 > ![image.png](images/keep_in_mind/image%201.png)
 
