@@ -2,7 +2,7 @@
 
 ![image.png](images/allocazione_della_memoria_1/image.png)
 
-Un programma eseguibile non è nient’altro che un insieme di istruzioni macchina mescolate con dei dati mescolate con dei valori di configurazione e controllo tutti codificati sotto forma di byte di sequenze di byte.
+Un programma eseguibile non è nient’altro che un insieme di istruzioni macchina mescolate con dei dati mescolate con dei valori di configurazione e controllo tutti codificati sotto forma di sequenze di byte.
 
 Il significato di questi byte è legato alla tipologia di informazione che mettiamo dentro — per la parte di istruzioni il significato è **cablato** dentro il processore.
 Sui processori 8080 che venivano usati nel PC IBM originale, il byte 3E serviva a rappresentare l’istruzione `MOV A`, dove A era l’accumulatore (il registro principale della CPU): 3E 7B voleva dire *carica nel registro accumulatore il valore binario 7B*.

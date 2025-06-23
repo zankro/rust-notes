@@ -180,7 +180,7 @@
 <p>💡 <strong>Ogni contributo o suggerimento è benvenuto.</strong></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="allocazione-della-memoria---malnati-1"><a class="header" href="#allocazione-della-memoria---malnati-1">Allocazione della memoria - Malnati 1</a></h1>
 <p><img src="images/allocazione_della_memoria_1/image.png" alt="image.png" /></p>
-<p>Un programma eseguibile non è nient’altro che un insieme di istruzioni macchina mescolate con dei dati mescolate con dei valori di configurazione e controllo tutti codificati sotto forma di byte di sequenze di byte.</p>
+<p>Un programma eseguibile non è nient’altro che un insieme di istruzioni macchina mescolate con dei dati mescolate con dei valori di configurazione e controllo tutti codificati sotto forma di sequenze di byte.</p>
 <p>Il significato di questi byte è legato alla tipologia di informazione che mettiamo dentro — per la parte di istruzioni il significato è <strong>cablato</strong> dentro il processore.
 Sui processori 8080 che venivano usati nel PC IBM originale, il byte 3E serviva a rappresentare l’istruzione <code>MOV A</code>, dove A era l’accumulatore (il registro principale della CPU): 3E 7B voleva dire <em>carica nel registro accumulatore il valore binario 7B</em>.</p>
 <p>Quindi lì e nei processori moderni ci sono codifiche analoghe, quindi a ogni byte corrisponde una e una sola interpretazione come istruzione macchina.
@@ -294,11 +294,9 @@ L’effetto che il programmatore trova è che è molto più facile scrivere il s
 Possiamo prenderci la briga di garantire che se quello è il codice dell’ABS non ci schiantiamo?
 No, perché avvengono delle cose che sono fuori dal nostro controllo.
 In più la presenza di queste varie sovrastrutture introducono una serie di vincoli e restrizioni di cui dobbiamo essere pienamente coscienti, ad esempio la restrizione del garbage collector che dice “<em>la memoria la libero io quando ho voglia</em>”.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="allocazione-della-memoria---malnati-2"><a class="header" href="#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2</a></h1>
-<h1 id="indice"><a class="header" href="#indice">Indice</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="allocazione-della-memoria---malnati-2"><a class="header" href="#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2 <!-- omit in toc --></a></h1>
+<h1 id="indice"><a class="header" href="#indice">Indice <!-- omit in toc --></a></h1>
 <ul>
-<li><a href="02-allocazione_della_memoria_parte_2.html#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2</a></li>
-<li><a href="02-allocazione_della_memoria_parte_2.html#indice">Indice</a></li>
 <li><a href="02-allocazione_della_memoria_parte_2.html#1-modello-di-esecuzione">1. Modello di esecuzione</a></li>
 <li><a href="02-allocazione_della_memoria_parte_2.html#2-stack">2. Stack</a>
 <ul>
@@ -563,8 +561,6 @@ Esaurendosi, verrà il momento in cui gli chiedo ancora un pezzo, ma non ne ha p
 <p>C’è una responsabilità in più: io lo devo rilasciare <strong>una e una sola volta</strong>.
 Non meno- <a href="02-allocazione_della_memoria_parte_2.html#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2</a></p>
 <ul>
-<li><a href="02-allocazione_della_memoria_parte_2.html#allocazione-della-memoria---malnati-2">Allocazione della memoria - Malnati 2</a></li>
-<li><a href="02-allocazione_della_memoria_parte_2.html#indice">Indice</a></li>
 <li><a href="02-allocazione_della_memoria_parte_2.html#1-modello-di-esecuzione">1. Modello di esecuzione</a></li>
 <li><a href="02-allocazione_della_memoria_parte_2.html#2-stack">2. Stack</a>
 <ul>

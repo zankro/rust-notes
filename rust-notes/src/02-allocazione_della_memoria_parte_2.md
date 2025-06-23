@@ -1,8 +1,6 @@
-# Allocazione della memoria - Malnati 2
+# Allocazione della memoria - Malnati 2 <!-- omit in toc -->
 
-# Indice
-- [Allocazione della memoria - Malnati 2](#allocazione-della-memoria---malnati-2)
-- [Indice](#indice)
+# Indice <!-- omit in toc -->
 - [1. Modello di esecuzione](#1-modello-di-esecuzione)
 - [2. Stack](#2-stack)
 	- [2.1 Esempio limite stack](#21-esempio-limite-stack)
@@ -424,8 +422,6 @@ E a quel punto il programma si rompe, proprio come si rompe con lo stack overflo
 
 C’è una responsabilità in più: io lo devo rilasciare **una e una sola volta**.
 Non meno- [Allocazione della memoria - Malnati 2](#allocazione-della-memoria---malnati-2)
-- [Allocazione della memoria - Malnati 2](#allocazione-della-memoria---malnati-2)
-- [Indice](#indice)
 - [1. Modello di esecuzione](#1-modello-di-esecuzione)
 - [2. Stack](#2-stack)
 	- [2.1 Esempio limite stack](#21-esempio-limite-stack)
