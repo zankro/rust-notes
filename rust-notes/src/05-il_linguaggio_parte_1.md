@@ -230,18 +230,18 @@ La responsabilità del rilascio è **del possessore originale**.
 
 Quindi alle tante domande attraverso il meccanismo del tempo di vita il compilatore mi sa dire *“posso in questo momento accedere o meno?”* e fa le verifiche, e mi lascia compilare il codice solo se effettivamente posso e se non posso o al dubbio che potrei non essere in grado mi stoppa e mi blocca lì.
 
-<aside>
-💡
 
-Dato che i **ref** e **ref mut** li posso solo costruire applicando l’operatore `&` o l’operatore `&mut` a una variabile esistente, sono certo che contengono un puntatore valido. 
+>💡 **Nota**
+>
+>Dato che i **ref** e **ref mut** li posso solo costruire applicando l’operatore `&` o l’operatore `&mut` a una variabile esistente, sono certo che contengono un puntatore valido. 
+>
+>Al tempo stesso, poiché sono riferimenti, cioè puntatori privi di possesso, so per certo che non tocca a me rilasciarli, quindi chi si ritrova un ref o un refmut sa che ci può accedere ma non è compito suo occuparsi del rilascio, perché il rilascio è del proprietario. 
+>
+>![image.png](images/il_linguaggio/image%208.png)
+>
+>![image.png](images/il_linguaggio/image%209.png)
 
-Al tempo stesso, poiché sono riferimenti, cioè puntatori privi di possesso, so per certo che non tocca a me rilasciarli, quindi chi si ritrova un ref o un refmut sa che ci può accedere ma non è compito suo occuparsi del rilascio, perché il rilascio è del proprietario. 
 
-![image.png](images/il_linguaggio/image%208.png)
-
-![image.png](images/il_linguaggio/image%209.png)
-
-</aside>
 
 Su un’architettura 64 bit i puntatori sono 64 bit, ma a volte 128 perché a differenza del C, dove i puntatori sono tutti uguali, qua **in base a che cosa punto** posso ottenere un puntatore semplice (uno ***slim pointer***), o un ***fat pointer***. 
 Se punto un dato la cui lunghezza non è nota a tempo di compilazione, il compilatore lo fa diventare un fat pointer e ci mette insieme in una tupla (cioè uno a fianco all’altro) il **puntatore** e la **lunghezza**, in modo tale che il destinatario sappia regolarsi. Se quello è un dato di tipo polimorfico il compilatore ci mette un fat pointer e mi dice “*guarda il destinatario non sa esattamente questa roba qui che cosa sia, quindi io gli aggiungo una tabellina a lato che lo disambigua*”.

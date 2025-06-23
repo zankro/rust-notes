@@ -679,16 +679,14 @@ Con raggio 10 ma coordinate diverse, otterremo `true` perché confrontiamo solo 
 
 Un caso particolare: se usiamo `f64::NAN` come raggio per entrambi i cerchi, il confronto tra due cerchi con `NaN` risulterà `false`, perché come dicevamo, in floating-point `NaN != NaN`. E questo vale in tutti i linguaggi. 
 
-<aside>
-💡 **La macro Derive**
 
-**Derive** è in grado di implementare `Debug`, `Eq`, `PartialEq`, `Ord`, `PartialOrd` e alcuni altri tratti, ma non tutti, poiché ogni tratto ha una semantica particolare - questi sono solo i tratti più semplici. 
-
-Esistono anche librerie aggiuntive, come `derive_more`, che forniscono ulteriori tratti da derivare, ma richiedono l'importazione della libreria nel proprio `Cargo`. È possibile creare i propri tratti derivabili, e ci sono altre librerie utili come `Serde` (*abbreviazione di serialization/deserialization*), che permette di derivare macro per serializzare - ovvero tratti per convertire i propri oggetti in JSON e leggerli da JSON.
-
-`Serde` offre anche la possibilità di leggere e generare XML, ma richiede l'importazione specifica del modulo `Serde XML`.
-
-</aside>
+>💡 **La macro Derive**
+>
+>**Derive** è in grado di implementare `Debug`, `Eq`, `PartialEq`, `Ord`, `PartialOrd` e alcuni altri tratti, ma non tutti, poiché ogni tratto ha una semantica particolare - questi sono solo i tratti più semplici. 
+>
+>Esistono anche librerie aggiuntive, come `derive_more`, che forniscono ulteriori tratti da derivare, ma richiedono l'importazione della libreria nel proprio `Cargo`. È possibile creare i propri tratti derivabili, e ci sono altre librerie utili come `Serde` (*abbreviazione di serialization/deserialization*), che permette di derivare macro per serializzare - ovvero tratti per convertire i propri oggetti in JSON e leggerli da JSON.
+>
+>`Serde` offre anche la possibilità di leggere e generare XML, ma richiede l'importazione specifica del modulo `Serde XML`.
 
 Esistono numerosi **tratti** che arricchiscono il comportamento degli oggetti. Esaminiamoli brevemente:
 
@@ -918,11 +916,7 @@ Quindi le **struct generiche**, in generale, portano però a codice più efficie
 
 In più, gli oggetti tratto li posso creare solo nella condizione in cui mi ritrovo a non avere metodi statici all'interno del tratto stesso. Quindi non posso definire un oggetto tratto legato a più tratti disgiunti, mentre lo posso fare dall'altra parte.
 
-<aside>
-💡
 
-**Monomorphism vs Trait Objects**
-
-![image.png](images/polimorfismo/image%2066.png)
-
-</aside>
+>💡 **Monomorphism vs Trait Objects**
+>
+>![image.png](images/polimorfismo/image%2066.png)

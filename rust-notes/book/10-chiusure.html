@@ -369,15 +369,14 @@ Perché Rust, per noi, dietro questa espressione genera una <strong>tupla</stron
 <p>Se a questo punto aggiungessi ancora una stampa qua mettendoci un <code>f1</code> finale giusto per vedere cosa succede, mi accorgerei che prima ho <code>f1</code> che parte: <code>a1</code>, <code>a2</code>, <code>a3</code>, <code>a4</code>, poi ho <code>f2</code> che mi fa <code>b1</code>, <code>b2</code>, <code>b3</code>. Poi vado avanti, richiamo di nuovo <code>f1</code> e chiaramente questo mi stampa <code>a5</code> perché si è ricordato il suo contenuto.</p>
 <p>Quindi io ho creato all'interno di questa funzione chiamata <code>gen</code> una <strong>chiusura,</strong> ovvero una funzione lambda, perché l'ho creata con le barre che però oltre a prendere i suoi parametri (nessuno in questo caso), si prende in ausilio due dati che derivano dal suo contesto: un dato dal contesto stretto è la <code>i</code> (se la porta dentro), l'altra <code>base</code> l'ha presa come parametro della funzione <code>gen</code>.</p>
 <p>Quindi chi invoca <code>gen</code> mi dà il prefisso che dovrò mettere davanti ai miei simboli che genererò e automaticamente a ogni invocazione io concatenerò il prefisso con il valore corrente di <code>i</code> per ottenere il mio risultato.</p>
-<aside>
-💡
-<p><strong>Keyword</strong> <strong><code>move</code></strong></p>
+<blockquote>
+<p>💡 <strong>Keyword</strong> <strong><code>move</code></strong></p>
 <p><img src="images/chiusure/image%2018.png" alt="image.png" /></p>
 <p><img src="images/chiusure/image%2019.png" alt="image.png" /></p>
 <p>Senza la parola chiave <strong><code>move</code></strong>, il compilatore blocca la compilazione.</p>
 <p>Se rimuoviamo <code>move</code>, il compilatore segnala un errore perché la chiusura prenderebbe <code>i</code> come riferimento semplice invece di acquisirne il possesso. Per questo motivo dobbiamo aggiungere <code>move</code> davanti alla chiusura, così da forzare la presa di possesso di <code>i</code>.</p>
 <p>Altrimenti, la variabile <code>i</code> cesserebbe di esistere una volta usciti dallo scope della funzione <code>gen</code>, ma la chiusura vi farebbe ancora riferimento: problema!</p>
-</aside>
+</blockquote>
 <p>Con la chiusura ho avuto la possibilità di creare una funzione che è <strong>semipermeabile</strong>, cioè riesce a catturare delle cose.</p>
 <p><em>Perché?</em>
 Perché non viene generata solo una funzione: <strong>viene generata una</strong> <strong>tupla che implementa il <em>tratto funzionale</em></strong>.</p>
@@ -420,11 +419,11 @@ Infine se implemento <code>Fn</code> è come se avessi un metodo che prende <cod
 <p>Quindi quale di questi tre tratti viene effettivamente implementato dipende da <em>cosa viene catturato e come viene catturato</em>. Una chiusura di fatto la scrivo sempre uguale ma se vado a vedere il tipo che il compilatore gli assegna vedrò delle cose distinte:</p>
 <p><img src="images/chiusure/image%2022.png" alt="image.png" /></p>
 <p>Vediamo che <code>f1</code> implementa <code>FnMut</code>, in altri casi implementerà altre cose.</p>
-<aside>
-💡
+<blockquote>
+<p>💡 <strong>Da ChatGPT</strong></p>
 <p><img src="images/chiusure/image%2023.png" alt="image.png" /></p>
 <p><img src="images/chiusure/image%2024.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p><img src="images/chiusure/image%2025.png" alt="image.png" /></p>
 <p><img src="images/chiusure/image%2026.png" alt="image.png" /></p>
 <p><strong>FnOnce</strong>
@@ -447,26 +446,24 @@ Il compilatore gli darà un nome incomprensibile.
 La posso passare solo se la chiamo col suo <strong>tratto</strong>, e quindi posso dire che a quell’altra funzione passerò un oggetto <code>T</code> che implementa il tratto <code>Fn</code>, <code>FnMut</code> o <code>FnOnce</code>.</p>
 <p>Qui vediamo un esempio di <code>higher_order_function</code>: è una funzione che prende <code>f</code> di tipo <code>F</code> a condizione che <code>F</code> grande implementi il tratto <code>Fn</code> che mangia il tipo <code>T</code> (<code>where F: Fn(T)</code>) e produce il valore <code>U</code> ( <code>-&gt; U</code>).</p>
 <p>Questo ci dà la possibilità di scrivere in modo molto generico delle cose.</p>
-<aside>
-💡
-<p><strong>Analisi firma</strong></p>
+<blockquote>
+<p>💡 <strong>Analisi firma</strong></p>
 <p><img src="images/chiusure/image%2028.png" alt="image.png" /></p>
 <p><img src="images/chiusure/image%2029.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p><img src="images/chiusure/image%2030.png" alt="image.png" /></p>
 <p>In questo esempio, usando <code>move</code>, il possesso della variabile catturata (<code>v</code>) viene trasferito alla chiusura. Tuttavia, <strong>non serve <code>FnMut</code></strong> perché la variabile <strong>non viene modificata</strong>, ma solo letta tramite <code>.clone()</code>.</p>
 <p>Anzi, se la chiusura <strong>non consuma</strong> la variabile catturata (non fa <code>return v</code>), allora <strong>può tranquillamente implementare <code>Fn</code></strong>, il trait più restrittivo.</p>
 <p>Questo è possibile proprio <strong>grazie a <code>move</code></strong>, che elimina qualsiasi legame tra la chiusura restituita e le variabili locali della funzione che la crea.</p>
 <p><img src="images/chiusure/image%2031.png" alt="image.png" /></p>
-<aside>
-💡
-<p><strong>Descrizione dell’esempio AI Generated</strong></p>
+<blockquote>
+<p>💡 <strong>Descrizione dell’esempio AI Generated</strong></p>
 <p>La chiusura <strong>cattura <code>i</code> in modo mutabile</strong> (perché lo incrementa) e <strong><code>b</code> per valore</strong> (una <code>String</code> derivata da <code>prefix</code>), quindi deve essere <strong><code>move</code></strong> per prendere possesso di entrambe. Questo è necessario affinché la chiusura possa <strong>vivere anche dopo che <code>generator</code> è terminata</strong>, mantenendo il proprio stato (<code>i</code>) tra una chiamata e l’altra.</p>
 <p>Anche se <code>b</code> è catturata per valore, <strong>non viene consumata</strong>, perché viene solo <strong>letta</strong> (passata per riferimento a <code>format!</code>). Questo permette alla chiusura di <strong>riutilizzare <code>b</code></strong> a ogni invocazione senza diventare <code>FnOnce</code>.</p>
 <p>Essendo la chiusura <strong>mutabile internamente</strong>, il valore <code>f</code> in main deve essere dichiarato <code>mut</code>.</p>
 <p>Infatti, <strong>le chiusure in Rust vengono <em>desugared</em> in tuple</strong> che contengono i valori catturati come campi. Se uno di questi campi (come <code>i</code>) viene modificato, allora il metodo generato (<code>call_mut()</code>, che fa parte del tratto <code>FnMut</code>) richiede <strong><code>&amp;mut self</code></strong>. Per poter invocare <code>f()</code>, il compilatore deve quindi disporre di <code>f</code> come valore <strong>mutabile</strong>.</p>
 <p>Ogni chiamata a <code>f()</code> restituisce un nuovo identificatore unico, sfruttando lo stato interno della chiusura.</p>
-</aside>
+</blockquote>
 <h1 id="4-riferimenti"><a class="header" href="#4-riferimenti">4. Riferimenti</a></h1>
 <p><img src="images/chiusure/image%2032.png" alt="image.png" /></p>
 <h1 id="5-applicazioni-pratiche"><a class="header" href="#5-applicazioni-pratiche">5. Applicazioni pratiche</a></h1>
@@ -546,20 +543,19 @@ Ad esempio, potrei includere questo blocco dentro un <code>for i in 3..7</code> 
 // Process finished with exit code 0</code></pre></pre>
 <p>A questo punto mi dice che ha <em>preparato la funzione</em> — ho già congelato il fatto che quello sarà un vettore di 4, ma non l'ho ancora fatto! Mi sono preparato le condizioni per poterlo avere.</p>
 <p>Quando mi servirà davvero il vettore gli chiedo di farlo con <code>let v = f();</code>, e lui mi dice <em>"Sto per preparare il vettore con 4 elementi”</em>.</p>
-<aside>
-⚠️
-<p><strong><code>fn</code> al posto di <code>FnOnce</code>, <code>FnMut</code>, <code>Fn</code></strong></p>
+<blockquote>
+<p>⚠️ <strong><code>fn</code> al posto di <code>FnOnce</code>, <code>FnMut</code>, <code>Fn</code></strong></p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn gen_vect(n: usize) -&gt; impl FnOnce() -&gt; Vec&lt;i32&gt; { 
-	// ...
- }
+  // ...
+}
 <span class="boring">}</span></code></pre></pre>
 <p>Se io ritorno <code>fn</code> semplice (dove c’è scritto <code>impl FnOnce()</code>), non posso avere uno stato — per poter essere una tupla mi serve essere uno dei tre tratti funzionali: <code>Fn</code>, <code>FnOnce</code>, <code>FnMut</code>.</p>
 <p><img src="images/chiusure/image%2034.png" alt="image.png" /></p>
 <p><img src="images/chiusure/image%2035.png" alt="image.png" /></p>
 <p><img src="images/chiusure/image%2036.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p>Questa tecnica in cui creo una funzione customizzata sul mio bisogno — <em>ho preparato una funzione che quando la invocherò mi darà un vettore di <code>n</code> elementi</em> — non è detto che mai mi serva. Se a un certo punto ne avrò bisogno glielo chiedo, e non dovrò ricordarmi quanti erano gli elementi perché lo sa lui. Questo è un modo totalmente diverso di programmare, ma molto potente.</p>
 
                     </main>

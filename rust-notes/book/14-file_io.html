@@ -245,11 +245,12 @@ Sostanzialmente perché rispetto ad una stringa, che ha certe caratteristiche (u
 <p>Un oggetto di tipo file si distingue da una stringa anche per il fatto che noi concateniamo elementi in modo differente in base al sistema operativo: cioè col back slash piuttosto che col forward slash.</p>
 <p>All'interno sono conservati una serie di metadati che di nuovo dipendono in qualche misura dal sistema operativo: tra i metadati importanti c'è l'<em><strong>owner</strong></em>, c'è la <em><strong>data di creazione</strong></em> ed <em><strong>ultima modifica.</strong></em></p>
 <p>Questi ultimi due fattori sono molto interessanti nel contesto soprattutto della <em><strong>system integration</strong></em> cioè quando noi ci troviamo ad avere un pezzo di software che già esiste (che ha scritto qualcun altro e che fa delle cose) e abbiamo bisogno di fare in modo che <em>inter-operi</em> in qualche modo con un altro pezzo di software che ha scritto qualcun altro ancora che ha delle sue caratteristiche.</p>
-<aside>
-💡 Spesso e volentieri i file sono un modo plausibile di ottenere una forma di system integration, perché se abbiamo, ad esempio, Word che crea i file .docx — io non so manipolare i file .docx, non so come word li generi eccetera.. però posso immaginare che mi metto a osservare una certa cartella e tutte le volte che vedo comparire un nuovo file .docx all'interno potrei decidere che quel file potrebbe magari servirmi da un'altra parte.
-Quindi magari scrivo un programmino che me lo prende e lo copia su un disco, una cosa che sembra una cartella locale ma in realtà è google drive e quindi che ne so ho fatto l'archiviazione automatica dei miei file .docx.
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
+<p>Spesso e volentieri i file sono un modo plausibile di ottenere una forma di system integration, perché se abbiamo, ad esempio, Word che crea i file .docx — io non so manipolare i file .docx, non so come word li generi eccetera.. però posso immaginare che mi metto a osservare una certa cartella e tutte le volte che vedo comparire un nuovo file .docx all'interno potrei decidere che quel file potrebbe magari servirmi da un'altra parte.
+Quindi magari scrivo un programmino che me lo prende e lo copia su un disco, una cosa che sembra una cartella locale ma in realtà è google drive e quindi che ne so ho fatto l'archiviazione automatica dei miei file .docx.</p>
 <p>Chiaramente in questo genere di operazioni sapere quando quel file è stato creato e quando è stato modificato è molto interessante perché pur non capendo niente della logica di come word aggiorna il file .docx, ma limitandomi a guardare l'oggetto file e monitorare la data di ultima modifica posso cercare di capire se quel file lì lo devo anche ricopiare da un'altra parte perché voglio farne il backup automatico oppure no.</p>
-</aside>
+</blockquote>
 <p>Posso sapere anche che tipo di file ho in questione: un <em><strong>file semplice</strong></em> (cioè è associato ad un array di bytes di qualche genere), o se c'è un nome che rappresenta una <em><strong>cartella</strong></em> quindi un raggruppamento di altri file, o se è un <em><strong>collegamento simbolico</strong></em> (ovvero è un nome che in realtà è un alias di un file che è però da un'altra parte) etc…</p>
 <h1 id="3-navigare-il-file-system"><a class="header" href="#3-navigare-il-file-system">3. Navigare il file system</a></h1>
 <p><img src="images/file_io/Untitled%202.png" alt="Untitled" /></p>
@@ -292,10 +293,11 @@ In questo caso ho due funzioni che mi fanno la vita molto comoda:</p>
 <li><strong><code>write</code></strong> prende uno slice di byte (<code>&amp;u8</code>) e lo scrive dentro il file, quindi quello che c'era nel file va perduto e viene sostituito dal blocco che io gli passo</li>
 </ul>
 <p>Quindi in quelle situazioni in cui io so a priori che le cose che devo trattare stanno probabilmente nel mio spazio indirizzamento, con questi due metodi ho tutto quello che mi serve ed è molto più agile poi lavorare direttamente su una stringa o su uno slice di byte piuttosto che operare a pezzi su blocchi che devo capire come li segmento, come li congiungo e così via…</p>
-<aside>
-💡 Nell’esempio in slide, vediamo che **`read_to_string`** prende come argomento una variabile **`filename`** , che deve essere di tipo `&Path`.
-Noi potremmo passarvi anche una stringa, ad esempio **`"C:/alpha/beta"`** perchè i `&str` (slice di caratteri) sono riconducibili ad un `Path`, perchè implementano il tratto **`From`** e quindi possiamo convertirli in automatico.
-</aside>
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
+<p>Nell’esempio in slide, vediamo che <strong><code>read_to_string</code></strong> prende come argomento una variabile <strong><code>filename</code></strong> , che deve essere di tipo <code>&amp;Path</code>.
+Noi potremmo passarvi anche una stringa, ad esempio <strong><code>"C:/alpha/beta"</code></strong> perchè i <code>&amp;str</code> (slice di caratteri) sono riconducibili ad un <code>Path</code>, perchè implementano il tratto <strong><code>From</code></strong> e quindi possiamo convertirli in automatico.</p>
+</blockquote>
 <p><img src="images/file_io/Untitled%206.png" alt="Untitled" /></p>
 <p>Nelle situazioni invece in cui vogliamo scriverlo pian piano, posso popolare questo file in vari modi.</p>
 <p>In questo esempio parto da un nome di un file <code>path = "lines.txt"</code>.
@@ -353,11 +355,10 @@ Infine <strong><code>BufWriter</code></strong> è una specializzazione del tratt
 Questo accade solo se il buffer ha dimensione maggiore di 0.</li>
 <li>Quando il buffer passato ha dimensione 0.</li>
 </ul>
-<aside>
-💡
-<p><strong>Nota</strong>
-Se passiamo uno slice di size 0 (cosa possibile), otterremo necessariamente <code>Ok(0)</code>, semplicemente perché non c'è spazio per leggere: in pratica ci dice <em>"ho letto 0 byte".</em></p>
-</aside>
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
+<p>Se passiamo uno slice di size 0 (cosa possibile), otterremo necessariamente <code>Ok(0)</code>, semplicemente perché non c'è spazio per leggere: in pratica ci dice <em>"ho letto 0 byte".</em></p>
+</blockquote>
 <p>Ogni volta che chiamiamo <code>read()</code>, viene effettuata una system call che comporta un cambio di contesto (questo accade nella maggior parte dei casi). Questa system call è costosa, richiedendo 500 cicli macchina.</p>
 <p><img src="images/file_io/Untitled%2010.png" alt="Untitled" /></p>
 <p><em>Quali sono tutti gli altri metodi che il tratto</em> <code>Read</code> <em>mi offre (e che di conseguenza trovo dentro</em> <code>File</code>, **<code>Stdin</code><em>,</em> <code>TcpStream</code> <em>etc...)?</em> ****</p>
@@ -400,13 +401,15 @@ Per quelle che sono seekable però abbiamo la possibilità di farci delle operaz
 <p><em>Come facciamo a leggere dei dati binari di qualche tipo?</em></p>
 <p>Supponiamo volessimo aprire un <strong>pdf</strong>, che è un file che ha un formato binario al suo interno: certo ci sono anche delle parti stringa, ma ci sono anche <em>immagini</em>, <em>codici di formattazione</em>, <em>cose strane</em> etc.</p>
 <p>Per cui di per sé non abbiamo la garanzia che contenga dell'<code>utf-8</code> quindi dobbiamo leggere come array di byte. Qua proviamo a farlo: nell'esempio in realtà leggo (nel caso di Linux) dal device che si chiama <em><strong>urandom</strong></em>, un particolare device che viene montato. È un finto file (infatti sta nella cartella <code>/dev</code>) che quando lo leggo mi genera dei byte a caso appoggiandosi a una qualche periferica che, attraverso un fenomeno fisico di qualche genere, prova a generare dei numeri che siano robustamente casuali.</p>
-<aside>
-💡 Un modo per generare dei numeri robustamente casuali è fare lavorare un diodo zener in corrispondenza del punto di gomito della sua curva tensione corrente, che è una zona di grande aleatorietà dove, tenendo in quella posizione li, a volte leggo uno a volte leggo zero in un modo non controllabile. Siccome è un fenomeno fisico che dipende da tutta una serie di faccende varie, quella è una buona sorgente di variabilità e di conseguenza può essere messo all'interno della nostra CPU un chip che internamente fa questo mestiere, e quando leggiamo da ***urandom*** in realtà andiamo a interrogare questo chip che ci genera dei byte a caso.
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
+<p>Un modo per generare dei numeri robustamente casuali è fare lavorare un diodo zener in corrispondenza del punto di gomito della sua curva tensione corrente, che è una zona di grande aleatorietà dove, tenendo in quella posizione li, a volte leggo uno a volte leggo zero in un modo non controllabile.
+Siccome è un fenomeno fisico che dipende da tutta una serie di cose realmente random, quella è una buona sorgente di variabilità e di conseguenza può essere messo all'interno della nostra CPU un chip che internamente fa questo mestiere, e quando leggiamo da <em><strong>urandom</strong></em> in realtà andiamo a interrogare questo chip che ci genera dei byte a caso.</p>
 <p>In altre situazioni si usano dei sensori (dei muoni piuttosto che di altre particelle che ci arrivano dai raggi cosmici sostanzialmente) che di nuovo sono abbastanza impredicibili e tra l'altro sono rilevabili anche negli ambienti interni perché attraversano una serie di situazioni e quindi questi sono tutti fenomeni difficilmente caratterizzabili.</p>
 <p>Perché è importante essere difficilmente caratterizzabile?
 I numeri random noi li possiamo usare per scopi molto diversi: li possiamo usare banalmente per pseudo simulazioni — fate un giochino, c'è il mostriciattolo che vi insegue che a volte gira destra e a volte gira a sinistra, va bene chi se ne frega.
 Ma se invece di fare il giochino o la simulazione di qualcos'altro stiamo facendo la crittografia per proteggere una transazione bancaria, se l’algoritmo non è un vero random ma è uno pseudo random (che di fatto è assolutamente predicibile: qualcuno potrebbe aver studiato un po’ di bit precedenti e fare un <em><strong>educated guess</strong></em> su quali saranno i bit a venire) questo sarebbe rischiosissimo. Per questo motivo ci serve avere un generatore di numeri casuali che sia legato a fenomeni fuori dal controllo.</p>
-</aside>
+</blockquote>
 <p>In questo caso qui apriamo il device che si chiama <code>dev/urandom</code> e in questo caso noi sappiamo che questo ci dà un 32 bit, quindi prepariamo un buffer di 4 byte <code>let mut buff = [0;4]</code> — quello lì è un buff di 4 byte inizialmente tutti i posti a 0. E poi chiamiamo <code>f.read_exact(&amp;mut buff)</code> , cioè riempimi questi 4 byte con il contenuto del file urandom. Se qualcosa va storto ritorna l'errore, dopo di che se invece non è un errore all'interno dell’array buff ho i 4 byte completamente random e quindi vado a vedere cosa succede e vedo: se in questo caso ne trovo uno tutto a 0 la pianto lì subito dicendo ok altrimenti provo a trasformare questo numero in un intero 32 bit e ci faccio qualcosa in questo caso lo stampo.</p>
 <p><img src="images/file_io/Untitled%2016.png" alt="Untitled" /></p>
 <p>Altre volte, invece di leggere brutalmente un blocco di byte così com’è nel disco o code del genere, io ho bisogno di leggere dei dati che so essere strutturati: ad esempio un file csv che contiene qualche milionata di numeri.

@@ -500,33 +500,29 @@ Niente di speciale: <code>b1</code> chiama il suo distruttore, e il distruttore 
 <p><code>b2</code> è ancora accessibile, lo posso tranquillamente stampare senza problemi.</p>
 <p><img src="images/smart_pointer/image%2036.png" alt="image.png" /></p>
 <p>Quando arriviamo alla chiusa graffa, questa comporta la contrazione dello stack. <code>b2</code> va via, passa al suo distruttore, rilascia, contraggo tutto, e la memoria è pulita.</p>
-<aside>
-💡
-<p><strong>Nota</strong></p>
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
 <p><code>b1</code> libera lo <strong>heap</strong>. Ci rimane <code>b1</code> con il suo vecchio valore, ma è inaccessibile. Se provi ad andarlo a leggere, il compilatore ti blocca — è rimasto il puntatore all'originale, ma non puoi scrivere del codice che ci va dentro a leggere, perché il compilatore ti blocca.</p>
 <p>Te lo garantisce perché è l'<strong>analisi statica del codice</strong> che dice: <em>“dopo la</em> <code>drop</code><em>, il tuo valore</em> <code>b1</code> <em>non possiede più il dato, quindi non puoi accedervi”</em>.
 Questo avviene in compilazione.</p>
-</aside>
-<aside>
-💡
-<p><strong>Nota 2</strong></p>
+</blockquote>
+<blockquote>
+<p>💡 <strong>Nota 2</strong></p>
 <p>Esattamente come <em>unique pointer</em>, <code>Box</code> non può essere copiato, quindi non posso avere due diversi riferimenti allo stesso blocco sullo <strong>heap</strong>.</p>
 <p><em>Perché?</em>
 Perché altrimenti non si capirebbe chi lo possiede e non ci sarebbe più la regola del rilascio singolo, ma cadrei nel rischio del doppio rilascio o del non rilascio che è uno dei tanti <em>undefined behavior</em> di cui il C è affetto, con la sua idea di puntatori.</p>
-</aside>
-<aside>
-💡
-<p><strong>La funzione <code>drop()</code></strong></p>
+</blockquote>
+<blockquote>
+<p>💡 <strong>La funzione <code>drop()</code></strong></p>
 <p><img src="images/smart_pointer/image%2037.png" alt="image.png" /></p>
 <p><img src="images/smart_pointer/image%2038.png" alt="image.png" /></p>
 <p><img src="images/smart_pointer/image%2039.png" alt="image.png" /></p>
-</aside>
-<aside>
-💡
-<p><strong>Smart pointers overview</strong></p>
+</blockquote>
+<blockquote>
+<p>💡 <strong>Smart pointers overview</strong></p>
 <p>Sono oggetti che dentro di sé contengono dei puntatori ma non sono dei puntatori, sono oggetti che li posseggono ma si presentano per Rust come fossero puntatori in quanto implementano a volte solo il tratto <code>Deref</code> a volte il tratto <code>DerefMut</code>.</p>
 <p>La differenza tra i due tratti è che in un caso applicando asterisco di fronte a questo oggetto ottengo un riferimento condiviso, applicandolo per quelli che implementano <code>DerefMut</code> ottengo un riferimento mutabile e di conseguenza ho la possibilità di modificare il contenuto presente al suo interno.</p>
-</aside>
+</blockquote>
 <h2 id="23-rc"><a class="header" href="#23-rc">2.3 <code>Rc</code></a></h2>
 <p><img src="images/smart_pointer/image%2040.png" alt="image.png" /></p>
 <p>Ci sono situazioni in cui noi abbiamo bisogno di avere due diversi puntatori che condividono un qualche dato.</p>
@@ -561,12 +557,11 @@ In questo caso abbiamo una lista di pezzi che ha vari punti di ingresso.</p>
 <p>In cima troviamo l'elemento <code>a</code>, definito nel main come <code>let a = Rc_new(...)</code>. Questo rappresenta l'elemento <code>5</code> concatenato con un <code>Rc</code> contenente l'elemento <code>10</code>. In sostanza, <code>a</code> è una lista di due elementi: <code>5</code> seguito da <code>10</code>. Fin qui nulla di straordinario — avremmo potuto ottenere lo stesso risultato usando un <code>Box</code>.</p>
 <p>Se facessimo <code>drop(a)</code>, il conteggio (inizialmente <code>1</code>) scenderebbe a <code>0</code> (ignorando momentaneamente ciò che si vede in slide, dove <code>a</code> è conosciuto da altri due elementi) innescando una cascata di deallocazioni: la struttura <code>Cons</code> verrebbe eliminata, l'<code>Rc</code> contenuto provocherebbe la diminuzione del contatore dell'area puntata, portando il secondo elemento (contenente <code>10</code>) a <code>0</code>, causandone il rilascio. Questo porterebbe al rilascio dell'<code>Rc</code> in coda, completando così la deallocazione dell'intera struttura.</p>
 <p><em>In altre parole, quando eliminiamo la testa della catena (il punto di ingresso), l'intera struttura si disgrega a cascata.</em></p>
-<aside>
-💡
-<p><strong>Nota</strong></p>
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
 <p>Quando un oggetto esce di scope, richiama il tratto <code>Drop</code>.
 In questo caso il <code>Drop</code> di <code>Rc</code> provvede a decrementare il contatore successivo, che se scende a zero provoca il <code>drop</code> dell'elemento successivo.</p>
-</aside>
+</blockquote>
 <p>In questo caso invece, anziché eliminare, allunghiamo la lista aggiungendo un nuovo elemento. Prepariamo <code>b</code>, anch'esso un reference count (<code>Rc::new</code>), che inizia con <code>3</code> e prosegue con un <code>clone()</code> di <code>a</code>.</p>
 <p>Non possiamo usare <code>a</code> direttamente poiché vogliamo mantenerlo disponibile, quindi lo cloniamo. L'effetto del clone è che il conteggio del blocco puntato da <code>a</code> sale a <code>2</code>.</p>
 <p>Dopodiché, dico "<em>ma guarda, io ho un altro modo di far cominciare questa lista</em>". Invece di avere la lista, quella di <code>b</code>, che è <code>3, 5, 10</code>, io ho anche un'altra possibilità. Davanti ad <code>a</code>, invece di metterci <code>3</code>, ci voglio mettere un <code>4</code>. E quindi mi preparo <code>c</code>.</p>
@@ -618,13 +613,12 @@ Dentro <code>five</code> c'è questo puntatore a questo blocco di 20 byte.</p>
 L'unico modo che ho per accedere al dato è provare a fare l’upgrade di <code>weak_five</code>, con <code>weak_five.upgrade</code>.</p>
 <p>Nel momento in cui lo faccio (supponendo che <code>five</code> non sia stato droppato nel frattempo, e che quindi il contatore valga almeno <strong>1</strong>) quello che succede è che il punto <code>upgrade</code> ha successo.
 In questo momento c'era scritto <strong><code>1, 1</code></strong>, e facendo l'<code>upgrade</code> diventa <strong><code>2, 1</code></strong>. Perché posseggo <code>five</code> originale, posseggo questo nuovo <code>Rc</code>, <code>strong_five</code>, e poi c'è sempre <code>weak_five</code> che resta lì.</p>
-<aside>
-💡
-<p><strong>Rc — downgrade &amp; upgrade</strong></p>
+<blockquote>
+<p>💡 <strong>Rc — downgrade &amp; upgrade</strong></p>
 <p><img src="images/smart_pointer/image%2045.png" alt="image.png" /></p>
 <p><img src="images/smart_pointer/image%2046.png" alt="image.png" /></p>
 <p><img src="images/smart_pointer/image%2047.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p>Poi c'è un <code>assert</code>, <code>strong_five.is_some</code>, che serve per verificare che abbiamo ricevuto qualcosa di valido. Potrei usarlo per leggere il 5, ad esempio con <code>println!("*strong_5")</code>, ma per ora ci basta sapere che funziona.</p>
 <p>A un certo punto lo <strong>droppo</strong>. Con il <code>drop</code> il contatore scende da 2 a 1. Nessun problema. Se faccio anche <code>drop</code> di <code>five</code>, il contatore degli <strong>strong</strong> scende da 1 a 0.</p>
 <p><em>Cosa succede?</em> Che del nostro blocco di 20 byte sullo heap, gli ultimi 4 (l’<code>i32</code>) vengono rilasciati. <em>Perché?</em> Non ci sono più riferimenti <strong>strong</strong>, quindi quel dato viene eliminato.
@@ -633,15 +627,14 @@ In questo momento c'era scritto <strong><code>1, 1</code></strong>, e facendo l'
 Il contatore ora è <strong><code>0, 1</code></strong>.
 <code>strong_five</code> è stato eliminato (il compilatore garantisce che non ci accedo), <code>five</code> è stato eliminato (e anche qui, il compilatore garantisce che non ci accedo), e rimane solo <code>weak_five</code> che punta alla sequenza <strong><code>0, 1</code></strong>. Se provassi a fare <code>weak_five.upgrade()</code>, il metodo controllerebbe il contatore strong, vedrebbe 0 e restituirebbe <code>None</code>. Non c'è più possibilità di accesso.</p>
 <p>Questo meccanismo garantisce che i <strong>weak pointer</strong> possano chiudere dei cicli: possiamo creare catene in avanti e chiuderle all'indietro come vogliamo, sia in anelli completi che in catene di piccoli anelli. I puntatori <strong>weak</strong> non creano problemi per la gestione della memoria, perché il dato viene rilasciato quando spariscono tutti i riferimenti <strong>strong</strong>. C'è quindi una direzione preferenziale: quando vengono eliminate tutte le "teste" che conoscono l'inizio della catena, questa si sbriciola pezzo per pezzo. I <strong>weak</strong> possono rimanere ma non causano problemi, non mantengono nulla in vita e vengono eliminati tranquillamente.</p>
-<aside>
-💡
-<p><strong>Ma, <code>Clone</code> non fa la copia in profondità?</strong></p>
+<blockquote>
+<p>💡 <strong>Ma, <code>Clone</code> non fa la copia in profondità?</strong></p>
 <p>Nel caso di <code>Rc</code>, <code>Clone</code> non fa la copia in profondità.
 Quello che fa è duplicare il puntatore semplice e incrementare il conteggio dei riferimenti.</p>
 <p><em>Quindi, noi abbiamo detto in modo generico che</em> <code>Clone</code> <em>fa la copia in profondità, ma non è sempre così.</em></p>
 <p>Mi dà la <strong>garanzia</strong> di avere una copia della struttura: quando clono un <code>Rc</code> , ad esempio clonando <code>a</code> nell’esempio di prima, ottenendo <code>b</code>, ottengo lo stesso puntatore che ora si trova in <code>a</code>. I due sono completamente equivalenti — entrambi vedono lo stesso blocco formato da struttura di controllo e dato posseduto.</p>
 <p>È come se la struttura fosse stata duplicata, anche se in realtà non ce n'è bisogno. L'obiettivo è garantirmi che vedo un duplicato completo, e infatti lo vedo, ma mi gestisce questa cosa non duplicando veramente i dati, ma incrementando un contatore e lasciando le cose come stanno, che è un buon guadagno in termini di memoria, prestazioni e sicurezza di condivisione!</p>
-</aside>
+</blockquote>
 <h2 id="33-cell"><a class="header" href="#33-cell">3.3 <code>Cell</code></a></h2>
 <p><img src="images/smart_pointer/image%2048.png" alt="image.png" /></p>
 <p><strong>È semplice, è un meccanismo tranquillo</strong>. È esattamente la riproposizione di quello che la comunità del C++ ha impiegato un po' di anni a distillare. Rust ha <em>adottato le stesse scelte</em>, cambiando giusto due nomi e messo a posto alcuni dettagli che gli venivano più comodi per la sua implementazione, ma concettualmente siamo perfettamente allineati.</p>
@@ -712,14 +705,13 @@ Oppure se mentre ci sono dei riferimenti semplici, arriva uno che lo vuole mutab
 Quindi in generale i metodi <code>borrow</code> e <code>borrow_mut</code>, se va bene ci danno una cosa che sembra un riferimento o un riferimento mutabile, che però è uno smart pointer, e cioè ha un <code>drop</code> associato che rimetta a posto le cose. Se le condizioni non sussistono, genera un panic.</p>
 <p><strong>Importante:</strong> Sia <code>Cell</code> che <code>RefCell</code> hanno un <em>vincolo fondamentale</em> — non possono operare in contesti multi-thread. In un contesto multi-thread, questi meccanismi perdono la loro efficacia poiché non possono garantire l'assenza di conflitti tra un istante e l'altro.</p>
 <p>Vediamo un esempio pratico.</p>
-<aside>
-💡
-<p><strong>Nota</strong></p>
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
 <p>Il dato <code>RC</code>, come smart pointer, incapsula il dato <code>T</code> come <em>immutabile</em>. A differenza di <code>Box</code> che possiede e può modificare il suo valore, <code>RC</code>, essendo condiviso, non può contenere un valore mutabile. Questo previene scenari problematici: immaginiamo di essere in due a conoscere lo stesso dato. Se ad esempio io opero basandomi sul valore "5" mentre tu lo modifichi in "10", la mia logica risulterebbe errata, portando a potenziali problemi.</p>
 <p><strong>Per questo motivo sia <code>Rc</code> che <code>Arc</code> incapsulano dati immutabili</strong>. Sebbene questo sia restrittivo, possiamo comunque modificare i dati prendendoci la responsabilità. <em>Come?</em> Nei contesti single-thread, creiamo strutture <code>Rc</code> contenenti <code>RefCell</code> che a loro volta contengono il dato. Talvolta usiamo <code>Cell</code>, ma <code>RefCell</code> è generalmente più pratico. <strong>Questa è una strategia efficace.</strong></p>
 <p>In contesti multi-thread, invece, utilizziamo <strong><code>Arc</code></strong> (equivalenti a <code>Rc</code>) che, non potendo contenere <code>RefCell</code>, contengono <strong><code>Mutex</code></strong> con il dato all'interno. Il <code>Mutex</code>, un altro tipo di smart pointer che approfondiremo parlando di concorrenza, permette di <em>prendere possesso temporaneo del dato</em> (e quindi poterlo mutare) uno alla volta. Se altri thread richiedono l'accesso contemporaneamente, dovranno attendere. Una volta completate le operazioni necessarie, rilasciamo il <code>Mutex</code> permettendo ad altri di utilizzare il dato.</p>
 <p>Quindi, usiamo in modo <strong>concatenato</strong> queste strutture, cioè <em>ciascuna è un'astrazione che mi dà un pezzettino che è a beneficio di qualcos'altro in un quadro più complesso</em>. Questa idea degli smart pointer non è proprio così banale, perché i meccanismi elementari sono stupidi — ad esempio il meccanismo dei contatori etc… <strong>Quello che non è banale sono le conseguenze, come li usiamo</strong>. Questi hanno un senso usati in modo concatenato, secondo dei pattern. E quei pattern lì bisogna provare a giocarci. <em>Sono pensati per permetterci di uscire un po' dal seminato, ma non così tanto da rischiare.</em></p>
-</aside>
+</blockquote>
 <h3 id="241-esempio"><a class="header" href="#241-esempio">2.4.1 Esempio</a></h3>
 <p><img src="images/smart_pointer/image%2052.png" alt="image.png" /></p>
 <p>Qui creiamo un oggetto <code>RefCell</code> che contiene <code>5</code> come valore. Provo a farmi dare un riferimento mutabile: <code>let m = c.borrow_mut()</code>. Se va bene, <code>m</code> è di tipo <code>RefMut&lt;i32&gt;</code>. Questa prima operazione funziona.</p>
@@ -772,13 +764,12 @@ Quindi lo devono definire così, <code>self: Rc&lt;Self&gt;</code>. Da questo mo
 <li>La seconda parte punta alla <code>vtable</code>, contenente i dati dell'oggetto tratto</li>
 </ul>
 <p>Un <code>Box</code> di un oggetto tratto può essere convertito in un riferimento a un oggetto tratto, essendo equivalenti. La differenza sta nella mutabilità: il riferimento semplice non è mutabile, mentre <code>ref mut</code> lo è.</p>
-<aside>
-💡
-<p><strong>Da ChatGPT</strong></p>
+<blockquote>
+<p>💡 <strong>Da ChatGPT</strong></p>
 <p><img src="images/smart_pointer/image%2056.png" alt="image.png" /></p>
 <p><img src="images/smart_pointer/image%2057.png" alt="image.png" /></p>
 <p><img src="images/smart_pointer/image%2058.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p>Analogamente, il <code>Vec</code> può essere convertito in un <code>Box</code> dello slice dei dati che possiede, solo non mutabile.</p>
 <p>L'<code>Rc</code> è un puntatore semplicissimo che punta sull’heap a un blocco che comincia con due numeri e prosegue col dato. È allocato in modo tale che possa essere rilasciato il dato separatamente dal blocco.</p>
 <p>L'<code>Arc</code> è esattamente la stessa cosa. L'unica differenza è l'istruzione macchina che viene usata per fare l'incremento o il decremento del contatore.

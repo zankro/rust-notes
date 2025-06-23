@@ -352,14 +352,10 @@ E l’idea di andare a contare finché non trovo lo 0 è un’idea peregrinissim
 Dunque, il tipo non mi dà queste informazioni.
 Dire che quello lì è un `char*` mi dice sì che se vado alla fine di questo puntatore troverò un char, ma quanti char non lo so.
 
-<aside>
-💡
 
-**From ChatGPT**
-
-![image.png](images/allocazione_della_memoria_3/image%2015.png)
-
-</aside>
+>💡 **From ChatGPT**
+>
+>![image.png](images/allocazione_della_memoria_3/image%2015.png)
 
 ## 4.3 Fino a quando è garantito l’accesso?
 
@@ -543,18 +539,17 @@ Memory leakage è uno spreco in primis, ed è un problema in secondis.
 Nel momento in cui il mio programma vive abbastanza a lungo, specialmente se sto creando un server. Perché sul server se a ogni richiesta io mi perdo una manciata di byte, dopo un po’ di richieste non ho più.
 - Rilasciare la memoria più volte corrompe le strutture dell’heap ed è l’origine del problema del ***Double Free***.
 
-<aside>
-💡
-
-Agli inizi della storia di Microsoft, Windows NT, aveva un mucchio di leakage e ti dicevano *“Sai che c’è? Ogni notte lo spegni, e poi lo riaccendi”*.
+> 💡 **Curiosità**
+>
+>Agli inizi della storia di Microsoft, Windows NT, aveva un mucchio di leakage e ti dicevano *“Sai che c’è? Ogni notte lo spegni, e poi lo riaccendi”*.
 Ma se hai una server farm con 500 macchine, non è molto comodo ricordare di spegnerle tutte e riaccenderle, e inoltre nel tempo in cui Windows NT fa il bootstrap (e ci metteva un bel po’ a farlo) sei completamente out of service.
-
-*E perché si doveva fare?* 
+>
+>*E perché si doveva fare?* 
 Perché aveva così tanto leakage che se lo facevi girare più di 24 ore lui esauriva tutta la memoria.
+>
+>Windows NT era comunque un sistema operativo fatto da zero e quindi ci sta che fosse complicato a realizzarlo, però era un problema reale che ha causato danni seri alle aziende che lo usavano, e a Microsoft stessa.
 
-Windows NT era comunque un sistema operativo fatto da zero e quindi ci sta che fosse complicato a realizzarlo, però era un problema reale che ha causato danni seri alle aziende che lo usavano, e a Microsoft stessa.
 
-</aside>
 
 ![image.png](images/allocazione_della_memoria_3/image%2025.png)
 

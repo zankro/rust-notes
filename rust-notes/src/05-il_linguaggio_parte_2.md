@@ -210,53 +210,48 @@ E perdo il dovere del rilascio perché è transitato a quell'altro.
 
 Quindi adesso vedete che la riga da `r` è tratteggiata, perché dentro `r` ci sono ancora scritti 3b7f5942 (quello che è, l’indirizzo dell’heap in cui è memorizzata la tupla), ma il compilatore sa che quel dato lì non deve più essere guardato — non c'è lì la responsabilità del rilascio. La responsabilità del rilascio è transitata sul destinatario, cioè `b`.
 
-<aside>
-💡
-
-**Copia vs Movimento**
-
-La **copia** è una **duplicazione**: il nuovo valore è indipendente dall’originale.
+>💡 **Copia vs Movimento**
+>
+>La **copia** è una **duplicazione**: il nuovo valore è indipendente dall’originale.
 Tipi come gli interi (i32, u8, ecc.) vengono copiati quando vengono assegnati o passati a una funzione: si crea una nuova copia del dato, e l’originale resta valido.
-
-Invece, per tipi come Box<T>, l’assegnazione comporta un ***movimento*** (move): il valore viene *spostato*, e l’originale non può più essere usato.
-
-```rust
-/* This is fine */
-fn main() {
-    let x1 = 5;
-    let x2 = x1; // Copy
-    
-    println!("x1: {}", x1);
-    println!("x2: {}", x2);
-}
-```
-
-```rust
-/* This doesn't compile */
-fn main() {
-    let b1 = Box::new(5);
-    let b2 = b1; // Movement
-    
-    println!("b1: {}", b1);     // this should thrown an error
-    println!("b2: {}", b2);
-}
-```
-
-L’esempio a destra non funziona perchè, dato che i dati posseduti da `b1` vengono *spostati* in `b2` (che ne diventa il nuovo proprietario), quando proviamo a stampare `b1` dopo il movimento, il compilatore ci blocca. 
+>
+>Invece, per tipi come Box<T>, l’assegnazione comporta un ***movimento*** (move): il valore viene *spostato*, e l’originale non può più essere usato.
+>
+>```rust
+>/* This is fine */
+>fn main() {
+>    let x1 = 5;
+>    let x2 = x1; // Copy
+>    
+>    println!("x1: {}", x1);
+>    println!("x2: {}", x2);
+>}
+>```
+>
+>```rust
+>/* This doesn't compile */
+>fn main() {
+>    let b1 = Box::new(5);
+>    let b2 = b1; // Movement
+>    
+>    println!("b1: {}", b1);     // this should thrown an error
+>    println!("b2: {}", b2);
+>}
+>```
+>
+>L’esempio a destra non funziona perchè, dato che i dati posseduti da `b1` vengono *spostati* in `b2` (che ne diventa il nuovo proprietario), quando proviamo a stampare `b1` dopo il movimento, il compilatore ci blocca. 
 Ci suggerisce anche un modo per risolvere, qualora proprio volessimo tenere sia `b1` che `b2`: clonare `b1`.
-
-```rust
-/* This is fine */
-fn main() {
-    let b1 = Box::new(5);
-    let b2 = b1.clone();
-    
-    println!("b1: {}", b1);
-    println!("b2: {}", b2);
-}
-```
-
-</aside>
+>
+>```rust
+>/* This is fine */
+>fn main() {
+>    let b1 = Box::new(5);
+>    let b2 = b1.clone();
+>    
+>    println!("b1: {}", b1);
+>    println!("b2: {}", b2);
+>}
+>```
 
 ![image.png](images/il_linguaggio_2/image%2012.png)
 
@@ -274,28 +269,26 @@ Qui avevo sullo stack `c`, che è un intero semplice e va via, avevo b, che è u
 
 Il meccanismo del ***movimento*** è challenging perché le persone inizialmente fan fatica a capirlo.
 
-<aside>
-💡
 
-Nota che qua non stiamo dicendo che il box è mutabile: `r` non lo è. 
-Ma avrei potuto dire in main `let **mut** b = makeBox(5);`, perché quando a `b` gli arriva, anche se il box è stato costruito senza mutabilità, **la variabile che viene ritornata è proprietaria del box** **e chi è proprietario può in qualunque momento decidere che si dà il diritto di mutare**.
-
-```rust
-/* This is fine */
-fn makeBox(a: i32) -> Box<(i32, i32)> {
-    let r = Box::new( (a, 1) );
-    return r;
-}
-
-fn main() {
-    let mut b = makeBox(5);
-    b.0 = b.0 + 1;
-    
-    println!("{:?}", b);
-}
-```
-
-</aside>
+> 💡 **Nota**
+> >
+>Nota che qua non stiamo dicendo che il box è mutabile: `r` non lo è. 
+Ma avrei potuto dire in main `let mut b = makeBox(5);`, perché quando a `b` gli arriva, anche se il box è stato costruito senza mutabilità, **la variabile che viene ritornata è proprietaria del box** **e chi è proprietario può in qualunque momento decidere che si dà il diritto di mutare**.
+>
+>```rust
+>/* This is fine */
+>fn makeBox(a: i32) -> Box<(i32, i32)> {
+>    let r = Box::new( (a, 1) );
+>    return r;
+>}
+>
+>fn main() {
+>    let mut b = makeBox(5);
+>    b.0 = b.0 + 1;
+>    
+>    println!("{:?}", b);
+>}
+>```
 
 Lo scegliere di non essere mutabili è una scelta conservativa per evitare *misunderstandings*, ma non è intrinseco nel valore, è intrinseco nel possessore! 
 Nel momento in cui io cedo da un possessore a un altro, il possessore originale poteva aver scelto per quello che riguardava lui di non essere mutabile perché lui non aveva nessun bisogno di fare mutazioni, ma il nuovo possessore a cui viene ceduta la cosa può decidere di farlo.
@@ -361,46 +354,44 @@ Vediamo che in questo caso la funzione `drop()`, che è predefinita dal linguagg
 
 ![image.png](images/il_linguaggio_2/image%2023.png)
 
-<aside>
-💡
 
-Notiamo inoltre che stiamo fornendo una implementazione del tratto `Drop` per il tipo S che abbiamo definito noi, prima invece avevamo solo definito un metodo che abbiamo chiamato “display”, che appartiene al tipo da noi definito.
-
-Se avessimo voluto fornire l’implementazione del tratto `Display`, per poter stampare il nostro tipo usando la macro `println!(”{}”, …)` invece di fare `s1.display()`, avremmo dovuto fare così:
-
-```rust
-use std::fmt::Display;
-use std::fmt;
-
-struct S(i32);
-impl Display for S {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "S value: {}, @{:p}", self.0, self)
-    }
-}
-impl Drop for S {
-    fn drop(&mut self) {
-        println!("Dropping.. S value: {}, @{:p}", self.0, self);
-    }
-}
-
-fn main() {
-    let s1 = S(5);
-    
-    println!("{}", s1); // Now this works!
-}
-```
-
-Inoltre, in questo esempio, S è una struct che contiene tipi elementari, dunque non vi è allocazione di memoria sullo heap: le strutture di tipo S vivono quindi nello stack.
+>💡 **Nota**
+>
+>Notiamo inoltre che stiamo fornendo una implementazione del tratto `Drop` per il tipo S che abbiamo definito noi, prima invece avevamo solo definito un metodo che abbiamo chiamato “display”, che appartiene al tipo da noi definito.
+>
+>Se avessimo voluto fornire l’implementazione del tratto `Display`, per poter stampare il nostro tipo usando la macro `println!(”{}”, …)` invece di fare `s1.display()`, avremmo dovuto fare così:
+>
+>```rust
+>use std::fmt::Display;
+>use std::fmt;
+>
+>struct S(i32);
+>impl Display for S {
+>    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+>        write!(f, "S value: {}, @{:p}", self.0, self)
+>    }
+>}
+>impl Drop for S {
+>    fn drop(&mut self) {
+>        println!("Dropping.. S value: {}, @{:p}", self.0, self);
+>    }
+>}
+>
+>fn main() {
+>    let s1 = S(5);
+>    
+>    println!("{}", s1); // Now this works!
+>}
+>```
+>
+>Inoltre, in questo esempio, S è una struct che contiene tipi elementari, dunque non vi è allocazione di memoria sullo heap: le strutture di tipo S vivono quindi nello stack.
 Dunque di fatto, non vi è alcun “rilascio della memoria”, abbiamo implementato `Drop` giusto per fare una stampa.
+>
+>Per i tipi che invece allocano memoria sullo heap, *dopo* che viene eseguito il metodo `drop()` da noi implementato, il tratto `Drop` si occupa poi di rilasciare la memoria.
+>
+>![image.png](images/il_linguaggio_2/image%2024.png)
 
-Per i tipi che invece allocano memoria sullo heap, *dopo* che viene eseguito il metodo `drop()` da noi implementato, il tratto `Drop` si occupa poi di rilasciare la memoria.
-
-![image.png](images/il_linguaggio_2/image%2024.png)
-
-</aside>
-
-Noi in questo momento serve solo stamparlo.
+A noi in questo momento serve solo stamparlo.
 
 ![image.png](images/il_linguaggio_2/image%2025.png)
 
@@ -416,14 +407,11 @@ Ragioniamo meglio su questo movimento, questo passaggio per movimento.
 
 Momentaneamente ci dimentichiamo del Box e creiamo il nostro S(1), e verifichiamo dove sta, e poi diciamo `let s2 = s1;` — lo copio..? No: lo muovo! 
 
-<aside>
-💡
 
-**Drop vs Copy**
-Avendo implementato **`Drop`**, questo tipo **non può avere anche il tratto `Copy`.**
+>💡 **Drop vs Copy**
+>Avendo implementato **`Drop`**, questo tipo **non può avere anche il tratto `Copy`.**
 Se non avessimo implementato il tratto `Drop`, essendo che questa struct contiene solo tipi elementari (un i32, nello specifico), allora avremmo potuto avere tranquillamente il tratto `Copy`.
 
-</aside>
 
 ![image.png](images/il_linguaggio_2/image%2027.png)
 

@@ -336,13 +336,13 @@ A questo punto è stato creato un <em>riferimento mutabile</em>, <em><strong>rif
 <strong>Quindi necessariamente chi li riceve non ha la responsabilità del rilascio.</strong>
 La responsabilità del rilascio è <strong>del possessore originale</strong>.</p>
 <p>Quindi alle tante domande attraverso il meccanismo del tempo di vita il compilatore mi sa dire <em>“posso in questo momento accedere o meno?”</em> e fa le verifiche, e mi lascia compilare il codice solo se effettivamente posso e se non posso o al dubbio che potrei non essere in grado mi stoppa e mi blocca lì.</p>
-<aside>
-💡
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
 <p>Dato che i <strong>ref</strong> e <strong>ref mut</strong> li posso solo costruire applicando l’operatore <code>&amp;</code> o l’operatore <code>&amp;mut</code> a una variabile esistente, sono certo che contengono un puntatore valido.</p>
 <p>Al tempo stesso, poiché sono riferimenti, cioè puntatori privi di possesso, so per certo che non tocca a me rilasciarli, quindi chi si ritrova un ref o un refmut sa che ci può accedere ma non è compito suo occuparsi del rilascio, perché il rilascio è del proprietario.</p>
 <p><img src="images/il_linguaggio/image%208.png" alt="image.png" /></p>
 <p><img src="images/il_linguaggio/image%209.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p>Su un’architettura 64 bit i puntatori sono 64 bit, ma a volte 128 perché a differenza del C, dove i puntatori sono tutti uguali, qua <strong>in base a che cosa punto</strong> posso ottenere un puntatore semplice (uno <em><strong>slim pointer</strong></em>), o un <em><strong>fat pointer</strong></em>.
 Se punto un dato la cui lunghezza non è nota a tempo di compilazione, il compilatore lo fa diventare un fat pointer e ci mette insieme in una tupla (cioè uno a fianco all’altro) il <strong>puntatore</strong> e la <strong>lunghezza</strong>, in modo tale che il destinatario sappia regolarsi. Se quello è un dato di tipo polimorfico il compilatore ci mette un fat pointer e mi dice “<em>guarda il destinatario non sa esattamente questa roba qui che cosa sia, quindi io gli aggiungo una tabellina a lato che lo disambigua</em>”.</p>
 <p>Quindi la dimensione dei puntatori effettiva minima è quella dell’architettura, a volte è il doppio dell’architettura, ma è molto meglio così perché lui in questo modo sa gestirsi e può rispondere all’ulteriore domanda che era nell’elenco “<em>posso accedere solo all’indirizzo indicato o posso accedere anche più avanti?</em>” — per quei tipi la cui dimensione è nota a priori non ho bisogno di aggiungere nient’altro perché il compilatore si è già scritto quello lì è una roba da 7 byte, da 32, da 44 etc.. per i tipi invece la cui dimensione è decisa a runtime necessariamente il compilatore mi include la lunghezza così che chi la riceve possa regolarsi.</p>

@@ -393,11 +393,10 @@ Potremmo pensare dal tipo: se quello lì è un puntatore a <code>int</code>, sup
 E l’idea di andare a contare finché non trovo lo 0 è un’idea peregrinissima, perché potrebbe non esserci lo 0 e magari finisco a leggere in zone che non sono mie…</p>
 <p>Dunque, il tipo non mi dà queste informazioni.
 Dire che quello lì è un <code>char*</code> mi dice sì che se vado alla fine di questo puntatore troverò un char, ma quanti char non lo so.</p>
-<aside>
-💡
-<p><strong>From ChatGPT</strong></p>
+<blockquote>
+<p>💡 <strong>From ChatGPT</strong></p>
 <p><img src="images/allocazione_della_memoria_3/image%2015.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <h2 id="43-fino-a-quando-è-garantito-laccesso"><a class="header" href="#43-fino-a-quando-è-garantito-laccesso">4.3 Fino a quando è garantito l’accesso?</a></h2>
 <p><em>Fino a quando è garantito l’accesso?</em>
 Non lo sappiamo.</p>
@@ -510,14 +509,14 @@ Memory leakage è uno spreco in primis, ed è un problema in secondis.
 Nel momento in cui il mio programma vive abbastanza a lungo, specialmente se sto creando un server. Perché sul server se a ogni richiesta io mi perdo una manciata di byte, dopo un po’ di richieste non ho più.</li>
 <li>Rilasciare la memoria più volte corrompe le strutture dell’heap ed è l’origine del problema del <em><strong>Double Free</strong></em>.</li>
 </ul>
-<aside>
-💡
+<blockquote>
+<p>💡 <strong>Curiosità</strong></p>
 <p>Agli inizi della storia di Microsoft, Windows NT, aveva un mucchio di leakage e ti dicevano <em>“Sai che c’è? Ogni notte lo spegni, e poi lo riaccendi”</em>.
 Ma se hai una server farm con 500 macchine, non è molto comodo ricordare di spegnerle tutte e riaccenderle, e inoltre nel tempo in cui Windows NT fa il bootstrap (e ci metteva un bel po’ a farlo) sei completamente out of service.</p>
 <p><em>E perché si doveva fare?</em>
 Perché aveva così tanto leakage che se lo facevi girare più di 24 ore lui esauriva tutta la memoria.</p>
 <p>Windows NT era comunque un sistema operativo fatto da zero e quindi ci sta che fosse complicato a realizzarlo, però era un problema reale che ha causato danni seri alle aziende che lo usavano, e a Microsoft stessa.</p>
-</aside>
+</blockquote>
 <p><img src="images/allocazione_della_memoria_3/image%2025.png" alt="image.png" /></p>
 <p>Se assegno a un puntatore un indirizzo non mappato, o non gli assegno niente e quindi mi tengo un dato a caso che c’è dentro, diventa un <em><strong>wild pointer</strong></em>: non so minimamente cosa possa essere.</p>
 <h2 id="51-esempi"><a class="header" href="#51-esempi">5.1 Esempi</a></h2>

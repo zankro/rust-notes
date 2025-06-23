@@ -294,10 +294,10 @@ Un intero a 16 bit può iniziare solo a multipli di 2 e così via.</p>
 Se io ho bisogno per qualche motivo di garantirmi il controllo su come è veramente disposta la memoria posso anteporre alla definizione della struct la parola chiave <code>#[repr(C)]</code>.
 Questa annotazione chiede <em>"caro compilatore, stante che puoi fare un po' come ti pare, non fare come ti pare e invece fai come farebbe il C".</em>
 In questo modo io sono tranquillo che quella struct così fatta, se dovessi passarla a una libreria scritta in C, il C capirebbe cosa c'è scritto dentro.</p>
-<aside>
-⚠️
+<blockquote>
+<p>⚠️ <strong>Attenzione</strong></p>
 <p>La struct è un blocco, che in quanto blocco può vivere dovunque (stack o heap, e in particolare: di norma starebbe sullo stack, ma nulla mi vieta di boxarla, il che significherebbe allocare la struct sullo heap).</p>
-</aside>
+</blockquote>
 <h2 id="22-visibilità"><a class="header" href="#22-visibilità">2.2 Visibilità</a></h2>
 <p><img src="images/tipi_composti/image%206.png" alt="image.png" /></p>
 <p>Sia la struct nel suo complesso che i singoli campi possono essere preceduti dalla parola chiave <code>pub</code>, che ne cambia la visibilità. Per default le struct nel loro complesso e i campi al loro interno sono considerati <strong>privati</strong>, ma con un'accezione di privato diversa da quella che potete avere da un linguaggio come Java.</p>

@@ -44,14 +44,10 @@ Se io ho dichiarato la variabile `v1`, che conteneva qualcosa, da qualche parte 
 Negli altri linguaggi `v2 = v1` significa “*copia il valore di v1 dentro v2*” e poi finisce lì. 
 In Rust invece significa “*copia il valore di v1 in v2, e da questo momento cessa di considerare v1 come responsabile del valore*”, quindi chi si dovrà occupare del suo rilascio non è più v1 ma è v2!
 
-<aside>
-💡
 
-**Copy**
-
-Abbiamo visto che ci sono alcune eccezioni a questa regola: per alcuni tipi semplici, come ad esempio i numeri, `let v2 = v1;` originerebbe una variabile **indipendente** da `v1`, che continuerebbe a possedere il suo valore.
-
-</aside>
+>💡 **Copy**
+>
+>Abbiamo visto che ci sono alcune eccezioni a questa regola: per alcuni tipi semplici, come ad esempio i numeri, `let v2 = v1;` originerebbe una variabile **indipendente** da `v1`, che continuerebbe a possedere il suo valore.
 
 Le assegnazioni di fatto in Rust corrispondono a **movimento**, ovvero c'è una cessione non solo del dato così com'è — `v1` esiste in un qualche punto della mia memoria ad un certo indirizzo, la variabile `v2` esiste in un altro punto della memoria al proprio indirizzo, e i dati dall'indirizzo 1 vengono copiati nell'indirizzo 2 per la dimensione necessaria (quindi se quello lì era un valore che occupava 10 byte vengono copiati 10 byte), dopodiché responsabile del rilascio diventa il destinatario, il mittente l'ha perso. 
 
@@ -78,17 +74,13 @@ Un vettore può essere creato in tanti modi — un modo per crearlo è usare la 
 
 In questo caso io gli chiedo preparare un vettore che abbia già fin dall'inizio uno spazio per contenere quattro cose, e quindi sullo stack mi compare la variabile `v` che dentro di sé contiene 24 byte: i primi 8 puntano ad un blocco sullo heap (grande 4 unità), il secondo pezzo di 8 byte contiene la dimensione del blocco puntato sullo heap (4), e il terzo elemento mi dice quanti di questi slot sono occupati.
 
-<aside>
-💡
 
-**`Vec::with_capacity(n)`**
-
-Quando scriviamo `let mut vec = Vec::with_capacity(n);`, dobbiamo sapere il tipo dei dati che verranno inseriti nel Vec. Il tipo viene esplicitamente scritto (scrivendo `let mut vec: Vec<i32> = Vec::with_capacity(n);`), oppure dedotto dal compilatore.
+>💡 **`Vec::with_capacity(n)`**
+>
+>Quando scriviamo `let mut vec = Vec::with_capacity(n);`, dobbiamo sapere il tipo dei dati che verranno inseriti nel Vec. Il tipo viene esplicitamente scritto (scrivendo `let mut vec: Vec<i32> = Vec::with_capacity(n);`), oppure dedotto dal compilatore.
 Nell’esempio sopra il tipo viene immediatamente dedotto quando scriviamo `v.push(i)`, ed essendo `i` un i32 (tendenzialmente), a run time verrà fatto spazio per 4 i32 sullo heap.
-
-Se avessimo creato il Vec tramite `Vec::new()`, una volta arrivati alla prima istruzione `v.push(i)`, sarebbe stato allocato solo lo spazio per un i32 sullo heap, per poi far crescere questo spazio durante il for.
-
-</aside>
+>
+>Se avessimo creato il Vec tramite `Vec::new()`, una volta arrivati alla prima istruzione `v.push(i)`, sarebbe stato allocato solo lo spazio per un i32 sullo heap, per poi far crescere questo spazio durante il for.
 
 ![image.png](images/possesso/image%202.png)
 
@@ -117,15 +109,13 @@ Il possesso da parte di una variabile del relativo valore inizia all'atto della 
 Nel momento in cui io dovessi copiare il mio `v` dentro un `v1`, il possesso si trasferisce. 
 Se ad una variabile mutabile è assegnato un nuovo valore, e quindi se `v` fosse mutabile e io facessi il contrario, cioè dicessi `v = v1`, il valore che possedevo prima di prendermi quello nuovo di `v1` viene rilasciato.
 
-<aside>
-💡
 
-Alcuni tipi di dato hanno un obbligo particolare: sono quelli che implementano il tratto `Drop`. 
+>💡 **Nota**
+>
+>Alcuni tipi di dato hanno un obbligo particolare: sono quelli che implementano il tratto `Drop`. 
 Altri sono più semplici, e queste cose avvengono lo stesso ma il compilatore si accorge che sono semplificabili e quindi le salta, ma di per sé avviene per tutto — anche con gli interi avverrebbe così, ma semplicemente l'intero dice *“ah benissimo, tu avevi la variabile `i` che conteneva 5, adesso ci sto mettendo 7. Dovrei rilasciare quel 5, ma siccome il 5 come tipo non implementa il tratto* `Drop` *posso non fare niente”* perché il fatto che il tipo i32 (o quello che sia) non implementa il tratto `Drop` vuol dire che dietro quel valore lì non c'è un significato particolare, se quello invece fosse sempre 5 ma inteso come **file descriptor** (cioè un numero che mi ha concesso il sistema operativo per indicare una risorsa che sta nel kernel che è un file che ho aperto da qualche parte) allora pur essendo concettualmente sempre solo un numero quello è un numero che però ha una valenza per il sistema operativo, quindi non posso semplicemente dire che è perduto, devo prima dire al sistema operativo “*tu mi avevi dato sto 5 che rappresentava un file, ora non mi serve più, quindi sappi che quel file lì te lo puoi gestire per qualche altra cosa*”, quindi quello che conta è **che cosa significano quei valori**. ****
-
-Di conseguenza noi metteremo il file descriptor tendenzialmente dentro un oggetto che pur avendo le dimensioni di un intero sia qualificato non come `Int` ma come qualcosa di diverso che permette al sistema operativo di riconoscere che quello lì è un intero un po’ particolare.
-
-</aside>
+>
+>Di conseguenza noi metteremo il file descriptor tendenzialmente dentro un oggetto che pur avendo le dimensioni di un intero sia qualificato non come `Int` ma come qualcosa di diverso che permette al sistema operativo di riconoscere che quello lì è un intero un po’ particolare.
 
 Quindi nel momento in cui una variabile venga assegnata ad un'altra variabile, oppure venga passata come argomento una funzione, il suo contenuto viene mosso nella sua nuova destinazione. Mosso significa che i suoi bit vengono copiati.
 
@@ -430,23 +420,20 @@ In queste situazioni il reference diventa un ***double pointer***: nella prima m
 Una cosa scrivibile è una cosa che ha un metodo `drop()`, un metodo `write()`, un metodo `write_vectored()`, un metodo `is_write_vectored()` e un metodo `flush()`. 
 Sapendo questa cosa, lui mi compila quella tabellina mettendomi le giuste funzioni da chiamare, quindi nell’esempio r3 siccome bisogna associare a una graffia forse un titolo è utilizzato r3 che tipo è?
 
-<aside>
-💡
 
-***Ma il tratto è un tipo?***
-I **tratti** in Rust non sono “tipi” nel senso diretto del termine, ma rappresentano un **insieme di comportamenti** (cioè metodi e/o funzioni associate) che un tipo può implementare. Un tratto definisce un contratto che i tipi devono soddisfare per essere considerati come “aderenti” a quel tratto.
-
-Possiamo paragonare i tratti alle interfacce di Java o di altri linguaggi orientati agli oggetti. In Java, un’interfaccia è un tipo astratto che può essere implementato da una classe concreta. Similmente, un tratto in Rust definisce un contratto che un tipo (ad esempio, una struct o un enum) può implementare. In Rust, si usa la parola chiave impl per implementare i tratti.
-
-Anche se i tratti non sono “tipi” in sé, Rust consente di utilizzarli come **trait object** tramite puntatori come `&dyn Trait` o `Box<dyn Trait>`. Questo permette di trattare i tipi che implementano un tratto come se fossero dello stesso tipo astratto. Ad esempio:
-
-![image.png](images/possesso/image%2027.png)
-
-L’idea che un tratto rappresenti “un pezzo di tipo” è utile per capire che un tratto definisce un insieme di capacità che un tipo può avere. Però, dire che una variabile è “di tipo Runnable” (per esempio) significa, tecnicamente, che la variabile è un **trait object**, non il tratto stesso.
-
-Un tratto da solo non può essere “istanziato”. Può essere implementato da tipi concreti, e puoi usare trait object per lavorare con tipi che lo implementano in modo polimorfico.
-
-</aside>
+>💡 **Ma il tratto è un tipo?**
+>
+>I **tratti** in Rust non sono “tipi” nel senso diretto del termine, ma rappresentano un **insieme di comportamenti** (cioè metodi e/o funzioni associate) che un tipo può implementare. Un tratto definisce un contratto che i tipi devono soddisfare per essere considerati come “aderenti” a quel tratto.
+>
+>Possiamo paragonare i tratti alle interfacce di Java o di altri linguaggi orientati agli oggetti. In Java, un’interfaccia è un tipo astratto che può essere implementato da una classe concreta. Similmente, un tratto in Rust definisce un contratto che un tipo (ad esempio, una struct o un enum) può implementare. In Rust, si usa la parola chiave impl per implementare i tratti.
+>
+>Anche se i tratti non sono “tipi” in sé, Rust consente di utilizzarli come **trait object** tramite puntatori come `&dyn Trait` o `Box<dyn Trait>`. Questo permette di trattare i tipi che implementano un tratto come se fossero dello stesso tipo astratto. Ad esempio:
+>
+>![image.png](images/possesso/image%2027.png)
+>
+>L’idea che un tratto rappresenti “un pezzo di tipo” è utile per capire che un tratto definisce un insieme di capacità che un tipo può avere. Però, dire che una variabile è “di tipo Runnable” (per esempio) significa, tecnicamente, che la variabile è un **trait object**, non il tratto stesso.
+>
+>Un tratto da solo non può essere “istanziato”. Può essere implementato da tipi concreti, e puoi usare trait object per lavorare con tipi che lo implementano in modo polimorfico.
 
 Quindi quello che succede è che i riferimenti così costruiti, che riconosciamo perché sono dichiarati di tipo `&dyn`, la parola *dynamic* è messa lì a posta per aiutare il programmatore a capire che quello che sta costruendo è un **double pointer**, gli costa il doppio ma probabilmente gli va bene che gli costi il doppio perché implementato in questo modo il programmatore può scrivere del codice che funziona sia con i file che con i vettori e quindi gli può star bene. 
 
@@ -456,26 +443,18 @@ Notate che la vtable contiene al suo interno, oltre che il puntatore e i vari me
 Quel size lì permette di dire *“ok, ho capito che il primo pezzo del mio fat pointer punta al blocco dove c’è scritto hidden implementation, ma quel blocco lì quanto è grande?”,* e allora guardando la vtable vedo size.
 L’alignment mi dice se l’oggetto puntato può cominciare ad un indirizzo qualsiasi o può iniziare solo un indirizzo pari, o può iniziare ad un indirizzo che sia multiplo di 4, che sia multiplo di 8 e così via.. questo perché permette poi, dovendo manipolare questo oggetto, di manipolarlo in un modo che sia congruente con i vincoli con cui quel blocco di memoria è stato acquisito. 
 
-<aside>
-💡
 
-***La vtable***
-Il double pointer punta a una vtable che è allocata **una volta sola**, quindi se io avessi 25 file diversi di cui mi faccio dare il reference, la prima parte del puntatore punta in 25 zone diverse dello heap, la seconda parte del puntatore punta alla stessa vtable perché di tipo `File` ce n’è uno solo: c’è una sola versione del metodo `drop()` per `File`, una sola versione del metodo `write_vectored()` etc...
+>💡 **La vtable**
+>
+>Il double pointer punta a una vtable che è allocata **una volta sola**, quindi se io avessi 25 file diversi di cui mi faccio dare il reference, la prima parte del puntatore punta in 25 zone diverse dello heap, la seconda parte del puntatore punta alla stessa vtable perché di tipo `File` ce n’è uno solo: c’è una sola versione del metodo `drop()` per `File`, una sola versione del metodo `write_vectored()` etc...
+>
+>La vtable non sta nello heap, sta nella zona statica del programma (dove vivono ad esempio le stringhe costanti) perché il compilatore la prealloca. È una zona che esiste da sempre: nel momento in cui io ho definito che esiste un tratto il compilatore si crea sta tabellina che rappresenta l’insieme delle funzioni che quel tratto in particolare sta dichiarando.
 
-La vtable non sta nello heap, sta nella zona statica del programma (dove vivono ad esempio le stringhe costanti) perché il compilatore la prealloca. È una zona che esiste da sempre: nel momento in cui io ho definito che esiste un tratto il compilatore si crea sta tabellina che rappresenta l’insieme delle funzioni che quel tratto in particolare sta dichiarando.
-
-</aside>
-
-<aside>
-⚠️
-
-**Fat pointer e double pointer**
-
-In questa spiegazione abbiamo fatto distinzione tra **fat pointer** e **double pointer** per maggiore chiarezza, ma in seguito parleremo di fat pointer indistintamente, indicando un riferimento che è, in generale, grande 2*usize.
-
-In un caso, il secondo usize indica un valore (la size del dato puntato), nell’altro caso invece indica un puntatore alla vtable.
-
-</aside>
+>⚠️ **Fat pointer e double pointer**
+>
+>In questa spiegazione abbiamo fatto distinzione tra **fat pointer** e **double pointer** per maggiore chiarezza, ma in seguito parleremo di fat pointer indistintamente, indicando un riferimento che è, in generale, grande 2*usize.
+>
+>In un caso, il secondo usize indica un valore (la size del dato puntato), nell’altro caso invece indica un puntatore alla vtable.
 
 # 6. Tempo di vita dei riferimenti
 

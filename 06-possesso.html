@@ -216,11 +216,10 @@ Normalmente il rilascio avviene nel momento in cui la variabile che lo possiede 
 <p>Se io ho dichiarato la variabile <code>v1</code>, che conteneva qualcosa, da qualche parte potrei scrivere <code>let v2 = v1</code>, mentre <code>v1</code> è ancora in vita.</p>
 <p>Negli altri linguaggi <code>v2 = v1</code> significa “<em>copia il valore di v1 dentro v2</em>” e poi finisce lì.
 In Rust invece significa “<em>copia il valore di v1 in v2, e da questo momento cessa di considerare v1 come responsabile del valore</em>”, quindi chi si dovrà occupare del suo rilascio non è più v1 ma è v2!</p>
-<aside>
-💡
-<p><strong>Copy</strong></p>
+<blockquote>
+<p>💡 <strong>Copy</strong></p>
 <p>Abbiamo visto che ci sono alcune eccezioni a questa regola: per alcuni tipi semplici, come ad esempio i numeri, <code>let v2 = v1;</code> originerebbe una variabile <strong>indipendente</strong> da <code>v1</code>, che continuerebbe a possedere il suo valore.</p>
-</aside>
+</blockquote>
 <p>Le assegnazioni di fatto in Rust corrispondono a <strong>movimento</strong>, ovvero c'è una cessione non solo del dato così com'è — <code>v1</code> esiste in un qualche punto della mia memoria ad un certo indirizzo, la variabile <code>v2</code> esiste in un altro punto della memoria al proprio indirizzo, e i dati dall'indirizzo 1 vengono copiati nell'indirizzo 2 per la dimensione necessaria (quindi se quello lì era un valore che occupava 10 byte vengono copiati 10 byte), dopodiché responsabile del rilascio diventa il destinatario, il mittente l'ha perso.</p>
 <p>Perso vuol dire che non è più lecito neanche andare a leggere che cosa c'è scritto dentro.
 Per il compilatore è come se la variabile <code>v1</code>, dopo che è stato eseguito <code>v2 = v1</code> è come se <code>v1</code> non fosse più inizializzata, non ha più un valore lecito.
@@ -236,13 +235,12 @@ Al destinatario, nel caso dell'invocazione a funzione dunque il parametro della 
 <p>Creo un vettore <code>v</code> sullo stack.</p>
 <p>Un vettore può essere creato in tanti modi — un modo per crearlo è usare la funzione costruttrice <code>Vec::new()</code>, che mi prepara un vettore completamente vuoto, o in alternativa posso usare <code>Vec::with_capacity()</code>, che mi crea un vettore che è sempre vuoto ma ha già preallocato un buffer sullo heap di una certa dimensione.</p>
 <p>In questo caso io gli chiedo preparare un vettore che abbia già fin dall'inizio uno spazio per contenere quattro cose, e quindi sullo stack mi compare la variabile <code>v</code> che dentro di sé contiene 24 byte: i primi 8 puntano ad un blocco sullo heap (grande 4 unità), il secondo pezzo di 8 byte contiene la dimensione del blocco puntato sullo heap (4), e il terzo elemento mi dice quanti di questi slot sono occupati.</p>
-<aside>
-💡
-<p><strong><code>Vec::with_capacity(n)</code></strong></p>
+<blockquote>
+<p>💡 <strong><code>Vec::with_capacity(n)</code></strong></p>
 <p>Quando scriviamo <code>let mut vec = Vec::with_capacity(n);</code>, dobbiamo sapere il tipo dei dati che verranno inseriti nel Vec. Il tipo viene esplicitamente scritto (scrivendo <code>let mut vec: Vec&lt;i32&gt; = Vec::with_capacity(n);</code>), oppure dedotto dal compilatore.
 Nell’esempio sopra il tipo viene immediatamente dedotto quando scriviamo <code>v.push(i)</code>, ed essendo <code>i</code> un i32 (tendenzialmente), a run time verrà fatto spazio per 4 i32 sullo heap.</p>
 <p>Se avessimo creato il Vec tramite <code>Vec::new()</code>, una volta arrivati alla prima istruzione <code>v.push(i)</code>, sarebbe stato allocato solo lo spazio per un i32 sullo heap, per poi far crescere questo spazio durante il for.</p>
-</aside>
+</blockquote>
 <p><img src="images/possesso/image%202.png" alt="image.png" /></p>
 <p>Dopo aver creato questo inizia un ciclo che faccio durare 5, a ogni iterazione del ciclo inserisco un numero nel mio vettore.</p>
 <p><img src="images/possesso/image%203.png" alt="image.png" /></p>
@@ -258,12 +256,12 @@ La variabile <code>v</code> deve essere eliminata, ma siccome la variabile <code
 <p>Il possesso da parte di una variabile del relativo valore inizia all'atto della sua inizializzazione, quindi nel momento in cui ho scritto <code>let v = Vec::with_capacity(4)</code>, in quel momento <code>v</code> comincia a possedere il suo valore.</p>
 <p>Nel momento in cui io dovessi copiare il mio <code>v</code> dentro un <code>v1</code>, il possesso si trasferisce.
 Se ad una variabile mutabile è assegnato un nuovo valore, e quindi se <code>v</code> fosse mutabile e io facessi il contrario, cioè dicessi <code>v = v1</code>, il valore che possedevo prima di prendermi quello nuovo di <code>v1</code> viene rilasciato.</p>
-<aside>
-💡
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
 <p>Alcuni tipi di dato hanno un obbligo particolare: sono quelli che implementano il tratto <code>Drop</code>.
 Altri sono più semplici, e queste cose avvengono lo stesso ma il compilatore si accorge che sono semplificabili e quindi le salta, ma di per sé avviene per tutto — anche con gli interi avverrebbe così, ma semplicemente l'intero dice <em>“ah benissimo, tu avevi la variabile <code>i</code> che conteneva 5, adesso ci sto mettendo 7. Dovrei rilasciare quel 5, ma siccome il 5 come tipo non implementa il tratto</em> <code>Drop</code> <em>posso non fare niente”</em> perché il fatto che il tipo i32 (o quello che sia) non implementa il tratto <code>Drop</code> vuol dire che dietro quel valore lì non c'è un significato particolare, se quello invece fosse sempre 5 ma inteso come <strong>file descriptor</strong> (cioè un numero che mi ha concesso il sistema operativo per indicare una risorsa che sta nel kernel che è un file che ho aperto da qualche parte) allora pur essendo concettualmente sempre solo un numero quello è un numero che però ha una valenza per il sistema operativo, quindi non posso semplicemente dire che è perduto, devo prima dire al sistema operativo “<em>tu mi avevi dato sto 5 che rappresentava un file, ora non mi serve più, quindi sappi che quel file lì te lo puoi gestire per qualche altra cosa</em>”, quindi quello che conta è <strong>che cosa significano quei valori</strong>. ****</p>
 <p>Di conseguenza noi metteremo il file descriptor tendenzialmente dentro un oggetto che pur avendo le dimensioni di un intero sia qualificato non come <code>Int</code> ma come qualcosa di diverso che permette al sistema operativo di riconoscere che quello lì è un intero un po’ particolare.</p>
-</aside>
+</blockquote>
 <p>Quindi nel momento in cui una variabile venga assegnata ad un'altra variabile, oppure venga passata come argomento una funzione, il suo contenuto viene mosso nella sua nuova destinazione. Mosso significa che i suoi bit vengono copiati.</p>
 <p>Ma al di là del fatto che i suoi bit vengono copiati il compilatore si segna che la variabile <code>v1</code> ha perso i diritti e i doveri e li ha trasferiti su <code>v2</code>, quindi quando <code>v1</code> uscirà di scope non dovrà essere fatto nulla perché in questo momento è come se fosse non inizializzata — è come se dentro di lei non ci fosse nulla.
 Invece quando <code>v2</code> uscirà di scope bisognerà fare quelle azioni necessarie per rilasciare le cose e quindi pulire il pulibile.</p>
@@ -452,33 +450,30 @@ In queste situazioni il reference diventa un <em><strong>double pointer</strong>
 <p><em>Come è fatta una cosa scrivibile?</em>
 Una cosa scrivibile è una cosa che ha un metodo <code>drop()</code>, un metodo <code>write()</code>, un metodo <code>write_vectored()</code>, un metodo <code>is_write_vectored()</code> e un metodo <code>flush()</code>.
 Sapendo questa cosa, lui mi compila quella tabellina mettendomi le giuste funzioni da chiamare, quindi nell’esempio r3 siccome bisogna associare a una graffia forse un titolo è utilizzato r3 che tipo è?</p>
-<aside>
-💡
-<p><em><strong>Ma il tratto è un tipo?</strong></em>
-I <strong>tratti</strong> in Rust non sono “tipi” nel senso diretto del termine, ma rappresentano un <strong>insieme di comportamenti</strong> (cioè metodi e/o funzioni associate) che un tipo può implementare. Un tratto definisce un contratto che i tipi devono soddisfare per essere considerati come “aderenti” a quel tratto.</p>
+<blockquote>
+<p>💡 <strong>Ma il tratto è un tipo?</strong></p>
+<p>I <strong>tratti</strong> in Rust non sono “tipi” nel senso diretto del termine, ma rappresentano un <strong>insieme di comportamenti</strong> (cioè metodi e/o funzioni associate) che un tipo può implementare. Un tratto definisce un contratto che i tipi devono soddisfare per essere considerati come “aderenti” a quel tratto.</p>
 <p>Possiamo paragonare i tratti alle interfacce di Java o di altri linguaggi orientati agli oggetti. In Java, un’interfaccia è un tipo astratto che può essere implementato da una classe concreta. Similmente, un tratto in Rust definisce un contratto che un tipo (ad esempio, una struct o un enum) può implementare. In Rust, si usa la parola chiave impl per implementare i tratti.</p>
 <p>Anche se i tratti non sono “tipi” in sé, Rust consente di utilizzarli come <strong>trait object</strong> tramite puntatori come <code>&amp;dyn Trait</code> o <code>Box&lt;dyn Trait&gt;</code>. Questo permette di trattare i tipi che implementano un tratto come se fossero dello stesso tipo astratto. Ad esempio:</p>
 <p><img src="images/possesso/image%2027.png" alt="image.png" /></p>
 <p>L’idea che un tratto rappresenti “un pezzo di tipo” è utile per capire che un tratto definisce un insieme di capacità che un tipo può avere. Però, dire che una variabile è “di tipo Runnable” (per esempio) significa, tecnicamente, che la variabile è un <strong>trait object</strong>, non il tratto stesso.</p>
 <p>Un tratto da solo non può essere “istanziato”. Può essere implementato da tipi concreti, e puoi usare trait object per lavorare con tipi che lo implementano in modo polimorfico.</p>
-</aside>
+</blockquote>
 <p>Quindi quello che succede è che i riferimenti così costruiti, che riconosciamo perché sono dichiarati di tipo <code>&amp;dyn</code>, la parola <em>dynamic</em> è messa lì a posta per aiutare il programmatore a capire che quello che sta costruendo è un <strong>double pointer</strong>, gli costa il doppio ma probabilmente gli va bene che gli costi il doppio perché implementato in questo modo il programmatore può scrivere del codice che funziona sia con i file che con i vettori e quindi gli può star bene.</p>
 <p>In seguito approfondiremo l’argomento dei tratti e andremo a imparare tutto quello che serve a riguardo, per il momento ci serve prendere in considerazione il fatto che Rust si è dato delle libertà nel scegliere delle cose, ha detto “<em>non è che tutti i riferimenti debbono essere uguali, tutti i riferimenti devono darmi le informazioni di cui ho bisogno. Laddove le informazioni che io posso capire staticamente dal programma mi bastano, il riferimento è un puntatore semplice. Laddove invece non mi bastano, il riferimento è un fat pointer (costituito da puntatore e size). Laddove non mi bastano ancora il riferimento è un double pointer (costituito da un puntatore alla struttura e un puntatore ad una vtable)</em>”.</p>
 <p>Notate che la vtable contiene al suo interno, oltre che il puntatore e i vari metodi (e quindi al codice effettivo che dovrà essere invocato nelle varie situazioni), anche due dati che sono <em><strong>size</strong></em> e <em><strong>alignment</strong></em>.
 Quel size lì permette di dire <em>“ok, ho capito che il primo pezzo del mio fat pointer punta al blocco dove c’è scritto hidden implementation, ma quel blocco lì quanto è grande?”,</em> e allora guardando la vtable vedo size.
 L’alignment mi dice se l’oggetto puntato può cominciare ad un indirizzo qualsiasi o può iniziare solo un indirizzo pari, o può iniziare ad un indirizzo che sia multiplo di 4, che sia multiplo di 8 e così via.. questo perché permette poi, dovendo manipolare questo oggetto, di manipolarlo in un modo che sia congruente con i vincoli con cui quel blocco di memoria è stato acquisito.</p>
-<aside>
-💡
-<p><em><strong>La vtable</strong></em>
-Il double pointer punta a una vtable che è allocata <strong>una volta sola</strong>, quindi se io avessi 25 file diversi di cui mi faccio dare il reference, la prima parte del puntatore punta in 25 zone diverse dello heap, la seconda parte del puntatore punta alla stessa vtable perché di tipo <code>File</code> ce n’è uno solo: c’è una sola versione del metodo <code>drop()</code> per <code>File</code>, una sola versione del metodo <code>write_vectored()</code> etc...</p>
+<blockquote>
+<p>💡 <strong>La vtable</strong></p>
+<p>Il double pointer punta a una vtable che è allocata <strong>una volta sola</strong>, quindi se io avessi 25 file diversi di cui mi faccio dare il reference, la prima parte del puntatore punta in 25 zone diverse dello heap, la seconda parte del puntatore punta alla stessa vtable perché di tipo <code>File</code> ce n’è uno solo: c’è una sola versione del metodo <code>drop()</code> per <code>File</code>, una sola versione del metodo <code>write_vectored()</code> etc...</p>
 <p>La vtable non sta nello heap, sta nella zona statica del programma (dove vivono ad esempio le stringhe costanti) perché il compilatore la prealloca. È una zona che esiste da sempre: nel momento in cui io ho definito che esiste un tratto il compilatore si crea sta tabellina che rappresenta l’insieme delle funzioni che quel tratto in particolare sta dichiarando.</p>
-</aside>
-<aside>
-⚠️
-<p><strong>Fat pointer e double pointer</strong></p>
+</blockquote>
+<blockquote>
+<p>⚠️ <strong>Fat pointer e double pointer</strong></p>
 <p>In questa spiegazione abbiamo fatto distinzione tra <strong>fat pointer</strong> e <strong>double pointer</strong> per maggiore chiarezza, ma in seguito parleremo di fat pointer indistintamente, indicando un riferimento che è, in generale, grande 2*usize.</p>
 <p>In un caso, il secondo usize indica un valore (la size del dato puntato), nell’altro caso invece indica un puntatore alla vtable.</p>
-</aside>
+</blockquote>
 <h1 id="6-tempo-di-vita-dei-riferimenti"><a class="header" href="#6-tempo-di-vita-dei-riferimenti">6. Tempo di vita dei riferimenti</a></h1>
 <p><img src="images/possesso/image%2028.png" alt="image.png" /></p>
 <p>I riferimenti hanno un tempo di vita.

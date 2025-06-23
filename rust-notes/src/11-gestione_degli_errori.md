@@ -364,15 +364,10 @@ Se io invoco `process::exit()` smetto su due punti. È come quando viene il cocc
 
 `panic!()` viceversa forza il ritorno al chiamante, al chiamante, al chiamante, e così via fino ad esaurire lo stack. Facendo questo, se ci sono dei distruttori pendenti che avevano segnato delle azioni per disfare qualcosa, questi verranno eseguiti. 
 
-<aside>
-💡
-
-**Distruttori e ritorno al chiamante**
-
-Ricorda che i distruttori vengono invocati quando la corrispondente variabile associata arriva alla fine del suo scope. Quindi, forzando il ritorno al chiamante (e quindi forzando ad uscire dallo scope corrente), i distruttori vengono chiamati.
+>💡 **Distruttori e ritorno al chiamante**
+>
+>Ricorda che i distruttori vengono invocati quando la corrispondente variabile associata arriva alla fine del suo scope. Quindi, forzando il ritorno al chiamante (e quindi forzando ad uscire dallo scope corrente), i distruttori vengono chiamati.
 E continuando a forzare il ritorno al chiamante fino ad esaurire lo stack possiamo invocare i distruttori di tutto ciò che avevamo allocato.
-
-</aside>
 
 In più, se il thread che ha invocato `panic!()` è il thread principale, il processo cessa, indipendentemente da quanti altri thread secondari ci siano. Se il thread che ha invocato `panic!()` è un thread secondario, di quelli che avete creato voi, solo lui termina. Gli altri continuano a fare quello che dovevano.
 
@@ -413,32 +408,22 @@ Se hai una funzione che ritorna un `Result` (quindi la funzione deve avere come 
 Per esempio, con `File::open(name)?`, viene chiamata la `open` e internamente viene verificato il risultato: se `open` ha restituito `Ok`, viene estratto e restituito il contenuto; se invece ha dato un errore, quell'errore viene propagato.
 La notazione con il punto interrogativo dopo uno statement significa quindi "se il risultato è di tipo `Error`, propaga quell'`Error`".
 
-<aside>
-💡
-
-**Riassunto**
-
-![image.png](images/gestione_degli_errori/image%2020.png)
-
-![image.png](images/gestione_degli_errori/image%2021.png)
-
-</aside>
+>💡 **Riassunto**
+>
+>![image.png](images/gestione_degli_errori/image%2020.png)
+>
+>![image.png](images/gestione_degli_errori/image%2021.png)
 
 **Il vincolo** però perché questa cosa funzioni è che la funzione che contiene i punti interrogativi ritorni un `Result`, perché se non ritorna un `Result` non va bene: quel punto interrogativo lì non sa che cosa ritornare. 
 Non solo, ma deve ritornare un `Result` che abbia come `Error` lo stesso `Error` che si è verificato: se io ho chiamato `File::open`, che mi ritorna un errore di tipo `io::Error`, non posso dire che la mia funzione ritorna un `Result` che nel caso di errore ci mette una `String`, perché non va bene — non matchano i tipi.
 
 Quindi nel caso specifico dell’esempio, in effetti la funzione `read_file` annuncia che se va bene mi dà una `String`, e se va male mi da un `io::Error`.
 
-<aside>
-💡
-
-**Ok(s)**
-
-![image.png](images/gestione_degli_errori/image%2022.png)
-
-![image.png](images/gestione_degli_errori/image%2023.png)
-
-</aside>
+>💡 **Ok(s)**
+>
+>![image.png](images/gestione_degli_errori/image%2022.png)
+>
+>![image.png](images/gestione_degli_errori/image%2023.png)
 
 ![image.png](images/gestione_degli_errori/image%2024.png)
 

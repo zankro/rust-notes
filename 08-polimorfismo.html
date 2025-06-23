@@ -597,12 +597,12 @@ Ma al di là del significato, per poter scrivere <code>c1 - c2</code> devo imple
 <p>Con raggio 10 ma coordinate diverse, otterremo <code>true</code> perché confrontiamo solo i raggi.</p>
 <p><img src="images/polimorfismo/image%2041.png" alt="image.png" /></p>
 <p>Un caso particolare: se usiamo <code>f64::NAN</code> come raggio per entrambi i cerchi, il confronto tra due cerchi con <code>NaN</code> risulterà <code>false</code>, perché come dicevamo, in floating-point <code>NaN != NaN</code>. E questo vale in tutti i linguaggi.</p>
-<aside>
-💡 **La macro Derive**
+<blockquote>
+<p>💡 <strong>La macro Derive</strong></p>
 <p><strong>Derive</strong> è in grado di implementare <code>Debug</code>, <code>Eq</code>, <code>PartialEq</code>, <code>Ord</code>, <code>PartialOrd</code> e alcuni altri tratti, ma non tutti, poiché ogni tratto ha una semantica particolare - questi sono solo i tratti più semplici.</p>
 <p>Esistono anche librerie aggiuntive, come <code>derive_more</code>, che forniscono ulteriori tratti da derivare, ma richiedono l'importazione della libreria nel proprio <code>Cargo</code>. È possibile creare i propri tratti derivabili, e ci sono altre librerie utili come <code>Serde</code> (<em>abbreviazione di serialization/deserialization</em>), che permette di derivare macro per serializzare - ovvero tratti per convertire i propri oggetti in JSON e leggerli da JSON.</p>
 <p><code>Serde</code> offre anche la possibilità di leggere e generare XML, ma richiede l'importazione specifica del modulo <code>Serde XML</code>.</p>
-</aside>
+</blockquote>
 <p>Esistono numerosi <strong>tratti</strong> che arricchiscono il comportamento degli oggetti. Esaminiamoli brevemente:</p>
 <h2 id="311-clone-e-copy"><a class="header" href="#311-clone-e-copy">3.11 Clone e Copy</a></h2>
 <p><img src="images/polimorfismo/image%2042.png" alt="image.png" /></p>
@@ -724,11 +724,11 @@ La notazione <code>M: Mapper + Serialize</code> vuol dire <em>“va bene qualunq
 <p><img src="images/polimorfismo/image%2065.png" alt="image.png" /></p>
 <p>Quindi le <strong>struct generiche</strong>, in generale, portano però a codice più efficiente, perché può essere ottimizzato, possibilmente permettendo di togliere quelle parti che sono compilabili a priori, perché sono in grado, attraverso l'analisi statica del codice, di vedere cosa capita. Mi permette di usare l'inlining e così via.</p>
 <p>In più, gli oggetti tratto li posso creare solo nella condizione in cui mi ritrovo a non avere metodi statici all'interno del tratto stesso. Quindi non posso definire un oggetto tratto legato a più tratti disgiunti, mentre lo posso fare dall'altra parte.</p>
-<aside>
-💡
-<p><strong>Monomorphism vs Trait Objects</strong></p>
+<blockquote>
+<p>💡 <strong>Monomorphism vs Trait Objects</strong></p>
 <p><img src="images/polimorfismo/image%2066.png" alt="image.png" /></p>
-</aside>
+</blockquote>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

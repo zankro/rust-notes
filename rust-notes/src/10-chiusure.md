@@ -316,22 +316,17 @@ Quindi io ho creato all'interno di questa funzione chiamata `gen` una **chiusura
 
 Quindi chi invoca `gen` mi dà il prefisso che dovrò mettere davanti ai miei simboli che genererò e automaticamente a ogni invocazione io concatenerò il prefisso con il valore corrente di `i` per ottenere il mio risultato.
 
-<aside>
-💡
-
-**Keyword** **`move`**
-
-![image.png](images/chiusure/image%2018.png)
-
-![image.png](images/chiusure/image%2019.png)
-
-Senza la parola chiave **`move`**, il compilatore blocca la compilazione. 
-
-Se rimuoviamo `move`, il compilatore segnala un errore perché la chiusura prenderebbe `i` come riferimento semplice invece di acquisirne il possesso. Per questo motivo dobbiamo aggiungere `move` davanti alla chiusura, così da forzare la presa di possesso di `i`.
-
-Altrimenti, la variabile `i` cesserebbe di esistere una volta usciti dallo scope della funzione `gen`, ma la chiusura vi farebbe ancora riferimento: problema!
-
-</aside>
+>💡 **Keyword** **`move`**
+>
+>![image.png](images/chiusure/image%2018.png)
+>
+>![image.png](images/chiusure/image%2019.png)
+>
+>Senza la parola chiave **`move`**, il compilatore blocca la compilazione. 
+>
+>Se rimuoviamo `move`, il compilatore segnala un errore perché la chiusura prenderebbe `i` come riferimento semplice invece di acquisirne il possesso. Per questo motivo dobbiamo aggiungere `move` davanti alla chiusura, così da forzare la presa di possesso di `i`.
+>
+>Altrimenti, la variabile `i` cesserebbe di esistere una volta usciti dallo scope della funzione `gen`, ma la chiusura vi farebbe ancora riferimento: problema!
 
 Con la chiusura ho avuto la possibilità di creare una funzione che è **semipermeabile**, cioè riesce a catturare delle cose. 
 
@@ -399,14 +394,12 @@ Quindi quale di questi tre tratti viene effettivamente implementato dipende da *
 
 Vediamo che `f1` implementa `FnMut`, in altri casi implementerà altre cose.
 
-<aside>
-💡
 
-![image.png](images/chiusure/image%2023.png)
-
-![image.png](images/chiusure/image%2024.png)
-
-</aside>
+>💡 **Da ChatGPT**
+>
+>![image.png](images/chiusure/image%2023.png)
+>
+>![image.png](images/chiusure/image%2024.png)
 
 ![image.png](images/chiusure/image%2025.png)
 
@@ -443,16 +436,12 @@ Qui vediamo un esempio di `higher_order_function`: è una funzione che prende `f
 
 Questo ci dà la possibilità di scrivere in modo molto generico delle cose. 
 
-<aside>
-💡
 
-**Analisi firma**
-
-![image.png](images/chiusure/image%2028.png)
-
-![image.png](images/chiusure/image%2029.png)
-
-</aside>
+>💡 **Analisi firma**
+>
+>![image.png](images/chiusure/image%2028.png)
+>
+>![image.png](images/chiusure/image%2029.png)
 
 ![image.png](images/chiusure/image%2030.png)
 
@@ -464,22 +453,18 @@ Questo è possibile proprio **grazie a `move`**, che elimina qualsiasi legame tr
 
 ![image.png](images/chiusure/image%2031.png)
 
-<aside>
-💡
 
-**Descrizione dell’esempio AI Generated**
-
-La chiusura **cattura `i` in modo mutabile** (perché lo incrementa) e **`b` per valore** (una `String` derivata da `prefix`), quindi deve essere **`move`** per prendere possesso di entrambe. Questo è necessario affinché la chiusura possa **vivere anche dopo che `generator` è terminata**, mantenendo il proprio stato (`i`) tra una chiamata e l’altra.
-
-Anche se `b` è catturata per valore, **non viene consumata**, perché viene solo **letta** (passata per riferimento a `format!`). Questo permette alla chiusura di **riutilizzare `b`** a ogni invocazione senza diventare `FnOnce`.
-
-Essendo la chiusura **mutabile internamente**, il valore `f` in main deve essere dichiarato `mut`.
-
-Infatti, **le chiusure in Rust vengono *desugared* in tuple** che contengono i valori catturati come campi. Se uno di questi campi (come `i`) viene modificato, allora il metodo generato (`call_mut()`, che fa parte del tratto `FnMut`) richiede **`&mut self`**. Per poter invocare `f()`, il compilatore deve quindi disporre di `f` come valore **mutabile**.
-
-Ogni chiamata a `f()` restituisce un nuovo identificatore unico, sfruttando lo stato interno della chiusura.
-
-</aside>
+>💡 **Descrizione dell’esempio AI Generated**
+>
+>La chiusura **cattura `i` in modo mutabile** (perché lo incrementa) e **`b` per valore** (una `String` derivata da `prefix`), quindi deve essere **`move`** per prendere possesso di entrambe. Questo è necessario affinché la chiusura possa **vivere anche dopo che `generator` è terminata**, mantenendo il proprio stato (`i`) tra una chiamata e l’altra.
+>
+>Anche se `b` è catturata per valore, **non viene consumata**, perché viene solo **letta** (passata per riferimento a `format!`). Questo permette alla chiusura di **riutilizzare `b`** a ogni invocazione senza diventare `FnOnce`.
+>
+>Essendo la chiusura **mutabile internamente**, il valore `f` in main deve essere dichiarato `mut`.
+>
+>Infatti, **le chiusure in Rust vengono *desugared* in tuple** che contengono i valori catturati come campi. Se uno di questi campi (come `i`) viene modificato, allora il metodo generato (`call_mut()`, che fa parte del tratto `FnMut`) richiede **`&mut self`**. Per poter invocare `f()`, il compilatore deve quindi disporre di `f` come valore **mutabile**.
+>
+>Ogni chiamata a `f()` restituisce un nuovo identificatore unico, sfruttando lo stato interno della chiusura.
 
 # 4. Riferimenti
 
@@ -587,25 +572,21 @@ A questo punto mi dice che ha *preparato la funzione* — ho già congelato il f
 
 Quando mi servirà davvero il vettore gli chiedo di farlo con `let v = f();`, e lui mi dice *"Sto per preparare il vettore con 4 elementi”*.
 
-<aside>
-⚠️
 
-**`fn` al posto di `FnOnce`, `FnMut`, `Fn`** 
-
-```rust
-fn gen_vect(n: usize) -> impl FnOnce() -> Vec<i32> { 
-	// ...
- }
-```
-
-Se io ritorno `fn` semplice (dove c’è scritto `impl FnOnce()`), non posso avere uno stato — per poter essere una tupla mi serve essere uno dei tre tratti funzionali: `Fn`, `FnOnce`, `FnMut`. 
-
-![image.png](images/chiusure/image%2034.png)
-
-![image.png](images/chiusure/image%2035.png)
-
-![image.png](images/chiusure/image%2036.png)
-
-</aside>
+>⚠️ **`fn` al posto di `FnOnce`, `FnMut`, `Fn`** 
+>
+>```rust
+>fn gen_vect(n: usize) -> impl FnOnce() -> Vec<i32> { 
+>	// ...
+> }
+>```
+>
+>Se io ritorno `fn` semplice (dove c’è scritto `impl FnOnce()`), non posso avere uno stato — per poter essere una tupla mi serve essere uno dei tre tratti funzionali: `Fn`, `FnOnce`, `FnMut`. 
+>
+>![image.png](images/chiusure/image%2034.png)
+>
+>![image.png](images/chiusure/image%2035.png)
+>
+>![image.png](images/chiusure/image%2036.png)
 
 Questa tecnica in cui creo una funzione customizzata sul mio bisogno — *ho preparato una funzione che quando la invocherò mi darà un vettore di `n` elementi* — non è detto che mai mi serva. Se a un certo punto ne avrò bisogno glielo chiedo, e non dovrò ricordarmi quanti erano gli elementi perché lo sa lui. Questo è un modo totalmente diverso di programmare, ma molto potente.

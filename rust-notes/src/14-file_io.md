@@ -108,13 +108,12 @@ All'interno sono conservati una serie di metadati che di nuovo dipendono in qual
 
 Questi ultimi due fattori sono molto interessanti nel contesto soprattutto della ***system integration*** cioè quando noi ci troviamo ad avere un pezzo di software che già esiste (che ha scritto qualcun altro e che fa delle cose) e abbiamo bisogno di fare in modo che *inter-operi* in qualche modo con un altro pezzo di software che ha scritto qualcun altro ancora che ha delle sue caratteristiche.
 
-<aside>
-💡 Spesso e volentieri i file sono un modo plausibile di ottenere una forma di system integration, perché se abbiamo, ad esempio, Word che crea i file .docx — io non so manipolare i file .docx, non so come word li generi eccetera.. però posso immaginare che mi metto a osservare una certa cartella e tutte le volte che vedo comparire un nuovo file .docx all'interno potrei decidere che quel file potrebbe magari servirmi da un'altra parte.
+>💡 **Nota**
+>
+>Spesso e volentieri i file sono un modo plausibile di ottenere una forma di system integration, perché se abbiamo, ad esempio, Word che crea i file .docx — io non so manipolare i file .docx, non so come word li generi eccetera.. però posso immaginare che mi metto a osservare una certa cartella e tutte le volte che vedo comparire un nuovo file .docx all'interno potrei decidere che quel file potrebbe magari servirmi da un'altra parte.
 Quindi magari scrivo un programmino che me lo prende e lo copia su un disco, una cosa che sembra una cartella locale ma in realtà è google drive e quindi che ne so ho fatto l'archiviazione automatica dei miei file .docx.
-
-Chiaramente in questo genere di operazioni sapere quando quel file è stato creato e quando è stato modificato è molto interessante perché pur non capendo niente della logica di come word aggiorna il file .docx, ma limitandomi a guardare l'oggetto file e monitorare la data di ultima modifica posso cercare di capire se quel file lì lo devo anche ricopiare da un'altra parte perché voglio farne il backup automatico oppure no. 
-
-</aside>
+>
+>Chiaramente in questo genere di operazioni sapere quando quel file è stato creato e quando è stato modificato è molto interessante perché pur non capendo niente della logica di come word aggiorna il file .docx, ma limitandomi a guardare l'oggetto file e monitorare la data di ultima modifica posso cercare di capire se quel file lì lo devo anche ricopiare da un'altra parte perché voglio farne il backup automatico oppure no. 
 
 Posso sapere anche che tipo di file ho in questione: un ***file semplice*** (cioè è associato ad un array di bytes di qualche genere), o se c'è un nome che rappresenta una ***cartella*** quindi un raggruppamento di altri file, o se è un ***collegamento simbolico*** (ovvero è un nome che in realtà è un alias di un file che è però da un'altra parte) etc… 
 
@@ -177,11 +176,11 @@ In questo caso ho due funzioni che mi fanno la vita molto comoda:
 
 Quindi in quelle situazioni in cui io so a priori che le cose che devo trattare stanno probabilmente nel mio spazio indirizzamento, con questi due metodi ho tutto quello che mi serve ed è molto più agile poi lavorare direttamente su una stringa o su uno slice di byte piuttosto che operare a pezzi su blocchi che devo capire come li segmento, come li congiungo e così via… 
 
-<aside>
-💡 Nell’esempio in slide, vediamo che **`read_to_string`** prende come argomento una variabile **`filename`** , che deve essere di tipo `&Path`.
+>💡 **Nota** 
+>
+>Nell’esempio in slide, vediamo che **`read_to_string`** prende come argomento una variabile **`filename`** , che deve essere di tipo `&Path`.
 Noi potremmo passarvi anche una stringa, ad esempio **`"C:/alpha/beta"`** perchè i `&str` (slice di caratteri) sono riconducibili ad un `Path`, perchè implementano il tratto **`From`** e quindi possiamo convertirli in automatico.
 
-</aside>
 
 ![Untitled](images/file_io/Untitled%206.png)
 
@@ -277,13 +276,9 @@ In generale, il metodo `read()` restituisce un risultato che, se negativo, conti
 Questo accade solo se il buffer ha dimensione maggiore di 0.
 - Quando il buffer passato ha dimensione 0.
 
-<aside>
-💡
-
-**Nota**
-Se passiamo uno slice di size 0 (cosa possibile), otterremo necessariamente `Ok(0)`, semplicemente perché non c'è spazio per leggere: in pratica ci dice *"ho letto 0 byte".*
-
-</aside>
+>💡 **Nota**
+>
+>Se passiamo uno slice di size 0 (cosa possibile), otterremo necessariamente `Ok(0)`, semplicemente perché non c'è spazio per leggere: in pratica ci dice *"ho letto 0 byte".*
 
 Ogni volta che chiamiamo `read()`, viene effettuata una system call che comporta un cambio di contesto (questo accade nella maggior parte dei casi). Questa system call è costosa, richiedendo 500 cicli macchina.
 
@@ -361,16 +356,16 @@ Supponiamo volessimo aprire un **pdf**, che è un file che ha un formato binario
 
 Per cui di per sé non abbiamo la garanzia che contenga dell'`utf-8` quindi dobbiamo leggere come array di byte. Qua proviamo a farlo: nell'esempio in realtà leggo (nel caso di Linux) dal device che si chiama ***urandom***, un particolare device che viene montato. È un finto file (infatti sta nella cartella `/dev`) che quando lo leggo mi genera dei byte a caso appoggiandosi a una qualche periferica che, attraverso un fenomeno fisico di qualche genere, prova a generare dei numeri che siano robustamente casuali.
 
-<aside>
-💡 Un modo per generare dei numeri robustamente casuali è fare lavorare un diodo zener in corrispondenza del punto di gomito della sua curva tensione corrente, che è una zona di grande aleatorietà dove, tenendo in quella posizione li, a volte leggo uno a volte leggo zero in un modo non controllabile. Siccome è un fenomeno fisico che dipende da tutta una serie di faccende varie, quella è una buona sorgente di variabilità e di conseguenza può essere messo all'interno della nostra CPU un chip che internamente fa questo mestiere, e quando leggiamo da ***urandom*** in realtà andiamo a interrogare questo chip che ci genera dei byte a caso.
-
-In altre situazioni si usano dei sensori (dei muoni piuttosto che di altre particelle che ci arrivano dai raggi cosmici sostanzialmente) che di nuovo sono abbastanza impredicibili e tra l'altro sono rilevabili anche negli ambienti interni perché attraversano una serie di situazioni e quindi questi sono tutti fenomeni difficilmente caratterizzabili.
-
-Perché è importante essere difficilmente caratterizzabile? 
+>💡 **Nota** 
+>
+>Un modo per generare dei numeri robustamente casuali è fare lavorare un diodo zener in corrispondenza del punto di gomito della sua curva tensione corrente, che è una zona di grande aleatorietà dove, tenendo in quella posizione li, a volte leggo uno a volte leggo zero in un modo non controllabile. 
+Siccome è un fenomeno fisico che dipende da tutta una serie di cose realmente random, quella è una buona sorgente di variabilità e di conseguenza può essere messo all'interno della nostra CPU un chip che internamente fa questo mestiere, e quando leggiamo da ***urandom*** in realtà andiamo a interrogare questo chip che ci genera dei byte a caso.
+>
+>In altre situazioni si usano dei sensori (dei muoni piuttosto che di altre particelle che ci arrivano dai raggi cosmici sostanzialmente) che di nuovo sono abbastanza impredicibili e tra l'altro sono rilevabili anche negli ambienti interni perché attraversano una serie di situazioni e quindi questi sono tutti fenomeni difficilmente caratterizzabili.
+>
+>Perché è importante essere difficilmente caratterizzabile? 
 I numeri random noi li possiamo usare per scopi molto diversi: li possiamo usare banalmente per pseudo simulazioni — fate un giochino, c'è il mostriciattolo che vi insegue che a volte gira destra e a volte gira a sinistra, va bene chi se ne frega.
 Ma se invece di fare il giochino o la simulazione di qualcos'altro stiamo facendo la crittografia per proteggere una transazione bancaria, se l’algoritmo non è un vero random ma è uno pseudo random (che di fatto è assolutamente predicibile: qualcuno potrebbe aver studiato un po’ di bit precedenti e fare un ***educated guess*** su quali saranno i bit a venire) questo sarebbe rischiosissimo. Per questo motivo ci serve avere un generatore di numeri casuali che sia legato a fenomeni fuori dal controllo.
-
-</aside>
 
 In questo caso qui apriamo il device che si chiama `dev/urandom` e in questo caso noi sappiamo che questo ci dà un 32 bit, quindi prepariamo un buffer di 4 byte `let mut buff = [0;4]` — quello lì è un buff di 4 byte inizialmente tutti i posti a 0. E poi chiamiamo `f.read_exact(&mut buff)` , cioè riempimi questi 4 byte con il contenuto del file urandom. Se qualcosa va storto ritorna l'errore, dopo di che se invece non è un errore all'interno dell’array buff ho i 4 byte completamente random e quindi vado a vedere cosa succede e vedo: se in questo caso ne trovo uno tutto a 0 la pianto lì subito dicendo ok altrimenti provo a trasformare questo numero in un intero 32 bit e ci faccio qualcosa in questo caso lo stampo.
 

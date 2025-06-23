@@ -424,12 +424,11 @@ Vedo che partono, in questo caso sono quasi equamente distribuiti: per ogni <cod
 <p>Se io lo rilanciamo qui adesso abbiamo che ci sono due <code>aaaa</code> di fila, <code>aaaa1</code> e <code>aaaa2</code>.</p>
 <p>Se lo lanciassi una terza volta vedrei ancora una cosa diversa. <em>Perché?</em> Perché ciascun thread procede secondo le sue norme.
 Io sono sicuro che <code>aaaa0</code> viene scritto prima di <code>aaaa1</code>, viene scritto prima di <code>aaaa2</code>, e prima di <code>aaaa3</code>. Di questo posso essere sicurissimo. Del fatto che <code>aaaa1</code> venga scritto prima di <code>bbbb1</code> non lo so minimamente. Non lo posso neanche sapere perché non c'è nessun modo di comunicare tra i due. E quindi viene come viene.</p>
-<aside>
-💡
-<p><strong>Nota</strong></p>
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
 <p>Con l’istruzione <code>thread::sleep(Duration::from_nanos(1))</code> chiedo al sistema operativo di togliermi dallo <em>scheduler</em> e di rimettermi tra un nanosecondo. Il sistema operativo <strong>non</strong> mi rimetterà tra un nanosecondo perché non fa neanche in tempo: cioè già solo per togliermi dalla CPU se ne mangia 50 di nanosecondi.</p>
 <p>Non appena ha finito di togliermi dalla CPU, si accorge che 1ns ormai è scaduto e mi rimette dentro. Ma l'effetto netto è che mi ha tolto la CPU. Se avessimo messo un tempo più lungo, sarebbe stato troppo, e l'altro thread nel frattempo avrebbe avuto il tempo di finire tutto.</p>
-</aside>
+</blockquote>
 <p>Quindi di base <strong>lo svolgimento dei singoli thread è indipendente uno dall'altro</strong>.</p>
 <p>Adesso proviamo un’altra cosa, la facciamo in C++.
 La facciamo in C++ perché non posso farla in Rust, perché Rust per via delle sue regole del Borrow Checker mi impedirebbe di fare certe cose.
@@ -636,23 +635,21 @@ In particolare all'interno di Rust sono definiti due tratti che sono due tratti 
 <p><em>E chi ce l'ha il tratto</em> <code>Send</code><em>?</em>
 Quasi tutti, tranne i reference e i pointer nativi.
 <em>Perché?</em> Perché se io ti passassi un reference, tu lo potresti usare da qui in avanti, <em>ma quanto a lungo lo usi? Boh, finché il thread padre c’è.</em> Non sono in grado di capire se quel reference dura a lungo abbastanza. Di conseguenza i reference non te li passo. <strong>Ti posso passare soltanto un dato di cui hai il pieno possesso.</strong></p>
-<aside>
-💡
-<p><strong>Da ChatGPT</strong></p>
+<blockquote>
+<p>💡 <strong>Da ChatGPT</strong></p>
 <p><img src="images/concorrenza/image%2040.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p><strong>C'è un secondo marker che ci interessa, che è <code>Sync</code></strong>.</p>
 <p><em>Chi è che ha il tratto</em> <code>Sync</code><em>?</em>
 <em>Quelli che possono essere condivisi in sicurezza tra thread differenti</em>.</p>
 <p>Se qualcuno gode del tratto <code>Sync</code> fa eccezione alla regola vista prima. Ovvero il suo riferimento è passabile. <strong>Normalmente i riferimenti non sono passabili</strong>. Ma se una cosa gode del tratto <code>Sync</code> diventa passabile come riferimento.</p>
 <p><em>Chi è che non implementa</em> <code>Sync</code><em>?</em>
 <code>Cell</code> e <code>RfCell</code>, perché se te li passassi sarebbe un disastro.</p>
-<aside>
-💡
-<p><strong>Da ChatGPT</strong></p>
+<blockquote>
+<p>💡 <strong>Da ChatGPT</strong></p>
 <p><img src="images/concorrenza/image%2041.png" alt="image.png" /></p>
 <p><img src="images/concorrenza/image%2042.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p><img src="images/concorrenza/image%2043.png" alt="image.png" /></p>
 <p>Quindi qui vediamo dei casi.</p>
 <p>La maggior parte degli oggetti vivono nel cerchio più interno: <strong>godono cioè sia di <code>Send</code> che di <code>Sync</code></strong>. E quindi non c'è un grosso problema.</p>
@@ -708,11 +705,10 @@ Se il mio dato è un dato elementare come un numero dovrò fare <code>*</code> d
 <p>Notate che l'oggetto <code>Mutex</code> di base io lo posso conoscere come oggetto non mutabile. Mi dà una forma di <strong>mutabilità interna</strong> simile a <code>RefCell</code> che però è condivisibile tra thread sotto certe condizioni, e come? Racchiudendolo dentro un <code>Arc</code>.
 Quindi il modo tipico di proteggermi quando ho bisogno di avere un dato che voglio che due thread possano <em>pasticciare</em> per i fatti loro è <em>prendere il mio dato, metterlo in un</em> <code>Mutex</code><em>, metterlo dentro un</em> <code>Arc</code>.
 Questo <code>Arc</code> lo posso dare, clonare tante volte quanto serve e darne una copia a ciascuno dei thread.</p>
-<aside>
-💡
-<p><strong>Da ChatGPT</strong></p>
+<blockquote>
+<p>💡 <strong>Da ChatGPT</strong></p>
 <p><img src="images/concorrenza/image%2048.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p>Ciascuno di questi thread, quando ha bisogno di accedere prende il suo <code>Arc</code>, fa  <code>.lock</code> (tanto <code>Arc</code> è uno <strong>smart pointer</strong> e automaticamente me lo dereferenzia al metodo interno, quindi vedo il <code>Mutex</code>), quindi facendo <code>.lock</code> se c'è bisogno aspetto (ma non me ne accorgo), e quando <code>lock</code> ritorna ho un altro smart pointer che per comodità chiamiamo <code>L</code> per comodità.
 Questo smart pointer mi dà l'accesso al dato, e sono sicuro che <em>mentre esiste questo smart pointer sono l'unico che lo può vedere</em>. Faccio tutto quello che devo, possibilmente in fretta, e poi butto via <code>L</code>, questo smart pointer. Buttandolo via dò la possibilità ad altri che volessero entrare, di poter fare delle cose.</p>
 <p><strong>Scriviamo velocemente l'esempio</strong> <strong>che abbiamo visto prima del più più con i thread.</strong></p>
@@ -780,9 +776,8 @@ Se stesse dentro il <code>Mutex</code> non potrebbe funzionare, <em>perché?</em
 Questo è fondamentale, perché quando un thread chiama <code>.wait()</code> su una <code>Condvar</code>, deve temporaneamente rilasciare il lock del <code>Mutex</code> per consentire ad altri thread di modificarne lo stato.
 Se la <code>Condvar</code> fosse contenuta all’interno del <code>Mutex</code>, rilasciare il lock significherebbe perdere l’accesso anche alla <code>Condvar</code> stessa.
 Di conseguenza, la <code>Condvar</code> e il <code>Mutex</code> devono essere oggetti separati ma strettamente coordinati.</p>
-<aside>
-💡
-<p><strong>Da ChatGPT</strong></p>
+<blockquote>
+<p>💡 <strong>Da ChatGPT</strong></p>
 <p><img src="images/concorrenza/image%2051.png" alt="image.png" /></p>
 <p>Esempio:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -791,15 +786,18 @@ Di conseguenza, la <code>Condvar</code> e il <code>Mutex</code> devono essere og
 let mut queue = lock.lock().unwrap();     // Acquisisce il lock
 
 while queue.is_empty() {                  // Check sulla CV
-		/* Rilascia il lock e dorme finché qualcuno notifica. */
-		/* Quando vengo svegliato, ho nuovamente possesso del lock  */
-    queue = condvar.wait(queue).unwrap(); 
-}
-
-// ora queue non è vuota → consuma elemento
-let item = queue.pop_front().unwrap();
 <span class="boring">}</span></code></pre></pre>
-</aside>
+</blockquote>
+<pre><code>	&gt;/* Rilascia il lock e dorme finché qualcuno notifica. */
+	&gt;/* Quando vengo svegliato, ho nuovamente possesso del lock  */
+&gt;queue = condvar.wait(queue).unwrap(); 
+</code></pre>
+<blockquote>
+<p>}</p>
+<p>// ora queue non è vuota → consuma elemento
+let item = queue.pop_front().unwrap();</p>
+<pre><code></code></pre>
+</blockquote>
 <p><strong>Quindi necessariamente</strong> quando abbiamo una struttura condivisa, la struttura condivisa la scriviamo dentro un <code>Mutex</code> e poi a fianco a questo <code>Mutex</code> gli mettiamo una <code>Condvar</code> (usando una tupla, o una <code>struct</code> di qualche tipo). Questo pezzo di dato rappresenta l'informazione di quella parte di sistema che abbiamo bisogno di coordinare.</p>
 <p>Se più di un thread devono poterci accedere, o questi thread fanno parte di uno <em>scope comune</em> e allora basta avere una <code>reference</code> e siamo a posto, oppure <strong>se questi thread hanno <em>cicli di vita indipendenti</em></strong> (non fanno parte di uno scope comune), allora <strong>incapsuliamo questa coppia</strong> fatta di <code>Mutex</code> (che racchiude tutti i dati) e <code>Condvar</code> <strong>dentro un <code>Arc</code></strong>, che può essere condiviso tra tutti i thread.</p>
 <p><strong>Quindi la struttura più generale</strong>, con lo stato condiviso, presuppone definire una tupla fatta di <code>Mutex</code> e <code>Condvar</code>. Il <code>Mutex</code> ha tutti i suoi dati e questa tupla, se ho bisogno, la condivido mediante <code>Arc</code>. Nell'<code>Arc</code> posso fare quanti cloni voglio, ciascun thread possederà un clone di questo <code>Arc</code>, nel momento in cui tutti i thread saranno morti il contatore dell'<code>Arc</code> scende a zero e di conseguenza <code>Mutex</code> e <code>Condvar</code> saranno rilasciati, liberando tutta la memoria.</p>
@@ -880,11 +878,10 @@ Creare un canale non serve a niente se non avete qualcuno che legge e qualcuno c
 <p>E in questo caso gli passiamo il canale <code>tx</code>, lo facciamo ciclare con un <code>for</code>, e ad ogni iterazione facciamo <code>tx.send</code>, per mandare qualcosa sul canale.
 Qui possiamo scegliere se fare <code>tx.send(…)**.unwrap()**</code>, se siamo sicuri che il canale sarà sempre aperto, oppure gestire eventuali errori restituiti facendo come mostrato sopra.
 Facendo così garantiamo che se per qualche motivo il ricevitore dovesse morire, ci fermiamo prima e <em>non proviamo neanche a mandare un altro dato, perché il ricevitore non ha potuto ricevere quello che abbiamo appena provato a mandare</em>.</p>
-<aside>
-💡
-<p><strong>Differenza <code>format!</code> e <code>println!</code></strong></p>
+<blockquote>
+<p>💡 <strong>Differenza <code>format!</code> e <code>println!</code></strong></p>
 <p><img src="images/concorrenza/image%2057.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p><img src="images/concorrenza/image%2058.png" alt="image.png" /></p>
 <p>Poi creiamo anche un thread che riceve: <code>let t2 = thread::spawn(move || ...)</code>, <em>e cosa fa questo qua?</em>
 Finché riesco a ricevere cose (<code>while let Ok(v) = rx.recv()</code> ), ogni volta la cosa che ricevo la chiamo <code>v</code>, che è una stringa, stampo.
@@ -1052,9 +1049,8 @@ Ipotizzando che il tempo necessario a decorare il mio dato con l'arricchimento s
 <p>E cosa fa il <strong>producer</strong>? Il producer scrive strettamente in ordine i suoi numeri, che tanto hanno un timestamp. Poi ho un <strong>gruppo di worker</strong>, cioè un gruppo di thread, ognuno indipendente dagli altri, che lottano per strappare dal canale d'ingresso un messaggio. Appena si appropriano di un messaggio, fanno la <em>ricerca nel database</em>, lo decorano con l'indirizzo, e lo sbattono in uscita.</p>
 <p>Ovviamente non è detto che escano nello stesso ordine con cui sono entrati, perché i messaggi io li ho scritti <code>1, 2, 3</code>, poi siccome il tempo di arricchimento può essere variabile per un insieme di motivi, può darsi che mi escano <code>3, 1, 2</code>. Non è un grosso problema. Il <strong>consumer finale</strong> è poi responsabile di riordinarli.</p>
 <p>Quindi un pattern del genere mi permette di avere <strong>n worker</strong>, che di per sé sono identici, fanno esattamente lo stesso mestiere, ma siccome lo fanno in parallelo (perché io posso sfruttare <em>n CPU</em> che ho a disposizione), riescono a compensare il fatto che l'operazione che fanno è lenta rispetto al tasso con cui io spedisco delle cose. Quindi in media io ho in uscita un pacchetto ogni volta che ho un pacchetto in ingresso, con il possibile riordinamento.</p>
-<aside>
-💡
-<p><strong>Curiosità sulla gestione dei thread tramite priorità</strong></p>
+<blockquote>
+<p>💡 <strong>Curiosità sulla gestione dei thread tramite priorità</strong></p>
 <p>L’idea di gestire l’ordine con cui i thread fanno le cose con un meccanismo di priorità si può fare, ma in generale è un'idea <strong>pessima</strong>.
 Gli scheduler hanno il concetto di <em>priorità</em>. Ma la priorità, nel momento in cui la assegno, mi divide i thread runnable in classi. Ci sono i runnable a priorità massima, che passano sempre e comunque davanti ai runnable di priorità più bassa della loro.</p>
 <p>Questa cosa qua sembra banale e ovvia, ma nasconde un <strong>piccolo problema</strong>, che si chiama <em><strong>priority inversion</strong></em>.
@@ -1063,7 +1059,7 @@ Potrebbe capitare in un momento che di cosa d'alta priorità non ce n'è nessuna
 <p>Quello ad <em>alta priorità</em> vuole quello stesso lock. E <strong>non posso darglielo</strong>. Non posso darglielo perché ce l'ha quello a bassa priorità. E quindi, quello ad alta priorità si ferma necessariamente, va in stato <em>non runnable</em>, perché per il momento non c'è il lock, e torna <em>runnable</em> quello a bassa priorità. Mentre sta ancora andando avanti, supponiamo che abbia 3 o 4 cose da fare, mentre sta ancora andando avanti, si presenta uno a <em>media priorità</em>. A questo punto, quello a media priorità, di nuovo, ha la prevalenza su quello a bassa, che di nuovo viene congelato, quindi il lock resta inaccessibile, e quello a media comincia a fare i fatti suoi. Supponiamo ora che quello a media priorità vada avanti per un'ora. <strong>Questo è un grosso problema</strong>.</p>
 <p>In questo modo, la prima missione su Marte è fallita. La prima missione su Marte ha mandato un <strong>rover</strong>, che aveva un <strong>sistema operativo real-time a priorità</strong>, e aveva dei task ad <em>alta priorità</em>, a <em>media priorità</em>, a <em>bassa priorità</em>. Il rover è atterrato su Marte, ha cominciato a fare cose, e si è piantato. Ma ci hanno messo <strong>3 giorni</strong> quelli della NASA a capire perché si era piantato: si era verificata la <em><strong>priority inversion</strong></em>.</p>
 <p>Per questo motivo i moderni sistemi operativi, la priorità di un thread, la legano <strong>dinamicamente</strong>. Cioè tu lo battezzi a bassa priorità. Nel momento in cui possiedi un <em>lock</em>, e su quel lock si mette in attesa qualcuno a priorità maggiore della tua, temporaneamente ti trasferisce questa cosa. E quindi questo permette al task, che normalmente sarebbe a bassa priorità, poiché sta possedendo un lock su cui c'è in attesa qualcuno più urgente, di dire <em>"va bene, allora, proprio perché questa cosa serve a lui che è più urgente, tu finisci e togliti in fretta dai piedi"</em>. E quello che è medio aspetta. Ma qusta cosa è crea una serie di turbe. Motivo per cui l'uso delle priorità sulle schedulazioni, va fatto con <em>tantissima, tantissima consapevolezza</em>. Questa cosa è costata <strong>qualche milione di dollari</strong> alla NASA.</p>
-</aside>
+</blockquote>
 <p>Dunque, il meccanismo del <strong>Fan-Out / Fan-In</strong> è: <em>sfrutto il fatto che ho un'operazione lenta, che richiede tempo, che tenderebbe a ritardarmi troppo il canale di ingresso, quindi ne metto una serie in parallelo, in modo tale che il tasso medio di uscita sia compatibile col tasso medio di ingresso.</em>
 Se l'operazione fatta dal <strong>worker</strong> dura, diciamo, <em>dieci volte</em> il tempo medio in cui mi entra un nuovo messaggio, io di worker ne devo mettere <strong>venti</strong>, per essere tranquillo.</p>
 <p><img src="images/concorrenza/image%2075.png" alt="image.png" /></p>

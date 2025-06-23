@@ -169,12 +169,10 @@ Se io ho bisogno per qualche motivo di garantirmi il controllo su come è verame
 Questa annotazione chiede *"caro compilatore, stante che puoi fare un po' come ti pare, non fare come ti pare e invece fai come farebbe il C".* 
 In questo modo io sono tranquillo che quella struct così fatta, se dovessi passarla a una libreria scritta in C, il C capirebbe cosa c'è scritto dentro. 
 
-<aside>
-⚠️
 
-La struct è un blocco, che in quanto blocco può vivere dovunque (stack o heap, e in particolare: di norma starebbe sullo stack, ma nulla mi vieta di boxarla, il che significherebbe allocare la struct sullo heap).
-
-</aside>
+>⚠️ **Attenzione**
+>
+>La struct è un blocco, che in quanto blocco può vivere dovunque (stack o heap, e in particolare: di norma starebbe sullo stack, ma nulla mi vieta di boxarla, il che significherebbe allocare la struct sullo heap).
 
 ## 2.2 Visibilità
 

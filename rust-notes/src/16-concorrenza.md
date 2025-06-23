@@ -370,16 +370,11 @@ Se io lo rilanciamo qui adesso abbiamo che ci sono due `aaaa` di fila, `aaaa1` e
 Se lo lanciassi una terza volta vedrei ancora una cosa diversa. *Perché?* Perché ciascun thread procede secondo le sue norme. 
 Io sono sicuro che `aaaa0` viene scritto prima di `aaaa1`, viene scritto prima di `aaaa2`, e prima di `aaaa3`. Di questo posso essere sicurissimo. Del fatto che `aaaa1` venga scritto prima di `bbbb1` non lo so minimamente. Non lo posso neanche sapere perché non c'è nessun modo di comunicare tra i due. E quindi viene come viene.
 
-<aside>
-💡
-
-**Nota**
-
-Con l’istruzione `thread::sleep(Duration::from_nanos(1))` chiedo al sistema operativo di togliermi dallo *scheduler* e di rimettermi tra un nanosecondo. Il sistema operativo **non** mi rimetterà tra un nanosecondo perché non fa neanche in tempo: cioè già solo per togliermi dalla CPU se ne mangia 50 di nanosecondi. 
-
-Non appena ha finito di togliermi dalla CPU, si accorge che 1ns ormai è scaduto e mi rimette dentro. Ma l'effetto netto è che mi ha tolto la CPU. Se avessimo messo un tempo più lungo, sarebbe stato troppo, e l'altro thread nel frattempo avrebbe avuto il tempo di finire tutto.
-
-</aside>
+>💡 **Nota**
+>
+>Con l’istruzione `thread::sleep(Duration::from_nanos(1))` chiedo al sistema operativo di togliermi dallo *scheduler* e di rimettermi tra un nanosecondo. Il sistema operativo **non** mi rimetterà tra un nanosecondo perché non fa neanche in tempo: cioè già solo per togliermi dalla CPU se ne mangia 50 di nanosecondi. 
+>
+>Non appena ha finito di togliermi dalla CPU, si accorge che 1ns ormai è scaduto e mi rimette dentro. Ma l'effetto netto è che mi ha tolto la CPU. Se avessimo messo un tempo più lungo, sarebbe stato troppo, e l'altro thread nel frattempo avrebbe avuto il tempo di finire tutto.
 
 Quindi di base **lo svolgimento dei singoli thread è indipendente uno dall'altro**.
 
@@ -702,14 +697,9 @@ I tratti marker della concorrenza si chiamano `Send` e `Sync`.
 Quasi tutti, tranne i reference e i pointer nativi. 
 *Perché?* Perché se io ti passassi un reference, tu lo potresti usare da qui in avanti, *ma quanto a lungo lo usi? Boh, finché il thread padre c’è.* Non sono in grado di capire se quel reference dura a lungo abbastanza. Di conseguenza i reference non te li passo. **Ti posso passare soltanto un dato di cui hai il pieno possesso.**
 
-<aside>
-💡
-
-**Da ChatGPT**
-
-![image.png](images/concorrenza/image%2040.png)
-
-</aside>
+>💡 **Da ChatGPT**
+>
+>![image.png](images/concorrenza/image%2040.png)
 
 **C'è un secondo marker che ci interessa, che è `Sync`**. 
 
@@ -721,16 +711,11 @@ Se qualcuno gode del tratto `Sync` fa eccezione alla regola vista prima. Ovvero 
 *Chi è che non implementa* `Sync`*?* 
 `Cell` e `RfCell`, perché se te li passassi sarebbe un disastro.
 
-<aside>
-💡
-
-**Da ChatGPT**
-
-![image.png](images/concorrenza/image%2041.png)
-
-![image.png](images/concorrenza/image%2042.png)
-
-</aside>
+>💡 **Da ChatGPT**
+>
+>![image.png](images/concorrenza/image%2041.png)
+>
+>![image.png](images/concorrenza/image%2042.png)
 
 ![image.png](images/concorrenza/image%2043.png)
 
@@ -774,7 +759,7 @@ La sincronizzazione in Rust può avvenire con **due “mega” modelli**:
 
 1. **Il modello a stato condiviso**
 Nel modello a stato condiviso abbiamo una struttura dati a cui accedono più thread che è protetta debitamente e che mi dà garanzia che le modifiche che faccio sono coerenti.
-2. **Il modello a scambio di messaggi**
+1. **Il modello a scambio di messaggi**
 Il modello a scambio di messaggi prevede che di condiviso non c'è niente ma abbiamo creato dei canali attraverso cui ci mandiamo a dire delle cose.
 
 Gli algoritmi che andiamo a disegnare nell'uno e nell'altro caso sono diversi. 
@@ -820,14 +805,9 @@ Notate che l'oggetto `Mutex` di base io lo posso conoscere come oggetto non muta
 Quindi il modo tipico di proteggermi quando ho bisogno di avere un dato che voglio che due thread possano *pasticciare* per i fatti loro è *prendere il mio dato, metterlo in un* `Mutex`*, metterlo dentro un* `Arc`. 
 Questo `Arc` lo posso dare, clonare tante volte quanto serve e darne una copia a ciascuno dei thread.
 
-<aside>
-💡
-
-**Da ChatGPT**
-
-![image.png](images/concorrenza/image%2048.png)
-
-</aside>
+>💡 **Da ChatGPT**
+>
+>![image.png](images/concorrenza/image%2048.png)
 
 Ciascuno di questi thread, quando ha bisogno di accedere prende il suo `Arc`, fa  `.lock` (tanto `Arc` è uno **smart pointer** e automaticamente me lo dereferenzia al metodo interno, quindi vedo il `Mutex`), quindi facendo `.lock` se c'è bisogno aspetto (ma non me ne accorgo), e quando `lock` ritorna ho un altro smart pointer che per comodità chiamiamo `L` per comodità. 
 Questo smart pointer mi dà l'accesso al dato, e sono sicuro che *mentre esiste questo smart pointer sono l'unico che lo può vedere*. Faccio tutto quello che devo, possibilmente in fretta, e poi butto via `L`, questo smart pointer. Buttandolo via dò la possibilità ad altri che volessero entrare, di poter fare delle cose.
@@ -943,30 +923,25 @@ Questo è fondamentale, perché quando un thread chiama `.wait()` su una `Condva
 Se la `Condvar` fosse contenuta all’interno del `Mutex`, rilasciare il lock significherebbe perdere l’accesso anche alla `Condvar` stessa.
 Di conseguenza, la `Condvar` e il `Mutex` devono essere oggetti separati ma strettamente coordinati.
 
-<aside>
-💡
-
-**Da ChatGPT**
-
-![image.png](images/concorrenza/image%2051.png)
-
-Esempio:
-
-```rust
-let (lock, condvar) = &*shared;           // Arc<(Mutex<VecDeque<T>>, Condvar)>
-let mut queue = lock.lock().unwrap();     // Acquisisce il lock
-
-while queue.is_empty() {                  // Check sulla CV
-		/* Rilascia il lock e dorme finché qualcuno notifica. */
-		/* Quando vengo svegliato, ho nuovamente possesso del lock  */
-    queue = condvar.wait(queue).unwrap(); 
-}
-
-// ora queue non è vuota → consuma elemento
-let item = queue.pop_front().unwrap();
-```
-
-</aside>
+>💡 **Da ChatGPT**
+>
+>![image.png](images/concorrenza/image%2051.png)
+>
+>Esempio:
+>
+>```rust
+>let (lock, condvar) = &*shared;           // Arc<(Mutex<VecDeque<T>>, Condvar)>
+>let mut queue = lock.lock().unwrap();     // Acquisisce il lock
+>
+>while queue.is_empty() {                  // Check sulla CV
+		>/* Rilascia il lock e dorme finché qualcuno notifica. */
+		>/* Quando vengo svegliato, ho nuovamente possesso del lock  */
+    >queue = condvar.wait(queue).unwrap(); 
+>}
+>
+>// ora queue non è vuota → consuma elemento
+>let item = queue.pop_front().unwrap();
+>```
 
 **Quindi necessariamente** quando abbiamo una struttura condivisa, la struttura condivisa la scriviamo dentro un `Mutex` e poi a fianco a questo `Mutex` gli mettiamo una `Condvar` (usando una tupla, o una `struct` di qualche tipo). Questo pezzo di dato rappresenta l'informazione di quella parte di sistema che abbiamo bisogno di coordinare.
 
@@ -1094,14 +1069,9 @@ E in questo caso gli passiamo il canale `tx`, lo facciamo ciclare con un `for`, 
 Qui possiamo scegliere se fare `tx.send(…)**.unwrap()**`, se siamo sicuri che il canale sarà sempre aperto, oppure gestire eventuali errori restituiti facendo come mostrato sopra.
 Facendo così garantiamo che se per qualche motivo il ricevitore dovesse morire, ci fermiamo prima e *non proviamo neanche a mandare un altro dato, perché il ricevitore non ha potuto ricevere quello che abbiamo appena provato a mandare*. 
 
-<aside>
-💡
-
-**Differenza `format!` e `println!`**
-
-![image.png](images/concorrenza/image%2057.png)
-
-</aside>
+>💡 **Differenza `format!` e `println!`**
+>
+>![image.png](images/concorrenza/image%2057.png)
 
 ![image.png](images/concorrenza/image%2058.png)
 
@@ -1363,26 +1333,21 @@ Ovviamente non è detto che escano nello stesso ordine con cui sono entrati, per
 
 Quindi un pattern del genere mi permette di avere **n worker**, che di per sé sono identici, fanno esattamente lo stesso mestiere, ma siccome lo fanno in parallelo (perché io posso sfruttare *n CPU* che ho a disposizione), riescono a compensare il fatto che l'operazione che fanno è lenta rispetto al tasso con cui io spedisco delle cose. Quindi in media io ho in uscita un pacchetto ogni volta che ho un pacchetto in ingresso, con il possibile riordinamento.
 
-<aside>
-💡
-
-**Curiosità sulla gestione dei thread tramite priorità**
-
-L’idea di gestire l’ordine con cui i thread fanno le cose con un meccanismo di priorità si può fare, ma in generale è un'idea **pessima**. 
+>💡 **Curiosità sulla gestione dei thread tramite priorità**
+>
+>L’idea di gestire l’ordine con cui i thread fanno le cose con un meccanismo di priorità si può fare, ma in generale è un'idea **pessima**. 
 Gli scheduler hanno il concetto di *priorità*. Ma la priorità, nel momento in cui la assegno, mi divide i thread runnable in classi. Ci sono i runnable a priorità massima, che passano sempre e comunque davanti ai runnable di priorità più bassa della loro.
-
-Questa cosa qua sembra banale e ovvia, ma nasconde un **piccolo problema**, che si chiama ***priority inversion***. 
+>
+>Questa cosa qua sembra banale e ovvia, ma nasconde un **piccolo problema**, che si chiama ***priority inversion***. 
 Potrebbe capitare in un momento che di cosa d'alta priorità non ce n'è nessuna. Perfetto. E allora guardo quelli di priorità più bassa. A priorità media non c'è di nuovo nessuno. Perfetto di nuovo. Passo a quelli di priorità ancora più bassa. A priorità bassissima ce ne sta uno. Magnifico. Lo lancio, tanto se avessi bisogno di far qualcosa di più urgente, lo sospenderei immediatamente, perché come mi arriva qualcuno più urgente, lo mollo lì e passo all'urgente. 
-
-Quello lì a *bassa priorità* potrebbe prendere un **lock**. Prende il lock e comincia a fare. Mentre possiede il lock, mi arriva uno ad *alta priorità*. Quindi lui lo congelo lì, con il suo lock in mano, perché non so a che punto è arrivato, e mi metto a prendere in considerazione quello ad alta priorità.
-
-Quello ad *alta priorità* vuole quello stesso lock. E **non posso darglielo**. Non posso darglielo perché ce l'ha quello a bassa priorità. E quindi, quello ad alta priorità si ferma necessariamente, va in stato *non runnable*, perché per il momento non c'è il lock, e torna *runnable* quello a bassa priorità. Mentre sta ancora andando avanti, supponiamo che abbia 3 o 4 cose da fare, mentre sta ancora andando avanti, si presenta uno a *media priorità*. A questo punto, quello a media priorità, di nuovo, ha la prevalenza su quello a bassa, che di nuovo viene congelato, quindi il lock resta inaccessibile, e quello a media comincia a fare i fatti suoi. Supponiamo ora che quello a media priorità vada avanti per un'ora. **Questo è un grosso problema**.
-
-In questo modo, la prima missione su Marte è fallita. La prima missione su Marte ha mandato un **rover**, che aveva un **sistema operativo real-time a priorità**, e aveva dei task ad *alta priorità*, a *media priorità*, a *bassa priorità*. Il rover è atterrato su Marte, ha cominciato a fare cose, e si è piantato. Ma ci hanno messo **3 giorni** quelli della NASA a capire perché si era piantato: si era verificata la ***priority inversion***.
-
-Per questo motivo i moderni sistemi operativi, la priorità di un thread, la legano **dinamicamente**. Cioè tu lo battezzi a bassa priorità. Nel momento in cui possiedi un *lock*, e su quel lock si mette in attesa qualcuno a priorità maggiore della tua, temporaneamente ti trasferisce questa cosa. E quindi questo permette al task, che normalmente sarebbe a bassa priorità, poiché sta possedendo un lock su cui c'è in attesa qualcuno più urgente, di dire *"va bene, allora, proprio perché questa cosa serve a lui che è più urgente, tu finisci e togliti in fretta dai piedi"*. E quello che è medio aspetta. Ma qusta cosa è crea una serie di turbe. Motivo per cui l'uso delle priorità sulle schedulazioni, va fatto con *tantissima, tantissima consapevolezza*. Questa cosa è costata **qualche milione di dollari** alla NASA.
-
-</aside>
+>
+>Quello lì a *bassa priorità* potrebbe prendere un **lock**. Prende il lock e comincia a fare. Mentre possiede il lock, mi arriva uno ad *alta priorità*. Quindi lui lo congelo lì, con il suo lock in mano, perché non so a che punto è arrivato, e mi metto a prendere in considerazione quello ad alta priorità.
+>
+>Quello ad *alta priorità* vuole quello stesso lock. E **non posso darglielo**. Non posso darglielo perché ce l'ha quello a bassa priorità. E quindi, quello ad alta priorità si ferma necessariamente, va in stato *non runnable*, perché per il momento non c'è il lock, e torna *runnable* quello a bassa priorità. Mentre sta ancora andando avanti, supponiamo che abbia 3 o 4 cose da fare, mentre sta ancora andando avanti, si presenta uno a *media priorità*. A questo punto, quello a media priorità, di nuovo, ha la prevalenza su quello a bassa, che di nuovo viene congelato, quindi il lock resta inaccessibile, e quello a media comincia a fare i fatti suoi. Supponiamo ora che quello a media priorità vada avanti per un'ora. **Questo è un grosso problema**.
+>
+>In questo modo, la prima missione su Marte è fallita. La prima missione su Marte ha mandato un **rover**, che aveva un **sistema operativo real-time a priorità**, e aveva dei task ad *alta priorità*, a *media priorità*, a *bassa priorità*. Il rover è atterrato su Marte, ha cominciato a fare cose, e si è piantato. Ma ci hanno messo **3 giorni** quelli della NASA a capire perché si era piantato: si era verificata la ***priority inversion***.
+>
+>Per questo motivo i moderni sistemi operativi, la priorità di un thread, la legano **dinamicamente**. Cioè tu lo battezzi a bassa priorità. Nel momento in cui possiedi un *lock*, e su quel lock si mette in attesa qualcuno a priorità maggiore della tua, temporaneamente ti trasferisce questa cosa. E quindi questo permette al task, che normalmente sarebbe a bassa priorità, poiché sta possedendo un lock su cui c'è in attesa qualcuno più urgente, di dire *"va bene, allora, proprio perché questa cosa serve a lui che è più urgente, tu finisci e togliti in fretta dai piedi"*. E quello che è medio aspetta. Ma qusta cosa è crea una serie di turbe. Motivo per cui l'uso delle priorità sulle schedulazioni, va fatto con *tantissima, tantissima consapevolezza*. Questa cosa è costata **qualche milione di dollari** alla NASA.
 
 Dunque, il meccanismo del **Fan-Out / Fan-In** è: *sfrutto il fatto che ho un'operazione lenta, che richiede tempo, che tenderebbe a ritardarmi troppo il canale di ingresso, quindi ne metto una serie in parallelo, in modo tale che il tasso medio di uscita sia compatibile col tasso medio di ingresso.* 
 Se l'operazione fatta dal **worker** dura, diciamo, *dieci volte* il tempo medio in cui mi entra un nuovo messaggio, io di worker ne devo mettere **venti**, per essere tranquillo. 

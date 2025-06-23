@@ -401,12 +401,11 @@ Se non è buono panica, che vuol dire mi arresto e la pianto lì. Se invece è b
 <p><strong>Perché viene chiamato "panic"?</strong> Perché smettere brutalmente un programma è più complicato di quel che sembra. Nel momento in cui io scopro che un'operazione che ho fatto è andata male e il <em>tipo di male</em> che si è verificato è di quelli <em>"unrecoverable",</em> allora devo smettere. Ma smettere potrei farlo con <code>exit()</code> (<code>std::process::exit</code>). Il problema è che smetterei di botto lasciando tutte le cose a caso. In alcuni casi non è detto che questo approccio vada bene. Quindi sarebbe meglio cercare di terminare <strong>disfacendo quello che si può ancora disfare</strong>, quindi <strong>eseguendo i distruttori</strong>.</p>
 <p>Se io invoco <code>process::exit()</code> smetto su due punti. È come quando viene il coccolone, non avete possibilità di fare altro. Bang!</p>
 <p><code>panic!()</code> viceversa forza il ritorno al chiamante, al chiamante, al chiamante, e così via fino ad esaurire lo stack. Facendo questo, se ci sono dei distruttori pendenti che avevano segnato delle azioni per disfare qualcosa, questi verranno eseguiti.</p>
-<aside>
-💡
-<p><strong>Distruttori e ritorno al chiamante</strong></p>
+<blockquote>
+<p>💡 <strong>Distruttori e ritorno al chiamante</strong></p>
 <p>Ricorda che i distruttori vengono invocati quando la corrispondente variabile associata arriva alla fine del suo scope. Quindi, forzando il ritorno al chiamante (e quindi forzando ad uscire dallo scope corrente), i distruttori vengono chiamati.
 E continuando a forzare il ritorno al chiamante fino ad esaurire lo stack possiamo invocare i distruttori di tutto ciò che avevamo allocato.</p>
-</aside>
+</blockquote>
 <p>In più, se il thread che ha invocato <code>panic!()</code> è il thread principale, il processo cessa, indipendentemente da quanti altri thread secondari ci siano. Se il thread che ha invocato <code>panic!()</code> è un thread secondario, di quelli che avete creato voi, solo lui termina. Gli altri continuano a fare quello che dovevano.</p>
 <p>Per questo motivo, la scelta generale di tutte le API è usare <code>panic!()</code> e non fare <code>exit</code>.</p>
 <p><img src="images/gestione_degli_errori/image%2016.png" alt="image.png" /></p>
@@ -428,21 +427,19 @@ Se hai una funzione che ritorna un <code>Result</code> (quindi la funzione deve 
 <p><strong>Cosa vuol dire quel punto interrogativo messo al fondo?</strong>
 Per esempio, con <code>File::open(name)?</code>, viene chiamata la <code>open</code> e internamente viene verificato il risultato: se <code>open</code> ha restituito <code>Ok</code>, viene estratto e restituito il contenuto; se invece ha dato un errore, quell'errore viene propagato.
 La notazione con il punto interrogativo dopo uno statement significa quindi "se il risultato è di tipo <code>Error</code>, propaga quell'<code>Error</code>".</p>
-<aside>
-💡
-<p><strong>Riassunto</strong></p>
+<blockquote>
+<p>💡 <strong>Riassunto</strong></p>
 <p><img src="images/gestione_degli_errori/image%2020.png" alt="image.png" /></p>
 <p><img src="images/gestione_degli_errori/image%2021.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p><strong>Il vincolo</strong> però perché questa cosa funzioni è che la funzione che contiene i punti interrogativi ritorni un <code>Result</code>, perché se non ritorna un <code>Result</code> non va bene: quel punto interrogativo lì non sa che cosa ritornare.
 Non solo, ma deve ritornare un <code>Result</code> che abbia come <code>Error</code> lo stesso <code>Error</code> che si è verificato: se io ho chiamato <code>File::open</code>, che mi ritorna un errore di tipo <code>io::Error</code>, non posso dire che la mia funzione ritorna un <code>Result</code> che nel caso di errore ci mette una <code>String</code>, perché non va bene — non matchano i tipi.</p>
 <p>Quindi nel caso specifico dell’esempio, in effetti la funzione <code>read_file</code> annuncia che se va bene mi dà una <code>String</code>, e se va male mi da un <code>io::Error</code>.</p>
-<aside>
-💡
-<p><strong>Ok(s)</strong></p>
+<blockquote>
+<p>💡 <strong>Ok(s)</strong></p>
 <p><img src="images/gestione_degli_errori/image%2022.png" alt="image.png" /></p>
 <p><img src="images/gestione_degli_errori/image%2023.png" alt="image.png" /></p>
-</aside>
+</blockquote>
 <p><img src="images/gestione_degli_errori/image%2024.png" alt="image.png" /></p>
 <p>In alcuni casi potrei anche dire se non mi interessa il dettaglio del perché è non è andata bene, e mi basta dire che non è andata bene, potrei dire che ritorna <code>Option</code> e il punto interrogativo fa la conversione automatica e riesce a gestirsela.</p>
 <h2 id="35-propagare-errori-eterogenei"><a class="header" href="#35-propagare-errori-eterogenei">3.5 Propagare errori eterogenei</a></h2>

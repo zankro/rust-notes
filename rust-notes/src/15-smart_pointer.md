@@ -492,53 +492,33 @@ Niente di speciale: `b1` chiama il suo distruttore, e il distruttore di `b1` sa 
 
 Quando arriviamo alla chiusa graffa, questa comporta la contrazione dello stack. `b2` va via, passa al suo distruttore, rilascia, contraggo tutto, e la memoria è pulita.
 
-<aside>
-💡
-
-**Nota**
-
-`b1` libera lo **heap**. Ci rimane `b1` con il suo vecchio valore, ma è inaccessibile. Se provi ad andarlo a leggere, il compilatore ti blocca — è rimasto il puntatore all'originale, ma non puoi scrivere del codice che ci va dentro a leggere, perché il compilatore ti blocca.
-
-Te lo garantisce perché è l'**analisi statica del codice** che dice: *“dopo la* `drop`*, il tuo valore* `b1` *non possiede più il dato, quindi non puoi accedervi”*. 
+>💡 **Nota**
+>
+>`b1` libera lo **heap**. Ci rimane `b1` con il suo vecchio valore, ma è inaccessibile. Se provi ad andarlo a leggere, il compilatore ti blocca — è rimasto il puntatore all'originale, ma non puoi scrivere del codice che ci va dentro a leggere, perché il compilatore ti blocca.
+>
+>Te lo garantisce perché è l'**analisi statica del codice** che dice: *“dopo la* `drop`*, il tuo valore* `b1` *non possiede più il dato, quindi non puoi accedervi”*. 
 Questo avviene in compilazione.
 
-</aside>
-
-<aside>
-💡
-
-**Nota 2**
-
-Esattamente come *unique pointer*, `Box` non può essere copiato, quindi non posso avere due diversi riferimenti allo stesso blocco sullo **heap**. 
-
-*Perché?* 
+>💡 **Nota 2**
+>
+>Esattamente come *unique pointer*, `Box` non può essere copiato, quindi non posso avere due diversi riferimenti allo stesso blocco sullo **heap**. 
+>
+>*Perché?* 
 Perché altrimenti non si capirebbe chi lo possiede e non ci sarebbe più la regola del rilascio singolo, ma cadrei nel rischio del doppio rilascio o del non rilascio che è uno dei tanti *undefined behavior* di cui il C è affetto, con la sua idea di puntatori.
 
-</aside>
+>💡 **La funzione `drop()`** 
+>
+>![image.png](images/smart_pointer/image%2037.png)
+>
+>![image.png](images/smart_pointer/image%2038.png)
+>
+>![image.png](images/smart_pointer/image%2039.png)
 
-<aside>
-💡
-
-**La funzione `drop()`** 
-
-![image.png](images/smart_pointer/image%2037.png)
-
-![image.png](images/smart_pointer/image%2038.png)
-
-![image.png](images/smart_pointer/image%2039.png)
-
-</aside>
-
-<aside>
-💡
-
-**Smart pointers overview**
-
-Sono oggetti che dentro di sé contengono dei puntatori ma non sono dei puntatori, sono oggetti che li posseggono ma si presentano per Rust come fossero puntatori in quanto implementano a volte solo il tratto `Deref` a volte il tratto `DerefMut`. 
-
-La differenza tra i due tratti è che in un caso applicando asterisco di fronte a questo oggetto ottengo un riferimento condiviso, applicandolo per quelli che implementano `DerefMut` ottengo un riferimento mutabile e di conseguenza ho la possibilità di modificare il contenuto presente al suo interno. 
-
-</aside>
+>💡 **Smart pointers overview**
+>
+>Sono oggetti che dentro di sé contengono dei puntatori ma non sono dei puntatori, sono oggetti che li posseggono ma si presentano per Rust come fossero puntatori in quanto implementano a volte solo il tratto `Deref` a volte il tratto `DerefMut`. 
+>
+>La differenza tra i due tratti è che in un caso applicando asterisco di fronte a questo oggetto ottengo un riferimento condiviso, applicandolo per quelli che implementano `DerefMut` ottengo un riferimento mutabile e di conseguenza ho la possibilità di modificare il contenuto presente al suo interno. 
 
 ## 2.3 `Rc`
 
@@ -597,15 +577,11 @@ Se facessimo `drop(a)`, il conteggio (inizialmente `1`) scenderebbe a `0` (ignor
 
 *In altre parole, quando eliminiamo la testa della catena (il punto di ingresso), l'intera struttura si disgrega a cascata.*
 
-<aside>
-💡
 
-**Nota**
-
-Quando un oggetto esce di scope, richiama il tratto `Drop`. 
+>💡 **Nota**
+>
+>Quando un oggetto esce di scope, richiama il tratto `Drop`. 
 In questo caso il `Drop` di `Rc` provvede a decrementare il contatore successivo, che se scende a zero provoca il `drop` dell'elemento successivo.
-
-</aside>
 
 In questo caso invece, anziché eliminare, allunghiamo la lista aggiungendo un nuovo elemento. Prepariamo `b`, anch'esso un reference count (`Rc::new`), che inizia con `3` e prosegue con un `clone()` di `a`. 
 
@@ -694,18 +670,13 @@ L'unico modo che ho per accedere al dato è provare a fare l’upgrade di `weak_
 Nel momento in cui lo faccio (supponendo che `five` non sia stato droppato nel frattempo, e che quindi il contatore valga almeno **1**) quello che succede è che il punto `upgrade` ha successo. 
 In questo momento c'era scritto **`1, 1`**, e facendo l'`upgrade` diventa **`2, 1`**. Perché posseggo `five` originale, posseggo questo nuovo `Rc`, `strong_five`, e poi c'è sempre `weak_five` che resta lì.
 
-<aside>
-💡
-
-**Rc — downgrade & upgrade**
-
-![image.png](images/smart_pointer/image%2045.png)
-
-![image.png](images/smart_pointer/image%2046.png)
-
-![image.png](images/smart_pointer/image%2047.png)
-
-</aside>
+>💡 **Rc — downgrade & upgrade**
+>
+>![image.png](images/smart_pointer/image%2045.png)
+>
+>![image.png](images/smart_pointer/image%2046.png)
+>
+>![image.png](images/smart_pointer/image%2047.png)
 
 Poi c'è un `assert`, `strong_five.is_some`, che serve per verificare che abbiamo ricevuto qualcosa di valido. Potrei usarlo per leggere il 5, ad esempio con `println!("*strong_5")`, ma per ora ci basta sapere che funziona. 
 
@@ -720,21 +691,16 @@ Il contatore ora è **`0, 1`**.
 
 Questo meccanismo garantisce che i **weak pointer** possano chiudere dei cicli: possiamo creare catene in avanti e chiuderle all'indietro come vogliamo, sia in anelli completi che in catene di piccoli anelli. I puntatori **weak** non creano problemi per la gestione della memoria, perché il dato viene rilasciato quando spariscono tutti i riferimenti **strong**. C'è quindi una direzione preferenziale: quando vengono eliminate tutte le "teste" che conoscono l'inizio della catena, questa si sbriciola pezzo per pezzo. I **weak** possono rimanere ma non causano problemi, non mantengono nulla in vita e vengono eliminati tranquillamente.
 
-<aside>
-💡
-
-**Ma, `Clone` non fa la copia in profondità?**
-
-Nel caso di `Rc`, `Clone` non fa la copia in profondità. 
+>💡 **Ma, `Clone` non fa la copia in profondità?**
+>
+>Nel caso di `Rc`, `Clone` non fa la copia in profondità. 
 Quello che fa è duplicare il puntatore semplice e incrementare il conteggio dei riferimenti. 
-
-*Quindi, noi abbiamo detto in modo generico che* `Clone` *fa la copia in profondità, ma non è sempre così.*
-
-Mi dà la **garanzia** di avere una copia della struttura: quando clono un `Rc` , ad esempio clonando `a` nell’esempio di prima, ottenendo `b`, ottengo lo stesso puntatore che ora si trova in `a`. I due sono completamente equivalenti — entrambi vedono lo stesso blocco formato da struttura di controllo e dato posseduto. 
-
-È come se la struttura fosse stata duplicata, anche se in realtà non ce n'è bisogno. L'obiettivo è garantirmi che vedo un duplicato completo, e infatti lo vedo, ma mi gestisce questa cosa non duplicando veramente i dati, ma incrementando un contatore e lasciando le cose come stanno, che è un buon guadagno in termini di memoria, prestazioni e sicurezza di condivisione!
-
-</aside>
+>
+>*Quindi, noi abbiamo detto in modo generico che* `Clone` *fa la copia in profondità, ma non è sempre così.*
+>
+>Mi dà la **garanzia** di avere una copia della struttura: quando clono un `Rc` , ad esempio clonando `a` nell’esempio di prima, ottenendo `b`, ottengo lo stesso puntatore che ora si trova in `a`. I due sono completamente equivalenti — entrambi vedono lo stesso blocco formato da struttura di controllo e dato posseduto. 
+>
+>È come se la struttura fosse stata duplicata, anche se in realtà non ce n'è bisogno. L'obiettivo è garantirmi che vedo un duplicato completo, e infatti lo vedo, ma mi gestisce questa cosa non duplicando veramente i dati, ma incrementando un contatore e lasciando le cose come stanno, che è un buon guadagno in termini di memoria, prestazioni e sicurezza di condivisione!
 
 ## 3.3 `Cell`
 
@@ -843,20 +809,15 @@ Quindi in generale i metodi `borrow` e `borrow_mut`, se va bene ci danno una cos
 
 Vediamo un esempio pratico. 
 
-<aside>
-💡
-
-**Nota**
-
-Il dato `RC`, come smart pointer, incapsula il dato `T` come *immutabile*. A differenza di `Box` che possiede e può modificare il suo valore, `RC`, essendo condiviso, non può contenere un valore mutabile. Questo previene scenari problematici: immaginiamo di essere in due a conoscere lo stesso dato. Se ad esempio io opero basandomi sul valore "5" mentre tu lo modifichi in "10", la mia logica risulterebbe errata, portando a potenziali problemi.
-
-**Per questo motivo sia `Rc` che `Arc` incapsulano dati immutabili**. Sebbene questo sia restrittivo, possiamo comunque modificare i dati prendendoci la responsabilità. *Come?* Nei contesti single-thread, creiamo strutture `Rc` contenenti `RefCell` che a loro volta contengono il dato. Talvolta usiamo `Cell`, ma `RefCell` è generalmente più pratico. **Questa è una strategia efficace.**
-
-In contesti multi-thread, invece, utilizziamo **`Arc`** (equivalenti a `Rc`) che, non potendo contenere `RefCell`, contengono **`Mutex`** con il dato all'interno. Il `Mutex`, un altro tipo di smart pointer che approfondiremo parlando di concorrenza, permette di *prendere possesso temporaneo del dato* (e quindi poterlo mutare) uno alla volta. Se altri thread richiedono l'accesso contemporaneamente, dovranno attendere. Una volta completate le operazioni necessarie, rilasciamo il `Mutex` permettendo ad altri di utilizzare il dato.
-
-Quindi, usiamo in modo **concatenato** queste strutture, cioè *ciascuna è un'astrazione che mi dà un pezzettino che è a beneficio di qualcos'altro in un quadro più complesso*. Questa idea degli smart pointer non è proprio così banale, perché i meccanismi elementari sono stupidi — ad esempio il meccanismo dei contatori etc… **Quello che non è banale sono le conseguenze, come li usiamo**. Questi hanno un senso usati in modo concatenato, secondo dei pattern. E quei pattern lì bisogna provare a giocarci. *Sono pensati per permetterci di uscire un po' dal seminato, ma non così tanto da rischiare.*
-
-</aside>
+>💡 **Nota**
+>
+>Il dato `RC`, come smart pointer, incapsula il dato `T` come *immutabile*. A differenza di `Box` che possiede e può modificare il suo valore, `RC`, essendo condiviso, non può contenere un valore mutabile. Questo previene scenari problematici: immaginiamo di essere in due a conoscere lo stesso dato. Se ad esempio io opero basandomi sul valore "5" mentre tu lo modifichi in "10", la mia logica risulterebbe errata, portando a potenziali problemi.
+>
+>**Per questo motivo sia `Rc` che `Arc` incapsulano dati immutabili**. Sebbene questo sia restrittivo, possiamo comunque modificare i dati prendendoci la responsabilità. *Come?* Nei contesti single-thread, creiamo strutture `Rc` contenenti `RefCell` che a loro volta contengono il dato. Talvolta usiamo `Cell`, ma `RefCell` è generalmente più pratico. **Questa è una strategia efficace.**
+>
+>In contesti multi-thread, invece, utilizziamo **`Arc`** (equivalenti a `Rc`) che, non potendo contenere `RefCell`, contengono **`Mutex`** con il dato all'interno. Il `Mutex`, un altro tipo di smart pointer che approfondiremo parlando di concorrenza, permette di *prendere possesso temporaneo del dato* (e quindi poterlo mutare) uno alla volta. Se altri thread richiedono l'accesso contemporaneamente, dovranno attendere. Una volta completate le operazioni necessarie, rilasciamo il `Mutex` permettendo ad altri di utilizzare il dato.
+>
+>Quindi, usiamo in modo **concatenato** queste strutture, cioè *ciascuna è un'astrazione che mi dà un pezzettino che è a beneficio di qualcos'altro in un quadro più complesso*. Questa idea degli smart pointer non è proprio così banale, perché i meccanismi elementari sono stupidi — ad esempio il meccanismo dei contatori etc… **Quello che non è banale sono le conseguenze, come li usiamo**. Questi hanno un senso usati in modo concatenato, secondo dei pattern. E quei pattern lì bisogna provare a giocarci. *Sono pensati per permetterci di uscire un po' dal seminato, ma non così tanto da rischiare.*
 
 ### 2.4.1 Esempio
 
@@ -939,18 +900,13 @@ Potrei avere un `Box<dyn Trait>`. In questo caso è un `Box` che punta a un ogge
 
 Un `Box` di un oggetto tratto può essere convertito in un riferimento a un oggetto tratto, essendo equivalenti. La differenza sta nella mutabilità: il riferimento semplice non è mutabile, mentre `ref mut` lo è. 
 
-<aside>
-💡
-
-**Da ChatGPT**
-
-![image.png](images/smart_pointer/image%2056.png)
-
-![image.png](images/smart_pointer/image%2057.png)
-
-![image.png](images/smart_pointer/image%2058.png)
-
-</aside>
+>💡 **Da ChatGPT**
+>
+>![image.png](images/smart_pointer/image%2056.png)
+>
+>![image.png](images/smart_pointer/image%2057.png)
+>
+>![image.png](images/smart_pointer/image%2058.png)
 
 Analogamente, il `Vec` può essere convertito in un `Box` dello slice dei dati che possiede, solo non mutabile.
 

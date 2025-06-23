@@ -342,39 +342,38 @@ Quando scrivo <code>return r</code> di fatto <code>r</code> viene copiato nello 
 <p><strong>Lo spostamento è una copia</strong> (quindi io di fatto passo tutti i byte), <strong>ma perdo il diritto di accesso perché ho ceduto i miei byte a un altro.</strong>
 E perdo il dovere del rilascio perché è transitato a quell'altro.</p>
 <p>Quindi adesso vedete che la riga da <code>r</code> è tratteggiata, perché dentro <code>r</code> ci sono ancora scritti 3b7f5942 (quello che è, l’indirizzo dell’heap in cui è memorizzata la tupla), ma il compilatore sa che quel dato lì non deve più essere guardato — non c'è lì la responsabilità del rilascio. La responsabilità del rilascio è transitata sul destinatario, cioè <code>b</code>.</p>
-<aside>
-💡
-<p><strong>Copia vs Movimento</strong></p>
+<blockquote>
+<p>💡 <strong>Copia vs Movimento</strong></p>
 <p>La <strong>copia</strong> è una <strong>duplicazione</strong>: il nuovo valore è indipendente dall’originale.
 Tipi come gli interi (i32, u8, ecc.) vengono copiati quando vengono assegnati o passati a una funzione: si crea una nuova copia del dato, e l’originale resta valido.</p>
 <p>Invece, per tipi come Box<T>, l’assegnazione comporta un <em><strong>movimento</strong></em> (move): il valore viene <em>spostato</em>, e l’originale non può più essere usato.</p>
 <pre><pre class="playground"><code class="language-rust">/* This is fine */
 fn main() {
-    let x1 = 5;
-    let x2 = x1; // Copy
-    
-    println!("x1: {}", x1);
-    println!("x2: {}", x2);
+   let x1 = 5;
+   let x2 = x1; // Copy
+   
+   println!("x1: {}", x1);
+   println!("x2: {}", x2);
 }</code></pre></pre>
 <pre><pre class="playground"><code class="language-rust">/* This doesn't compile */
 fn main() {
-    let b1 = Box::new(5);
-    let b2 = b1; // Movement
-    
-    println!("b1: {}", b1);     // this should thrown an error
-    println!("b2: {}", b2);
+   let b1 = Box::new(5);
+   let b2 = b1; // Movement
+   
+   println!("b1: {}", b1);     // this should thrown an error
+   println!("b2: {}", b2);
 }</code></pre></pre>
 <p>L’esempio a destra non funziona perchè, dato che i dati posseduti da <code>b1</code> vengono <em>spostati</em> in <code>b2</code> (che ne diventa il nuovo proprietario), quando proviamo a stampare <code>b1</code> dopo il movimento, il compilatore ci blocca.
 Ci suggerisce anche un modo per risolvere, qualora proprio volessimo tenere sia <code>b1</code> che <code>b2</code>: clonare <code>b1</code>.</p>
 <pre><pre class="playground"><code class="language-rust">/* This is fine */
 fn main() {
-    let b1 = Box::new(5);
-    let b2 = b1.clone();
-    
-    println!("b1: {}", b1);
-    println!("b2: {}", b2);
+   let b1 = Box::new(5);
+   let b2 = b1.clone();
+   
+   println!("b1: {}", b1);
+   println!("b2: {}", b2);
 }</code></pre></pre>
-</aside>
+</blockquote>
 <p><img src="images/il_linguaggio_2/image%2012.png" alt="image.png" /></p>
 <p>Di conseguenza nel momento in cui contraggo lo stack va via <code>r</code> (variabile locale), vanno via i parametri etc.. quello che potrebbe esserci e torno al main.</p>
 <p><img src="images/il_linguaggio_2/image%2013.png" alt="image.png" /></p>
@@ -384,23 +383,25 @@ E quindi posso creare la variabile <code>c</code> come somma delle due parti.</p
 <p>Dopodiché arrivo al chiusa graffa del main.
 Qui avevo sullo stack <code>c</code>, che è un intero semplice e va via, avevo b, che è un box e prima di andar via rilascia, motivo per cui quando termina questa cosa qua lascio pulito lo heap — non ho perdite di memoria, tutto è stato rilasciato una e una sola volta.</p>
 <p>Il meccanismo del <em><strong>movimento</strong></em> è challenging perché le persone inizialmente fan fatica a capirlo.</p>
-<aside>
-💡
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
+<blockquote>
+</blockquote>
 <p>Nota che qua non stiamo dicendo che il box è mutabile: <code>r</code> non lo è.
-Ma avrei potuto dire in main <code>let **mut** b = makeBox(5);</code>, perché quando a <code>b</code> gli arriva, anche se il box è stato costruito senza mutabilità, <strong>la variabile che viene ritornata è proprietaria del box</strong> <strong>e chi è proprietario può in qualunque momento decidere che si dà il diritto di mutare</strong>.</p>
+Ma avrei potuto dire in main <code>let mut b = makeBox(5);</code>, perché quando a <code>b</code> gli arriva, anche se il box è stato costruito senza mutabilità, <strong>la variabile che viene ritornata è proprietaria del box</strong> <strong>e chi è proprietario può in qualunque momento decidere che si dà il diritto di mutare</strong>.</p>
 <pre><pre class="playground"><code class="language-rust">/* This is fine */
 fn makeBox(a: i32) -&gt; Box&lt;(i32, i32)&gt; {
-    let r = Box::new( (a, 1) );
-    return r;
+   let r = Box::new( (a, 1) );
+   return r;
 }
 
 fn main() {
-    let mut b = makeBox(5);
-    b.0 = b.0 + 1;
-    
-    println!("{:?}", b);
+   let mut b = makeBox(5);
+   b.0 = b.0 + 1;
+   
+   println!("{:?}", b);
 }</code></pre></pre>
-</aside>
+</blockquote>
 <p>Lo scegliere di non essere mutabili è una scelta conservativa per evitare <em>misunderstandings</em>, ma non è intrinseco nel valore, è intrinseco nel possessore!
 Nel momento in cui io cedo da un possessore a un altro, il possessore originale poteva aver scelto per quello che riguardava lui di non essere mutabile perché lui non aveva nessun bisogno di fare mutazioni, ma il nuovo possessore a cui viene ceduta la cosa può decidere di farlo.</p>
 <blockquote>
@@ -438,8 +439,8 @@ Lanciamo e vediamo che <code>s1</code> vive nello stack all'indirizzo indicato, 
 <p>Per aggiungere un distruttore bisogna fare in questo modo.
 Vediamo che in questo caso la funzione <code>drop()</code>, che è predefinita dal linguaggio e che così come in C++ il distruttore si scrive <code>~nome_classe</code>, qua il distruttore si scrive in questo modo e ha possibilità di manipolare quello che c'è dentro — riceve sempre l'oggetto che sta per essere distrutto come <strong>mutabile</strong>, e quindi sa di poter farci delle cose dentro.</p>
 <p><img src="images/il_linguaggio_2/image%2023.png" alt="image.png" /></p>
-<aside>
-💡
+<blockquote>
+<p>💡 <strong>Nota</strong></p>
 <p>Notiamo inoltre che stiamo fornendo una implementazione del tratto <code>Drop</code> per il tipo S che abbiamo definito noi, prima invece avevamo solo definito un metodo che abbiamo chiamato “display”, che appartiene al tipo da noi definito.</p>
 <p>Se avessimo voluto fornire l’implementazione del tratto <code>Display</code>, per poter stampare il nostro tipo usando la macro <code>println!(”{}”, …)</code> invece di fare <code>s1.display()</code>, avremmo dovuto fare così:</p>
 <pre><pre class="playground"><code class="language-rust">use std::fmt::Display;
@@ -447,27 +448,27 @@ use std::fmt;
 
 struct S(i32);
 impl Display for S {
-    fn fmt(&amp;self, f: &amp;mut fmt::Formatter&lt;'_&gt;) -&gt; fmt::Result {
-        write!(f, "S value: {}, @{:p}", self.0, self)
-    }
+   fn fmt(&amp;self, f: &amp;mut fmt::Formatter&lt;'_&gt;) -&gt; fmt::Result {
+       write!(f, "S value: {}, @{:p}", self.0, self)
+   }
 }
 impl Drop for S {
-    fn drop(&amp;mut self) {
-        println!("Dropping.. S value: {}, @{:p}", self.0, self);
-    }
+   fn drop(&amp;mut self) {
+       println!("Dropping.. S value: {}, @{:p}", self.0, self);
+   }
 }
 
 fn main() {
-    let s1 = S(5);
-    
-    println!("{}", s1); // Now this works!
+   let s1 = S(5);
+   
+   println!("{}", s1); // Now this works!
 }</code></pre></pre>
 <p>Inoltre, in questo esempio, S è una struct che contiene tipi elementari, dunque non vi è allocazione di memoria sullo heap: le strutture di tipo S vivono quindi nello stack.
 Dunque di fatto, non vi è alcun “rilascio della memoria”, abbiamo implementato <code>Drop</code> giusto per fare una stampa.</p>
 <p>Per i tipi che invece allocano memoria sullo heap, <em>dopo</em> che viene eseguito il metodo <code>drop()</code> da noi implementato, il tratto <code>Drop</code> si occupa poi di rilasciare la memoria.</p>
 <p><img src="images/il_linguaggio_2/image%2024.png" alt="image.png" /></p>
-</aside>
-<p>Noi in questo momento serve solo stamparlo.</p>
+</blockquote>
+<p>A noi in questo momento serve solo stamparlo.</p>
 <p><img src="images/il_linguaggio_2/image%2025.png" alt="image.png" /></p>
 <p>Vediamo che è stato costruito S(1) sullo stack, è stato costruito S(2) sullo heap, poi senza che noi abbiamo fatto niente altro se non rendere esplicita la distruzione (che avveniva comunque, solo che per default non stampava niente).</p>
 <p>Vediamo che siccome abbiamo creato prima S(1) e poi S(2), nel contrarsi lo stack prima egetta S(2) e poi egetta S(1).</p>
@@ -475,12 +476,11 @@ Dunque di fatto, non vi è alcun “rilascio della memoria”, abbiamo implement
 <p>Ragioniamo meglio su questo movimento, questo passaggio per movimento.</p>
 <p><img src="images/il_linguaggio_2/image%2026.png" alt="image.png" /></p>
 <p>Momentaneamente ci dimentichiamo del Box e creiamo il nostro S(1), e verifichiamo dove sta, e poi diciamo <code>let s2 = s1;</code> — lo copio..? No: lo muovo!</p>
-<aside>
-💡
-<p><strong>Drop vs Copy</strong>
+<blockquote>
+<p>💡 <strong>Drop vs Copy</strong>
 Avendo implementato <strong><code>Drop</code></strong>, questo tipo <strong>non può avere anche il tratto <code>Copy</code>.</strong>
 Se non avessimo implementato il tratto <code>Drop</code>, essendo che questa struct contiene solo tipi elementari (un i32, nello specifico), allora avremmo potuto avere tranquillamente il tratto <code>Copy</code>.</p>
-</aside>
+</blockquote>
 <p><img src="images/il_linguaggio_2/image%2027.png" alt="image.png" /></p>
 <p>Faccio <code>s2.display()</code>, e provo a fare anche <code>s1.display()</code> ma il compilatore mi blocca!</p>
 <p>Ci dice <em>“sei partito da</em> <code>let s1 = S(1);</code><em>, poi hai chiamato display, bene, e poi me l'hai mosso dentro s2 — <strong>value moved here</strong></em>”.</p>
